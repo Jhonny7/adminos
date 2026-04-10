@@ -1,0 +1,121 @@
+<div class="form-container">
+  <h1>Ejemplo Completo de Formulario con OInput</h1>
+
+  <form (ngSubmit)="submitForm()" class="form">
+    <!-- TEXT INPUT -->
+    <section class="form-section">
+      <h2>Información Personal</h2>
+      
+      <app-oinput
+        [inputData]="nameInput"
+        [index]="0"
+        (change)="onInputChange({data: nameInput, index: 0})"
+        (blur)="onInputBlur({data: nameInput, index: 0})"
+      ></app-oinput>
+
+      <app-oinput
+        [inputData]="emailInput"
+        [index]="1"
+        (change)="onInputChange({data: emailInput, index: 1})"
+        (blur)="onInputBlur({data: emailInput, index: 1})"
+      ></app-oinput>
+
+      <app-oinput
+        [inputData]="phoneInput"
+        [index]="2"
+        (change)="onInputChange({data: phoneInput, index: 2})"
+        (blur)="onInputBlur({data: phoneInput, index: 2})"
+      ></app-oinput>
+
+      <app-oinput
+        [inputData]="birthdayInput"
+        [index]="3"
+        (change)="onInputChange({data: birthdayInput, index: 3})"
+        (blur)="onInputBlur({data: birthdayInput, index: 3})"
+      ></app-oinput>
+    </section>
+
+    <!-- SELECT INPUT -->
+    <section class="form-section">
+      <h2>Ubicación</h2>
+      
+      <app-oinput
+        [inputData]="countryInput"
+        [index]="4"
+        (change)="onInputChange({data: countryInput, index: 4})"
+        (blur)="onInputBlur({data: countryInput, index: 4})"
+      ></app-oinput>
+    </section>
+
+    <!-- TEXTAREA INPUT -->
+    <section class="form-section">
+      <h2>Información Adicional</h2>
+      
+      <app-oinput
+        [inputData]="bioInput"
+        [index]="5"
+        (change)="onInputChange({data: bioInput, index: 5})"
+        (blur)="onInputBlur({data: bioInput, index: 5})"
+      ></app-oinput>
+
+      <app-oinput
+        [inputData]="priceInput"
+        [index]="6"
+        (change)="onInputChange({data: priceInput, index: 6})"
+        (blur)="onInputBlur({data: priceInput, index: 6})"
+      ></app-oinput>
+    </section>
+
+    <!-- CHECKBOX INPUT -->
+    <section class="form-section">
+      <h2>Intereses</h2>
+      
+      <app-oinput
+        [inputData]="interestsInput"
+        [index]="7"
+        (change)="onInputChange({data: interestsInput, index: 7})"
+        (blur)="onInputBlur({data: interestsInput, index: 7})"
+      ></app-oinput>
+    </section>
+
+    <!-- TOGGLE INPUT -->
+    <section class="form-section">
+      <h2>Preferencias</h2>
+      
+      <app-oinput
+        [inputData]="notificationsInput"
+        [index]="8"
+        (change)="onInputChange({data: notificationsInput, index: 8})"
+        (blur)="onInputBlur({data: notificationsInput, index: 8})"
+      ></app-oinput>
+    </section>
+
+    <!-- PASSWORD INPUT -->
+    <section class="form-section">
+      <h2>Seguridad</h2>
+      
+      <app-oinput
+        [inputData]="passwordInput"
+        [index]="9"
+        (change)="onInputChange({data: passwordInput, index: 9})"
+        (blur)="onInputBlur({data: passwordInput, index: 9})"
+      ></app-oinput>
+    </section>
+
+    <!-- BUTTONS -->
+    <section class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="hasErrors()">
+        Enviar Formulario
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="resetForm()">
+        Limpiar
+      </button>
+    </section>
+  </form>
+
+  <!-- DEBUG: Mostrar valores actuales -->
+  <div class="debug-section" *ngIf="false">
+    <h2>Valores Actuales (Debug)</h2>
+    <pre>{{ getFormValues() | json }}</pre>
+  </div>
+</div>

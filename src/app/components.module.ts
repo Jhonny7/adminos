@@ -1,0 +1,96 @@
+import { CommonModule } from "@angular/common";
+import { NgModule } from "@angular/core";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { RouterModule } from "@angular/router";
+import { TranslateModule } from "@ngx-translate/core";
+import { OButtonComponent } from "./components/atoms/obutton/obutton";
+import {
+  OInputAutocompleteComponent,
+  OInputCheckboxComponent,
+  OInputComponent,
+  OInputDateComponent,
+  OInputDragDropComponent,
+  OInputMapComponent,
+  OInputOTPComponent,
+  OInputPasswordComponent,
+  OInputPhoneComponent,
+  OInputSelectComponent,
+  OInputSpecialSelectComponent,
+  OInputTextareaComponent,
+  OInputTextComponent,
+  OInputToggleComponent
+} from "./components/atoms/oinput";
+import { OInputExampleComponent } from "./components/atoms/oinput/oinput-example.component";
+import { SpinnerComponent } from "./components/atoms/spinner/spinner.component";
+import { OModalAlertComponent } from "./components/molecules/modal-alert/modal-alert";
+import { OContainerComponent } from "./components/molecules/ocontainer/ocontainer";
+import { SidebarComponent } from "./components/molecules/sidebar/sidebar";
+import { SpinnerOverlayComponent } from "./components/molecules/spinner-overlay/spinner-overlay.component";
+import { LayoutComponent } from "./components/organisms/layout/layout";
+import { OTableComponent, OTableExampleComponent } from "./components/organisms/otable";
+import { MaterialModule } from "./material.module";
+import { Home } from "./pages/Home/home.component";
+import { Login } from "./pages/login/login.component";
+import { OSquareButtonComponent } from "./components/atoms/osquare-button/osquare-button.component";
+import { OIconComponent } from "./components/atoms/oicon/oicon.component";
+import { ModalPanelContainerComponent } from "./components/atoms/modal-panel/modal-panel.component";
+import { PopoverContainerComponent } from "./components/atoms/popover/popover.component";
+
+export const exporters: any = [
+  LayoutComponent,
+  SidebarComponent,
+  OButtonComponent,
+  OModalAlertComponent,
+  OContainerComponent,
+  SpinnerOverlayComponent,
+  SpinnerComponent,
+  OTableComponent,
+  OTableExampleComponent,
+  OSquareButtonComponent,
+  OIconComponent,
+  // Main
+  OInputComponent,
+  
+  // Basic inputs
+  OInputTextComponent,
+  OInputPasswordComponent,
+  OInputTextareaComponent,
+  OInputSelectComponent,
+  OInputPhoneComponent,
+  OInputDateComponent,
+  
+  // Toggle & Checkbox
+  OInputToggleComponent,
+  OInputCheckboxComponent,
+  
+  // Advanced (placeholders)
+  OInputOTPComponent,
+  OInputSpecialSelectComponent,
+  OInputMapComponent,
+  OInputDragDropComponent,
+  OInputAutocompleteComponent,
+  //Pages
+  Login,
+  Home,
+  OInputExampleComponent,
+  ModalPanelContainerComponent,
+  PopoverContainerComponent
+];
+
+@NgModule({
+  declarations: [
+    ...exporters
+  ],
+  exports: [
+    ...exporters,
+  ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    TranslateModule,
+    MaterialModule
+  ]
+})
+export class ComponentsModule {}

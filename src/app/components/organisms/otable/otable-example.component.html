@@ -1,0 +1,152 @@
+<div class="otable-example-container">
+  <!-- ============================================
+       HEADER SECTION
+       ============================================ -->
+  <div class="example-header">
+    <h1>Ejemplo Completo - OTable Component</h1>
+    <p class="description">
+      Este ejemplo demuestra todas las funcionalidades del componente OTable:
+      ordenamiento, filtrado, selección múltiple, edición inline, reordenamiento por drag & drop,
+      y diseño responsivo para móviles.
+    </p>
+
+    <!-- Statistics Cards -->
+    <div class="stats-cards">
+      <div class="stat-card">
+        <div class="stat-value">{{ getTotalUsers() }}</div>
+        <div class="stat-label">Total Usuarios</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ getActiveUsers() }}</div>
+        <div class="stat-label">Usuarios Activos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ getSelectedCount() }}</div>
+        <div class="stat-label">Seleccionados</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       ACTION BUTTONS
+       ============================================ -->
+  <div class="action-buttons">
+    <button class="btn-primary" (click)="addUser()">
+      <span class="material-icons">add</span>
+      Agregar Usuario
+    </button>
+
+    <button class="btn-danger" (click)="deleteSelected()" [disabled]="getSelectedCount() === 0">
+      <span class="material-icons">delete</span>
+      Eliminar Seleccionados ({{ getSelectedCount() }})
+    </button>
+  </div>
+
+  <!-- ============================================
+       OTABLE COMPONENT
+       ============================================ -->
+  <div class="table-container">
+    <otable [columns]="columns" [data]="currentData" [actions]="tableActions" [moduleTitle]="tableProps.moduleTitle"
+      [selectable]="tableProps.selectable" [isReorder]="tableProps.isReorder" [filterContent]="filterComponent"
+      (selectionChange)="onSelectionChange($event)" (reorder)="onReorder($event)" (rowsChange)="onRowsChange($event)"
+      (closeDrawer)="onCloseDrawer($event)">
+    </otable>
+  </div>
+
+  <!-- ============================================
+       CODE SNIPPET
+       ============================================ -->
+  <div class="code-section">
+    <h3>Código de Implementación</h3>
+    <div class="code-tabs">
+      <button class="tab-btn active" data-tab="html">HTML</button>
+      <button class="tab-btn" data-tab="typescript">TypeScript</button>
+      <button class="tab-btn" data-tab="scss">SCSS</button>
+    </div>
+
+    <div class="code-content">
+      <!-- HTML Tab -->
+      <div class="tab-content active" data-tab="html">
+        <pre><code>&lt;otable
+  [columns]="columns"
+  [data]="currentData"
+  [actions]="tableActions"
+  [filterComponent]="filterComponent"
+  [props]="tableProps"
+  (selectionChange)="onSelectionChange($event)"
+  (reorder)="onReorder($event)"
+  (rowsChange)="onRowsChange($event)"
+  (closeDrawer)="onCloseDrawer($event)"&gt;
+&lt;/otable&gt;</code></pre>
+      </div>
+
+      <!-- TypeScript Tab -->
+      <div class="tab-content" data-tab="typescript">
+        <pre><code>// Ver el código en el componente TypeScript</code></pre>
+      </div>
+
+      <!-- SCSS Tab -->
+      <div class="tab-content" data-tab="scss">
+        <pre><code>// Estilos responsivos
+.table-container &lbrace;
+  @media (max-width: 768px) &lbrace;
+    .otable &lbrace;
+      font-size: 14px;
+    &rbrace;
+  &rbrace;
+&rbrace;
+
+// Tema personalizado
+.otable &lbrace;
+  --primary-color: #3b6ec4;
+  --secondary-color: #f5f5f5;
+  --text-color: #333;
+&rbrace;</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       FEATURES SHOWCASE
+       ============================================ -->
+  <div class="features-section">
+    <h3>Características Implementadas</h3>
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="material-icons">sort</span>
+        <h4>Ordenamiento</h4>
+        <p>Haz clic en los encabezados para ordenar ascendente/descendente</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="material-icons">filter_list</span>
+        <h4>Filtrado Avanzado</h4>
+        <p>Usa el drawer lateral para aplicar filtros complejos</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="material-icons">check_box</span>
+        <h4>Selección Múltiple</h4>
+        <p>Selecciona filas individuales o todas con el checkbox del header</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="material-icons">edit</span>
+        <h4>Edición Inline</h4>
+        <p>Doble clic en cualquier celda editable para modificar el valor</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="material-icons">drag_indicator</span>
+        <h4>Reordenamiento</h4>
+        <p>Arrastra las filas para cambiar el orden (drag & drop)</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="material-icons">phone_android</span>
+        <h4>Responsive</h4>
+        <p>Diseño adaptativo que funciona en móviles y tablets</p>
+      </div>
+    </div>
+  </div>
+</div>

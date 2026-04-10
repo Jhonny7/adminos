@@ -1,0 +1,14 @@
+<ocontainer [extraClass]="'cls-home'">
+    <otable
+        [columns]="columns"
+        [data]="data"
+        [moduleTitle]="tableProps.moduleTitle"
+        [selectable]="tableProps.selectable"
+        [isReorder]="tableProps.isReorder"
+        [filterContent]="filterComponent"
+        [actions]="tableActions"
+        (rowsChange)="onRowsChange($event)"
+        (selectionChange)="onSelectionChange($event)"
+        (reorder)="onReorder($event)">
+        </otable>
+</ocontainer>

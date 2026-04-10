@@ -1,0 +1,10 @@
+{
+  "common":{
+    "cancel": "Cancelar"
+  },
+  "login": {
+    "login": "Iniciar sesión",
+    "forgot": "Olvidé mi contraseña",
+    "nclient": "Nuevo cliente"
+  }
+}

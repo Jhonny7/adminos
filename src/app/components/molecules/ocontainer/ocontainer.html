@@ -1,0 +1,14 @@
+<section
+  class="container-app"
+  [class]="extraClass"
+  [id]="customId ?? 'container-app'"
+  [style.background]="themeService.themeData.background"
+>
+  <div
+    class="container-box"
+    [class.no-padding]="!hasPadding && !forcePadding"
+    [class.no-padding-left]="!hasPaddingLeft"
+  >
+    <ng-content></ng-content>
+  </div>
+</section>

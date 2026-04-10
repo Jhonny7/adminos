@@ -1,0 +1,20 @@
+<div class="action-sheet-wrapper" #actionSheetWrapper>
+
+
+    <div class="action-sheet-content">
+        <div class="action-sheet-header" *ngIf="data.title">
+            <h3>{{ data.title }}</h3>
+        </div>
+        <button mat-button *ngFor="let btn of data.buttons; let idx = index" class="action-sheet-item"
+            (click)="onButtonClick(idx, btn)">
+            <mat-icon *ngIf="btn.icon" class="action-sheet-icon">{{ btn.icon }}</mat-icon>
+            <span class="action-sheet-label">{{ btn.text }}</span>
+        </button>
+    </div>
+
+    <mat-divider class="cancel-divider" *ngIf="data.hasCancelButton"></mat-divider>
+
+    <button mat-button *ngIf="data.hasCancelButton" class="action-sheet-cancel" (click)="onCancel()">
+        {{ 'common.cancel' | translate }}
+    </button>
+</div>

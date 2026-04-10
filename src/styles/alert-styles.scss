@@ -1,0 +1,167 @@
+// =============================================
+// MATERIAL DIALOG & BOTTOM SHEET ANIMATIONS
+// =============================================
+
+// ACTION SHEET (MatBottomSheet)
+.action-sheet-bottom-panel {
+  .mat-mdc-bottom-sheet-container {
+    border-radius: 16px 16px 0 0;
+    animation: slideUpActionSheet 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none !important; // Remove default box shadow
+  }
+}
+
+@keyframes slideUpActionSheet {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// PANEL POSITIONING (MatDialog)
+.modal-panel-bottom {
+  .mat-mdc-dialog-container {
+    border-radius: 16px 16px 0 0;
+    animation: slideUpPanel 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+.modal-panel-right {
+  .mat-mdc-dialog-container {
+    border-radius: 0;
+    animation: slideLeftPanel 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+.modal-panel-left {
+  .mat-mdc-dialog-container {
+    border-radius: 0;
+    animation: slideRightPanel 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+.modal-panel-top {
+  .mat-mdc-dialog-container {
+    border-radius: 0 0 16px 16px;
+    animation: slideDownPanel 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@keyframes slideUpPanel {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDownPanel {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideLeftPanel {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideRightPanel {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Material Dialog Overlay
+.cdk-overlay-pane {
+  &.modal-panel-bottom,
+  &.modal-panel-top {
+    display: flex !important;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  &.modal-panel-right {
+    display: flex !important;
+    align-items: stretch;
+    justify-content: flex-end;
+  }
+
+  &.modal-panel-left {
+    display: flex !important;
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .cdk-overlay-pane {
+    &.modal-panel-right,
+    &.modal-panel-left {
+      width: 100% !important;
+    }
+  }
+
+  .mat-mdc-dialog-container {
+    max-width: 100%;
+    margin: 0;
+  }
+}
+
+// Smooth transitions for close button hover
+.panel-close-button {
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #333 !important;
+  }
+}
+
+// Remove Material Dialog default max-width for bottom/top panels
+.cdk-overlay-pane.modal-panel-bottom,
+.cdk-overlay-pane.modal-panel-top {
+  .mat-mdc-dialog-container {
+    max-width: 100%;
+  }
+}
+
+// POPOVER (MatDialog)
+.popover-panel {
+  .mat-mdc-dialog-container {
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    padding: 0;
+    overflow: visible;
+  }
+}
+
+.cdk-overlay-pane.popover-panel {
+  .mat-mdc-dialog-container {
+    max-width: none;
+    max-height: none;
+  }
+}

@@ -1,0 +1,30 @@
+<div class="sidebar" [class.collapsed]="collapsed">
+
+  <div class="menu">
+    <div class="adminos" (click)="openMenu($event)">
+      <p>Admin <span>OS</span></p>
+    </div>
+
+    <div *ngFor="let item of menu">
+      <div class="menu-item" (click)="toggle(item)">
+        <mat-icon>{{ item.icon }}</mat-icon>
+
+        <span *ngIf="!collapsed">
+          {{ item.label }}
+        </span>
+
+        <mat-icon *ngIf="item.children && !collapsed">
+          {{ item.open ? 'expand_less' : 'expand_more' }}
+        </mat-icon>
+      </div>
+      <div class="submenu" [@submenuAnimation]="item.open && !collapsed ? 'open' : 'closed'">
+        <div class="submenu-item" *ngFor="let sub of item.children">
+          {{ sub.label }}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

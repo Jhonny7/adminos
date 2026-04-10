@@ -1,0 +1,80 @@
+.layout-container {
+  height: 100vh;
+}
+
+.sidebar {
+  width: 250px;
+  transition: width 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 70px;
+}
+
+.mat-drawer-content {
+  transition: margin-left 0.3s ease;
+}
+
+/* margin-left controlado por binding de template */
+
+.content {
+  padding: 0;
+  height: 100vh;
+  overflow-y: auto;
+  transition: padding-top 0.3s ease;
+}
+
+.header {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  background: #383838;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  transition: transform 0.3s ease;
+
+  display: flex;
+  justify-content: space-between;
+
+  &.hidden {
+    transform: translateY(-100%);
+  }
+
+  .right{
+    text-align: right;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .left{
+    text-align: left;
+  }
+}
+
+::ng-deep .mat-drawer-inner-container{
+  overflow: hidden !important;
+}
+
+::ng-deep .mat-drawer {
+  width: 250px !important;
+  transition: width 0.3s ease;
+  border: none !important;
+}
+
+::ng-deep .mat-drawer.collapsed {
+  width: 70px !important;
+}
+
+::ng-deep .mat-drawer-content {
+  transition: margin-left 0.3s ease;
+}
+
+::ng-deep .mat-drawer-content {
+  border: none;
+}

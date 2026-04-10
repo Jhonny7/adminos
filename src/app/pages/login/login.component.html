@@ -1,0 +1,60 @@
+<ocontainer extraClass="animated fadeInDown clss" *ngIf="!load" [hasWaterMark]="false">
+  <section class="container-login">
+
+    <div class="posco-logo">
+      <img src="assets/imgs/login/video-chat.png" alt="">
+    </div>
+
+    <!-- <div class="with-posco">
+      <img src="assets/imgs/login/with-posco.png" alt="">
+    </div> -->
+
+    <div class="interpolate-img"></div>
+    <div class="container-login-img"></div>
+    <div class="white-screen"></div>
+
+    <section class="form-box">
+      <p class="title">Admin OS</p>
+      
+      <div class="box">
+
+        <div class="change-language">
+          <img src="assets/imgs/login/mx.svg" alt="">
+        </div>
+
+        <p class="login-title">{{'login.login' | translate}}</p>
+
+       <!--  <oinput
+          [inputPlaceholder]="'login.input-name' | translate"
+          [inputLabel]="'login.input-name' | translate"
+          [(olamModel)]="data.username.value"
+        ></oinput>
+
+        <div class="inp-pass">
+          <oinput
+            [inputType]="type ? 'password' : 'text'"
+            [inputPlaceholder]="'login.input-password' | translate"
+            [inputLabel]="'login.input-password' | translate"
+            globalExtraClass="input-pass-login"
+            [(olamModel)]="data.pass.value"
+          ></oinput>
+          <div class="eye" (mousedown)="eye()" (mouseup)="eye()">
+            <span class="material-icons outlined"> visibility </span>
+          </div>
+        </div> -->
+
+        <obutton extraClass="posco-login-btn" (click)="login()">{{'login.login' | translate}}</obutton>
+
+        <p class="forgot" (click)="forgot()">
+          <span class="material-icons outlined">lock_open</span>
+          {{'login.forgot' | translate}}
+        </p>
+
+        <p class="forgot" (click)="register()">
+          <span class="material-icons outlined">add</span>
+          {{'login.nclient' | translate}}
+        </p>
+      </div>
+    </section>
+  </section>
+</ocontainer>

@@ -1,0 +1,30 @@
+.container-app {
+  width: 100%;
+min-height: 100%;
+display: flex;
+justify-content: center;
+box-sizing: border-box;
+background-color: #051a3c;
+}
+
+.container-app::-webkit-scrollbar {
+  display: none;
+}
+
+.container-box {
+  width: 100%;
+
+  background: #ffffff;
+  padding: 16px;
+
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.no-padding {
+  padding: 0;
+}
+
+.no-padding-left {
+  padding-left: 0;
+}

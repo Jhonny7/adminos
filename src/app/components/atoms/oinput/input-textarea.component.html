@@ -1,0 +1,32 @@
+<div class="master-area" [ngClass]="{ 'inp-icon': inputData.extraComponent }">
+  <p *ngIf="inputData.hasTopLabel" class="top-label">
+    {{ inputData.label }}
+  </p>
+
+  <ng-container *ngIf="inputData.extraLeftComponent">
+    <ng-container *ngComponentOutlet="inputData.extraLeftComponent"></ng-container>
+  </ng-container>
+
+  <textarea
+    [id]="inputData.id"
+    class="arsa-input"
+    [ngClass]="{ 'round-error': inputData.hasError }"
+    [value]="inputData.value || ''"
+    [cols]="inputData.cols || 30"
+    [rows]="inputData.rows || 3"
+    [placeholder]="inputData.placeholder"
+    [attr.maxlength]="inputData.maxLength || 100"
+    [disabled]="inputData.disabled || false"
+    (input)="handleChange($event)"
+    (blur)="handleBlur($event)"
+    style="height: auto;"
+  ></textarea>
+
+  <ng-container *ngIf="inputData.extraComponent">
+    <ng-container *ngComponentOutlet="inputData.extraComponent"></ng-container>
+  </ng-container>
+</div>
+
+<p *ngIf="inputData.required && inputData.hasError" class="error">
+  {{ inputData.errorMessage }}
+</p>

@@ -1,0 +1,23 @@
+<section class="input-checkbox-wrapper">
+  <p *ngIf="inputData.hasTopLabel" class="top-label">
+    {{ inputData.label }}
+  </p>
+
+  <div *ngFor="let option of inputData.values" class="checkbox-item">
+    <label class="checkbox-wrapper">
+      <input
+        type="checkbox"
+        [checked]="isChecked(option.value)"
+        [disabled]="inputData.disabled || false"
+        (change)="handleChange(option.value)"
+        (blur)="handleBlur()"
+      />
+      <span [ngClass]="getCheckboxClass(isChecked(option.value))"></span>
+      {{ option.label }}
+    </label>
+  </div>
+</section>
+
+<p *ngIf="inputData.required && inputData.hasError" class="error">
+  {{ inputData.errorMessage }}
+</p>

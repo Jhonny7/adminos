@@ -1,0 +1,32 @@
+<section>
+  <p *ngIf="inputData.hasTopLabel" class="top-label">
+    {{ inputData.label }}
+  </p>
+
+  <ng-container *ngIf="inputData.extraLeftComponent">
+    <ng-container *ngComponentOutlet="inputData.extraLeftComponent"></ng-container>
+  </ng-container>
+
+  <section class="bet">
+    <div
+      class="arsa-input film-date"
+      [ngClass]="{ 'round-error': inputData.hasError }"
+      style="position: relative;"
+    >
+      <input
+        type="text"
+        [id]="inputData.id"
+        [value]="inputData.value || ''"
+        [placeholder]="inputData.placeholder"
+        [attr.maxlength]="inputData.maxLength || 100"
+        (input)="handleChange($event)"
+        (focus)="handleDateInputFocus($event)"
+        (blur)="handleDateInputBlur($event); handleBlur($event)"
+      />
+    </div>
+  </section>
+</section>
+
+<p *ngIf="inputData.required && inputData.hasError" class="error">
+  {{ inputData.errorMessage }}
+</p>

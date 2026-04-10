@@ -1,1 +1,89 @@
-/* You can add global styles to this file, and also import other style files */
+@use 'styles/alert-styles' as *;
+
+@font-face {
+  font-family: ubuntu;
+  src: url("/assets/fonts/ubuntu.ttf");
+  font-weight: 200;
+}
+
+.as-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
+
+.as-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.as-container {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: #f2f2f2;
+  border-radius: 16px 16px 0 0;
+  padding: 8px;
+}
+
+.as-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 6px;
+  font-size: 16px;
+}
+
+.as-btn.destructive {
+  color: red;
+}
+
+.as-btn.cancel {
+  font-weight: bold;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  font-family: ubuntu;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: auto;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 0.25rem;
+    background-color: var(--color-greys);
+    box-shadow: var(--shadow-small);
+  }
+}
+
+* {
+  scrollbar-width: thin; // Firefox
+  scrollbar-color: var(--background) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: var(--background);
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mat-bottom-sheet-container {
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+}

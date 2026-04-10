@@ -1,0 +1,139 @@
+<div class="table-wrapper">
+  <!-- SEARCH AND ACTIONS BAR -->
+  <section class="search-content">
+    <section class="search-bar">
+      <div class="module-title">{{ moduleTitle }}</div>
+      <div class="searcher">
+        <div [style.background-color]="themeService.themeData.background">Buscar</div>
+        <input type="text" placeholder="Filtro..." [(ngModel)]="search" />
+      </div>
+    </section>
+
+    <section class="actions">
+      <button [style.color]="themeService.themeData.color" [style.background-color]="themeService.themeData.background" (click)="openFilterDrawer()"
+        [disabled]="disableFilter" class="filter-btn">
+        <span class="material-icons">filter_list</span>
+        {{ filterText }}
+      </button>
+
+      <button [style.color]="themeService.themeData.color" [style.background-color]="themeService.themeData.background" (click)="onSingleActionClick()"
+        class="action-btn">
+        <span class="material-icons">add</span>
+        {{ singleActionText }}
+      </button>
+    </section>
+  </section>
+
+  <!-- FILTER DRAWER -->
+  <div class="drawer-overlay" *ngIf="drawerOpen" (click)="closeFilterDrawer()"></div>
+  <div class="drawer" [class.mobile]="isMobile" [class.open]="drawerOpen">
+    <div class="drawer-content">
+      <ng-container *ngIf="filterContent">
+        <ng-container *ngComponentOutlet="filterContent; injector: filterInjector">
+        </ng-container>
+      </ng-container>
+      <div *ngIf="!filterContent" id="injectContent"></div>
+    </div>
+  </div>
+
+  <!-- TABLE CONTENT -->
+  <section class="content-table">
+    <ng-container *ngIf="headerComponent">
+      <ng-container *ngComponentOutlet="headerComponent"></ng-container>
+    </ng-container>
+
+    <div class="table-container" [class.mobile]="isMobile">
+      <table class="dynamic-table">
+        <thead>
+          <tr>
+            <th class="reorder-column" *ngIf="isReorder"></th>
+            <th class="checkbox-column" *ngIf="selectable"></th>
+            <th *ngFor="let col of visibleColumns; trackBy: trackByColumnKey" [style.width.px]="getColumnWidth(col)"
+              [style.minWidth.px]="getColumnWidth(col)" [class.sortable]="col.sortable && !isReorder"
+              (click)="col.sortable && requestSort(col.key)">
+              {{ col.label }}
+              <span *ngIf="!isReorder && sortConfig?.key === col.key" class="sort-indicator">
+                {{ sortConfig.direction === 'asc' ? '🔼' : '🔽' }}
+              </span>
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngIf="filteredData.length === 0">
+            <td [attr.colspan]="visibleColumns.length + (selectable ? 1 : 0) + (isReorder ? 1 : 0)" class="empty-row">
+              {{ emptyText }}
+            </td>
+          </tr>
+
+          <tr *ngFor="let row of filteredData; let idx = index; trackBy: trackByRowKey"
+            [attr.draggable]="isReorder && !isEditingCell(row, null, idx)" (dragstart)="onDragStart(row, idx, $event)"
+            (dragover)="onDragOver($event)" (drop)="onDrop(row, idx, $event)" (dragend)="onDragEnd()"
+            [class.dragging]="dragSrcKey === getRowKey(row, idx)">
+            <!-- REORDER COLUMN -->
+            <td class="reorder-column" *ngIf="isReorder">
+              <span class="drag-handle">
+                <span class="material-icons">drag_handle</span>
+              </span>
+            </td>
+
+            <!-- SELECTION COLUMN -->
+            <td class="checkbox-column" *ngIf="selectable">
+              <input [type]="singleSelection ? 'radio' : 'checkbox'" [name]="'table-selection-' + getRowKey(row, idx)"
+                [checked]="selectedKeys.includes(keyTag ? row[keyTag] : getRowKey(row, idx))"
+                (change)="toggleSelection(keyTag ? row[keyTag] : getRowKey(row, idx))" />
+            </td>
+
+            <!-- DATA COLUMNS -->
+            <td *ngFor="let col of visibleColumns; trackBy: trackByColumnKey" [attr.data-label]="col.label"
+              (click)="col.editable && beginEdit(row, col, idx)" [class.editing]="isEditingCell(row, col.key, idx)">
+              <!-- DISPLAY MODE -->
+              <span *ngIf="!isEditingCell(row, col.key, idx)">
+                {{ displayValue(col, row) }}
+              </span>
+
+              <!-- EDIT MODE: AUTOCOMPLETE -->
+              <div *ngIf="isEditingCell(row, col.key, idx) && col.inputType === 'autocomplete'" class="edit-input">
+                <input type="text" [value]="editValue || ''" (input)="onAutocompleteInput($event, col, idx)"
+                  (blur)="commitEdit(row, col, idx)" (keydown)="onEditKeyDown($event, row, col, idx)"
+                  [attr.list]="'datalist-' + col.key + '-' + idx" autofocus />
+                <datalist [id]="'datalist-' + col.key + '-' + idx">
+                  <option *ngFor="let opt of col.options" [value]="opt.label">
+                </datalist>
+              </div>
+
+              <!-- EDIT MODE: SELECT -->
+              <div *ngIf="isEditingCell(row, col.key, idx) && col.inputType === 'select'" class="edit-input">
+                <select [value]="editValue || ''" (change)="onSelectChange($event, row, col, idx)"
+                  (keydown)="onEditKeyDown($event, row, col, idx)" autofocus>
+                  <option value="" disabled>Selecciona</option>
+                  <option *ngFor="let opt of col.options" [value]="opt.value">
+                    {{ opt.label }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- EDIT MODE: OTHER INPUTS -->
+              <div *ngIf="isEditingCell(row, col.key, idx) && !['select', 'autocomplete'].includes(col.inputType || '')"
+                class="edit-input">
+                <input [type]="getInputType(col)" [step]="getInputStep(col)" [pattern]="getInputPattern(col)"
+                  [inputMode]="col.inputType === 'price' ? 'decimal' : undefined" [value]="editValue || ''"
+                  (input)="onInputChange($event, col)" (blur)="commitEdit(row, col, idx)"
+                  (keydown)="onEditKeyDown($event, row, col, idx)" autofocus />
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- ACTIONS POPOVER (simplified - you can enhance with Angular CDK Overlay) -->
+<div class="actions-popover" *ngIf="showActionsPopover" [style.left.px]="popoverPosition.x"
+  [style.top.px]="popoverPosition.y">
+  <div class="action-item" *ngFor="let action of tableActions" (click)="onActionClick(action)">
+    <span class="material-icons" *ngIf="action.icon">{{ action.icon }}</span>
+    <span>{{ action.title }}</span>
+  </div>
+</div>

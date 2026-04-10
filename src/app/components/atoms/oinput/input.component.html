@@ -1,0 +1,141 @@
+<section [ngClass]="getComponentClass()">
+  <!-- TEXT & PRICE -->
+  <ng-container *ngIf="currentType === 'text' || currentType === 'price'">
+    <app-oinput-text 
+      [inputData]="inputData" 
+      [index]="index"
+      (change)="onInputChange($event)"
+      (blur)="onInputBlur($event)">
+    </app-oinput-text>
+  </ng-container>
+
+  <!-- TOGGLE -->
+  <ng-container *ngIf="currentType === 'toggle'">
+    <app-oinput-toggle 
+      [inputData]="inputData" 
+      [index]="index"
+      (change)="onInputChange($event)"
+      (blur)="onInputBlur($event)">
+    </app-oinput-toggle>
+  </ng-container>
+
+  <!-- SELECT -->
+  <ng-container *ngIf="currentType === 'select'">
+    <app-oinput-select 
+      [inputData]="inputData" 
+      [index]="index"
+      (change)="onInputChange($event)"
+      (blur)="onInputBlur($event)">
+    </app-oinput-select>
+  </ng-container>
+
+  <!-- SPECIAL SELECT -->
+  <ng-container *ngIf="currentType === 'special-select'">
+    <app-oinput-special-select 
+      [inputData]="inputData" 
+      [index]="index"
+      (change)="onInputChange($event)"
+      (blur)="onInputBlur($event)">
+    </app-oinput-special-select>
+  </ng-container>
+
+  <!-- PASSWORD -->
+  <ng-container *ngIf="currentType === 'password'">
+    <app-oinput-password 
+      [inputData]="inputData" 
+      [index]="index"
+      (change)="onInputChange($event)"
+      (blur)="onInputBlur($event)">
+    </app-oinput-password>
+  </ng-container>
+
+  <!-- TEXTAREA -->
+  <ng-container *ngIf="currentType === 'textarea'">
+    <app-oinput-textarea 
+      [inputData]="inputData" 
+      [index]="index"
+      (change)="onInputChange($event)"
+      (blur)="onInputBlur($event)">
+    </app-oinput-textarea>
+  </ng-container>
+
+  <!-- PHONE -->
+  <ng-container *ngIf="currentType === 'phone'">
+    <app-oinput-phone 
+      [inputData]="inputData" 
+      [index]="index"
+      (change)="onInputChange($event)"
+      (blur)="onInputBlur($event)">
+    </app-oinput-phone>
+  </ng-container>
+
+  <!-- OTP -->
+  <ng-container *ngIf="currentType === 'otp'">
+    <app-oinput-otp 
+      [inputData]="inputData" 
+      [index]="index"
+      (change)="onInputChange($event)"
+      (blur)="onInputBlur($event)">
+    </app-oinput-otp>
+  </ng-container>
+
+  <!-- CHECKBOX -->
+  <ng-container *ngIf="currentType === 'checkbox'">
+    <app-oinput-checkbox 
+      [inputData]="inputData" 
+      [index]="index"
+      (change)="onInputChange($event)"
+      (blur)="onInputBlur($event)">
+    </app-oinput-checkbox>
+  </ng-container>
+
+  <!-- DATE / DATE-TIMELOCAL / TIME -->
+  <ng-container *ngIf="currentType === 'date' || currentType === 'date-timelocal' || currentType === 'time'">
+    <app-oinput-date 
+      [inputData]="inputData" 
+      [index]="index"
+      (change)="onInputChange($event)"
+      (blur)="onInputBlur($event)">
+    </app-oinput-date>
+  </ng-container>
+
+  <!-- MAP -->
+  <ng-container *ngIf="currentType === 'map'">
+    <app-oinput-map 
+      [inputData]="inputData" 
+      [index]="index"
+      (change)="onInputChange($event)"
+      (blur)="onInputBlur($event)">
+    </app-oinput-map>
+  </ng-container>
+
+  <!-- FILE / DRAG-DROP -->
+  <ng-container *ngIf="currentType === 'file'">
+    <app-oinput-dragdrop 
+      [inputData]="inputData" 
+      [index]="index"
+      (change)="onInputChange($event)"
+      (blur)="onInputBlur($event)">
+    </app-oinput-dragdrop>
+  </ng-container>
+
+  <!-- AUTOCOMPLETE -->
+  <ng-container *ngIf="currentType === 'autocomplete'">
+    <app-oinput-autocomplete 
+      [inputData]="inputData" 
+      [index]="index"
+      (change)="onInputChange($event)"
+      (blur)="onInputBlur($event)">
+    </app-oinput-autocomplete>
+  </ng-container>
+
+  <!-- DEFAULT: TEXT -->
+  <ng-container *ngIf="!['text', 'price', 'toggle', 'select', 'special-select', 'password', 'textarea', 'phone', 'otp', 'checkbox', 'date', 'date-timelocal', 'time', 'map', 'file', 'autocomplete'].includes(currentType)">
+    <app-oinput-text 
+      [inputData]="inputData" 
+      [index]="index"
+      (change)="onInputChange($event)"
+      (blur)="onInputBlur($event)">
+    </app-oinput-text>
+  </ng-container>
+</section>

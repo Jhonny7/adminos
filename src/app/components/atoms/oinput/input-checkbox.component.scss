@@ -1,0 +1,83 @@
+:host ::ng-deep {
+  .input-checkbox-wrapper {
+    .top-label {
+      margin-bottom: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 0;
+    }
+
+    .checkbox-item {
+      margin-bottom: 0.5rem;
+    }
+
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      position: relative;
+      cursor: pointer;
+      font-size: 1rem;
+      user-select: none;
+      gap: 0.5rem;
+
+      input[type="checkbox"] {
+        opacity: 0;
+        position: absolute;
+        width: 0;
+        height: 0;
+      }
+
+      span {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background-color: #fff;
+        border: 1px solid #1c8bc5;
+        border-radius: 50%;
+        position: relative;
+        transition: border-color 0.2s ease;
+      }
+
+      input[type="checkbox"]:checked + span::before {
+        content: "";
+        position: absolute;
+        left: 3px;
+        top: 3px;
+        width: 10px;
+        height: 10px;
+        background-color: #1c8bc5;
+        border-radius: 50%;
+      }
+
+      .squartle {
+        border-radius: 0 !important;
+      }
+
+      .squartle::before {
+        border-radius: 0 !important;
+      }
+
+      .checkd::after {
+        content: "";
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        width: 10px;
+        height: 10px;
+        background-color: #1c8bc5;
+        border-radius: 50%;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .error {
+    color: #ff648a;
+    margin-top: 6px;
+    font-size: 12px;
+  }
+}

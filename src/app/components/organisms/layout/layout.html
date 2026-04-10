@@ -1,0 +1,38 @@
+<mat-sidenav-container class="layout-container">
+
+  <mat-sidenav
+    #sidenav
+    [mode]="isMobile ? 'over' : 'side'"
+    [opened]="isMobile ? mobileOpen : true"
+    [fixedInViewport]="isMobile"
+    class="sidebar"
+    [class.collapsed]="collapsed && !isMobile"
+    [style.width.px]="isMobile ? 250 : (collapsed ? 70 : 250)"
+  >
+    <app-sidebar
+      [collapsed]="!isMobile && collapsed"
+      [isMobile]="isMobile"
+    ></app-sidebar>
+  </mat-sidenav>
+
+  <mat-sidenav-content
+    (click)="handleContentClick()"
+    [style.margin-left.px]="isMobile ? 0 : (collapsed ? 70 : 250)"
+  >
+
+    <div class="header" [class.hidden]="!isHeaderVisible" [style.margin-left.px]="isMobile ? 0 : (collapsed ? 70 : 250)"> 
+      <div class="left">
+        <osquare-button icon="menu" (onClick)="toggleMenu($event)"></osquare-button>
+      </div>
+      <div class="right">
+         <osquare-button [icon]="menu.icon" [type]="menu.type" (onClick)="menu.onClick($event)" *ngFor="let menu of rightIcons"></osquare-button>
+      </div>
+    </div>
+
+    <div class="content" (scroll)="onScroll($event)" [style.padding-top.px]="isHeaderVisible ? 60 : 0">
+      <router-outlet></router-outlet>
+    </div>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

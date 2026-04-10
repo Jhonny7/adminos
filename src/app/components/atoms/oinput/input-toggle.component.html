@@ -1,0 +1,28 @@
+<section 
+  [ngClass]="'input-toggle-wrapper'"
+  [class.round-error]="inputData.hasError"
+>
+  <p *ngIf="inputData.hasTopLabel" class="top-label">
+    {{ inputData.label }}
+  </p>
+
+  <div
+    role="switch"
+    [tabindex]="inputData.disabled ? -1 : 0"
+    [attr.aria-checked]="checked"
+    [ngClass]="getToggleClass()"
+    (click)="handleToggle()"
+    (keydown)="handleKeyDown($event)"
+    (blur)="handleBlur()"
+    [style.--toggle-track-bg]="checked ? '#bf2800' : '#e6e6e6'"
+    [style.--toggle-thumb-bg]="'#fff'"
+  >
+    <div class="toggle-track">
+      <div class="toggle-thumb"></div>
+    </div>
+  </div>
+</section>
+
+<p *ngIf="inputData.required && inputData.hasError" class="error">
+  {{ inputData.errorMessage }}
+</p>

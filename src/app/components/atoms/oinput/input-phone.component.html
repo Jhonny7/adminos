@@ -1,0 +1,30 @@
+<div class="master-input" style="width: 100%;">
+  <p *ngIf="inputData.hasTopLabel" class="top-label">
+    {{ inputData.label }}
+  </p>
+
+  <ng-container *ngIf="inputData.extraLeftComponent">
+    <ng-container *ngComponentOutlet="inputData.extraLeftComponent"></ng-container>
+  </ng-container>
+
+  <input
+    type="tel"
+    [id]="inputData.id"
+    class="arsa-input"
+    [ngClass]="{ 'round-error': inputData.hasError }"
+    [value]="inputData.value || ''"
+    [placeholder]="inputData.placeholder"
+    [attr.maxlength]="inputData.maxLength || 20"
+    [disabled]="inputData.disabled || false"
+    (input)="handleChange($event)"
+    (blur)="handleBlur($event)"
+  />
+
+  <ng-container *ngIf="inputData.extraComponent">
+    <ng-container *ngComponentOutlet="inputData.extraComponent"></ng-container>
+  </ng-container>
+</div>
+
+<p *ngIf="inputData.required && inputData.hasError" class="error">
+  {{ inputData.errorMessage }}
+</p>

@@ -1,0 +1,38 @@
+<div class="master-select" [ngClass]="{ 'round-error': inputData.hasError }" style="width: 100%;">
+  <p *ngIf="inputData.hasTopLabel" class="top-label">
+    {{ inputData.label }}
+  </p>
+
+  <ng-container *ngIf="inputData.extraLeftComponent">
+    <ng-container *ngComponentOutlet="inputData.extraLeftComponent"></ng-container>
+  </ng-container>
+
+  <input
+    *ngIf="inputData.hasSearch"
+    type="search"
+    class="select-search"
+    [placeholder]="inputData.placeholder || ''"
+    [value]="searchTerm"
+    (input)="handleSearchChange($event)"
+    [disabled]="inputData.disabled || false"
+  />
+
+  <select
+    [id]="inputData.id"
+    class="arsa-select"
+    [ngClass]="{ 'round-error': inputData.hasError }"
+    [value]="toString(localValue || '')"
+    (change)="handleChange($event)"
+    (blur)="handleBlur($event)"
+    [disabled]="inputData.disabled || false"
+  >
+    <option value="">{{ inputData.placeholder || 'Select an option' }}</option>
+    <option *ngFor="let option of filteredValues" [value]="toString(option.value)">
+      {{ option.label }}
+    </option>
+  </select>
+</div>
+
+<p *ngIf="inputData.required && inputData.hasError" class="error">
+  {{ inputData.errorMessage }}
+</p>

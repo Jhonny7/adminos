@@ -1,0 +1,510 @@
+// =========================================
+// OTABLE COMPONENT STYLES
+// =========================================
+
+.table-wrapper {
+  width: 100%;
+  background-color: #fff;
+  border-radius: 4px;
+}
+
+// =========================================
+// SEARCH AND ACTIONS BAR
+// =========================================
+
+.search-content {
+  padding: 24px 18px;
+  box-shadow: 1px 1px 1px #f2eeee;
+  margin-bottom: 20px;
+  border: 1px solid #e6e2e2;
+  border-radius: 3px;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+
+  .search-bar {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    align-items: center;
+
+    .module-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .searcher {
+      display: flex;
+      gap: 0px;
+      flex: 1;
+
+      div {
+        background-color: var(--background);
+        color: var(--color);
+        padding: 8px;
+        border: none;
+        border-radius: 4px 0 0 4px;
+        width: 100px;
+        text-align: center;
+        font-weight: 500;
+      }
+
+      input {
+        margin-left: -2px;
+        width: 100%;
+        border: 1px solid #333;
+        border-left: 0px;
+        border-radius: 0px 4px 4px 0px;
+        padding-left: 20px;
+        padding: 8px 12px;
+        font-size: 14px;
+        outline: none;
+
+        &:focus {
+          border-color: #1c8bc5;
+          box-shadow: 0 0 0 3px rgba(28, 139, 197, 0.1);
+        }
+      }
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+
+    button {
+      padding: 4px 10px;
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      height: 34.5px;
+      border-radius: 4px;
+      background: var(--background);
+      outline: none;
+      border: none;
+      color: var(--color);
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+
+      &:hover:not(:disabled) {
+        background-color: #2c5aa3;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .material-icons {
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+// =========================================
+// RESPONSIVE SEARCH BAR
+// =========================================
+
+@media(max-width: 720px) {
+  .search-content {
+    flex-direction: column;
+    align-items: start;
+
+    .search-bar {
+      width: 100%;
+
+      @media(max-width: 450px) {
+        .module-title {
+          display: none;
+        }
+      }
+    }
+
+    .actions {
+      width: 100%;
+
+      button {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+
+        .material-icons {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+// =========================================
+// TABLE CONTENT
+// =========================================
+
+.content-table {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 1px 1px 1px #f2eeee;
+  border: 1px solid #e6e2e2;
+}
+
+.table-container {
+  overflow-x: auto;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+
+  &.mobile {
+    // Mobile specific styles will be applied via CSS classes
+  }
+}
+
+// =========================================
+// TABLE STYLES
+// =========================================
+
+.dynamic-table {
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-width: max-content;
+  table-layout: fixed;
+
+  thead {
+    tr {
+      background-color: var(--background);
+      color: var(--color);
+
+      th {
+        padding: 12px 8px;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+
+        &:last-child {
+          border-right: none;
+        }
+
+        &.sortable {
+          cursor: pointer;
+          user-select: none;
+          transition: background-color 0.3s ease;
+
+          &:hover {
+            background-color: #2c5aa3;
+          }
+        }
+
+        .sort-indicator {
+          margin-left: 5px;
+          font-size: 12px;
+        }
+
+        &.checkbox-column {
+          width: 40px;
+        }
+
+        &.reorder-column {
+          width: 26px;
+        }
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      border: 1px solid #ddd;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: #f9f9f9;
+      }
+
+      &.dragging {
+        opacity: 0.6;
+        transform: rotate(2deg);
+      }
+
+      td {
+        padding: 12px 8px;
+        text-align: center;
+        border-right: 1px solid #d5cece;
+        vertical-align: middle;
+
+        &:last-child {
+          border-right: none;
+        }
+
+        &.checkbox-column {
+          width: 40px;
+
+          input[type="checkbox"],
+          input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+          }
+        }
+
+        &.reorder-column {
+          width: 26px;
+          padding: 8px;
+
+          .drag-handle {
+            cursor: grab;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+
+            &:active {
+              cursor: grabbing;
+            }
+
+            .material-icons {
+              font-size: 18px;
+            }
+          }
+        }
+
+        &.empty-row {
+          text-align: center;
+          color: #666;
+          font-style: italic;
+          padding: 40px;
+        }
+
+        &.editing {
+          background-color: #fff3cd;
+          border: 2px solid #ffc107;
+        }
+
+        .edit-input {
+          width: 100%;
+
+          input,
+          select {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #ffc107;
+            border-radius: 3px;
+            font-size: 14px;
+            outline: none;
+
+            &:focus {
+              border-color: #1c8bc5;
+              box-shadow: 0 0 0 2px rgba(28, 139, 197, 0.2);
+            }
+          }
+        }
+      }
+    }
+
+    tr:nth-child(even) {
+      background-color: #f8f8f8;
+    }
+
+    tr:nth-child(odd) {
+      background-color: #ffffff;
+    }
+  }
+}
+
+// =========================================
+// MOBILE RESPONSIVE TABLE
+// =========================================
+
+@media screen and (max-width: 768px) {
+  .table-container.mobile {
+    .dynamic-table {
+      border: 0;
+
+      thead {
+        border: none;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+      }
+
+      tbody {
+        tr {
+          border-bottom: 3px solid #ddd;
+          display: block;
+          margin-bottom: 1rem;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+          td {
+            border-bottom: 1px solid #ddd;
+            display: block;
+            font-size: 14px;
+            text-align: right;
+            padding: 12px 16px;
+            border-right: none;
+
+            &::before {
+              content: attr(data-label);
+              float: left;
+              font-weight: bold;
+              text-transform: uppercase;
+              color: var(--background);
+              font-size: 12px;
+            }
+
+            &:last-child {
+              border-bottom: 0;
+            }
+
+            &.checkbox-column,
+            &.reorder-column {
+              text-align: center;
+
+              &::before {
+                display: none;
+              }
+            }
+
+            .edit-input {
+
+              input,
+              select {
+                font-size: 16px; // Prevent zoom on iOS
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// =========================================
+// DRAWER STYLES
+// =========================================
+
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  transition: opacity 0.3s ease;
+}
+
+.drawer {
+  position: fixed;
+  z-index: 1001;
+  background-color: #fff;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+
+  &.mobile {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    border-radius: 12px 12px 0 0;
+    transform: translateY(100%);
+
+    &.open {
+      transform: translateY(0);
+    }
+  }
+
+  &:not(.mobile) {
+    top: 0;
+    right: 0;
+    width: 400px;
+    height: 100%;
+    transform: translateX(100%);
+
+    &.open {
+      transform: translateX(0);
+    }
+  }
+
+  .drawer-content {
+    padding: 1rem;
+    height: 100%;
+    overflow-y: auto;
+  }
+}
+
+// =========================================
+// ACTIONS POPOVER
+// =========================================
+
+.actions-popover {
+  position: fixed;
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 2000;
+  min-width: 200px;
+  padding: 8px 0;
+
+  .action-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+
+    .material-icons {
+      color: var(--background);
+      font-size: 18px;
+    }
+
+    span {
+      color: var(--background);
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+}
+
+// =========================================
+// UTILITY CLASSES
+// =========================================
+
+.sort-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+// Material Icons fallback
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+}

@@ -1,12 +1,18 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
+  standalone: false
 })
 export class App {
   protected readonly title = signal('admin');
+
+  constructor(private translate: TranslateService) {
+    this.translate.setDefaultLang('es');
+    this.translate.use('es');
+  }
 }

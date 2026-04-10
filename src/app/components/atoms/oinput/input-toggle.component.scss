@@ -1,0 +1,69 @@
+:host ::ng-deep {
+  .input-toggle-wrapper {
+    .top-label {
+      margin-bottom: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 0;
+    }
+
+    .toggle-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      outline: none;
+      user-select: none;
+
+      // track wrapper
+      .toggle-track {
+        width: 48px;
+        height: 28px;
+        border-radius: 999px;
+        background: var(--toggle-track-bg, #e6e6e6);
+        position: relative;
+        transition: background 180ms ease;
+        box-sizing: border-box;
+        padding: 3px;
+      }
+
+      .toggle-thumb {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--toggle-thumb-bg, #fff);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        transition: transform 180ms ease, box-shadow 120ms ease;
+        transform: translateX(0);
+      }
+
+      &.checked {
+        .toggle-thumb {
+          transform: translateX(20px);
+        }
+      }
+
+      &.unchecked {
+        .toggle-thumb {
+          transform: translateX(0);
+        }
+      }
+
+      &.disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      .toggle-label {
+        font-size: 14px;
+        color: #333;
+      }
+    }
+
+    .error {
+      color: #d93025;
+      margin-top: 6px;
+      font-size: 12px;
+    }
+  }
+}

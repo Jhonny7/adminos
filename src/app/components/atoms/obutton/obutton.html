@@ -1,0 +1,7 @@
+<button class="olm-btn" [class]="extraClass" (click)="onTap ? onTap : ''"
+[style.color]="themeService.themeData.color"
+[style.background-color]="themeService.themeData.background">
+  <ng-content >
+    
+  </ng-content>
+</button>
