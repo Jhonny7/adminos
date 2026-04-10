@@ -7,6 +7,11 @@ import { App } from './app';
 import { routes } from './app.routes';
 import { ComponentsModule } from './components.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { Chart, registerables } from 'chart.js';
+
+Chart.register(...registerables);
+
 export function createTranslateLoader() {
     return new TranslateHttpLoader();
 }
@@ -29,6 +34,7 @@ export function createTranslateLoader() {
     ],
     bootstrap: [App],
     providers: [
+        provideCharts(withDefaultRegisterables())
     ],
     exports: [
         TranslateModule

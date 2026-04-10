@@ -74,7 +74,7 @@ import { MatTreeModule } from '@angular/material/tree';
         MatTableModule,
         MatTabsModule,
         MatTooltipModule,
-        MatTreeModule,
+        MatTreeModule
     ],
     exports: [
         MatToolbarModule,
@@ -113,7 +113,7 @@ import { MatTreeModule } from '@angular/material/tree';
         MatTableModule,
         MatTabsModule,
         MatTooltipModule,
-        MatTreeModule,
+        MatTreeModule
     ],
     providers: [
         //{provide: MAT_CHECKBOX_DEFAULT_OPTIONS, useValue: { clickAction: 'noop' } as MatCheckboxDefaultOptions}

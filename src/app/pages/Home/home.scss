@@ -13,3 +13,22 @@
         background-color: transparent;
     }
 }
+
+.dashboard {
+    margin-bottom: 20px;
+
+    .chart-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+
+        .chart-container {
+            width: 48%;
+            height: 300px;
+            canvas {
+                width: 100% !important;
+                height: 100% !important;
+            }
+        }
+    }
+}

@@ -29,7 +29,7 @@
   display: flex;
   align-items: center;
   padding: 0 16px;
-  background: #383838;
+  background: linear-gradient(180deg, #11161d 0%, #0d1218 100%);
   color: white;
   position: fixed;
   top: 0;
@@ -45,19 +45,19 @@
     transform: translateY(-100%);
   }
 
-  .right{
+  .right {
     text-align: right;
     display: flex;
     gap: 8px;
     align-items: center;
   }
 
-  .left{
+  .left {
     text-align: left;
   }
 }
 
-::ng-deep .mat-drawer-inner-container{
+::ng-deep .mat-drawer-inner-container {
   overflow: hidden !important;
 }
 

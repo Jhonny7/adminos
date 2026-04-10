@@ -1,0 +1,114 @@
+<ocontainer [extraClass]="'cls-dashboard'">
+    <div class="dashboard">
+        <!-- KPI Cards -->
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-icon">👥</span>
+                    <span class="kpi-change">+12.5% vs año anterior</span>
+                </div>
+                <h3 class="kpi-title">Usuarios Registrados</h3>
+                <p class="kpi-value">845</p>
+                <small class="kpi-subtitle">Registrados activos</small>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-icon">🌾</span>
+                    <span class="kpi-change">+8.7% vs año anterior</span>
+                </div>
+                <h3 class="kpi-title">Superficie Total</h3>
+                <p class="kpi-value">3,850 ha</p>
+                <small class="kpi-subtitle">Hectáreas registradas</small>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-icon">🌱</span>
+                    <span class="kpi-change">-1.2% vs año anterior</span>
+                </div>
+                <h3 class="kpi-title">Cultivos Activos</h3>
+                <p class="kpi-value">18</p>
+                <small class="kpi-subtitle">Semillas productivas</small>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <span class="kpi-icon">📈</span>
+                    <span class="kpi-change">+3.41% incremento anual</span>
+                </div>
+                <h3 class="kpi-title">Superficie con Riego</h3>
+                <p class="kpi-value">56.6%</p>
+                <small class="kpi-subtitle">Áreas regadas</small>
+            </div>
+        </div>
+
+        <!-- Charts Row 1 -->
+        <div class="chart-row">
+            <div class="chart-container">
+                <h4 class="chart-title">Distribución de Superficie Agrícola</h4>
+                <p class="chart-subtitle">Hectáreas por tipo de sistema de riego</p>
+                @if (chartsReady()) {
+                    <div class="chart-canvas">
+                        <canvas baseChart
+                            [data]="pieChartData"
+                            [options]="pieChartOptions"
+                            [type]="'doughnut'">
+                        </canvas>
+                    </div>
+                } @else {
+                    <div class="chart-placeholder"></div>
+                }
+            </div>
+            <div class="chart-container">
+                <h4 class="chart-title">Usuarios por Sexo</h4>
+                <p class="chart-subtitle">Distribución demográfica de productores</p>
+                @if (chartsReady()) {
+                    <div class="chart-canvas">
+                        <canvas baseChart
+                            [data]="barChartData"
+                            [options]="barChartOptions"
+                            [type]="'bar'">
+                        </canvas>
+                    </div>
+                } @else {
+                    <div class="chart-placeholder"></div>
+                }
+            </div>
+        </div>
+
+        <!-- Charts Row 2 -->
+        <div class="chart-row">
+            <div class="chart-container">
+                <h4 class="chart-title">Top 5 Cultivos por Superficie</h4>
+                <p class="chart-subtitle">Hectáreas sembradas por tipo de cultivo</p>
+                @if (chartsReady()) {
+                    <div class="chart-canvas">
+                        <canvas baseChart
+                            [data]="lineChartData"
+                            [options]="lineChartOptions"
+                            [type]="'line'">
+                        </canvas>
+                    </div>
+                } @else {
+                    <div class="chart-placeholder"></div>
+                }
+            </div>
+            <div class="chart-container">
+                <h4 class="chart-title">Top 5 Cultivos por Producción</h4>
+                <p class="chart-subtitle">Toneladas cosechadas por cultivo</p>
+                @if (chartsReady()) {
+                    <div class="chart-canvas">
+                        <canvas baseChart
+                            [data]="doughnutChartData"
+                            [options]="doughnutChartOptions"
+                            [type]="'bar'">
+                        </canvas>
+                    </div>
+                } @else {
+                    <div class="chart-placeholder"></div>
+                }
+            </div>
+        </div>
+    </div>
+</ocontainer>

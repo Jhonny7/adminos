@@ -1,0 +1,122 @@
+<ocontainer [extraClass]="'cls-labors'">
+    <div class="labors-page">
+        <div class="filters-row">
+            <div class="filter-box">
+                <label>Ciclo Agrícola</label>
+                <select>
+                    <option>2025-2026</option>
+                </select>
+            </div>
+            <div class="filter-box">
+                <label>Tipo de Productor</label>
+                <select>
+                    <option>Todos</option>
+                </select>
+            </div>
+            <div class="filter-box">
+                <label>Ubicación</label>
+                <select>
+                    <option>Todas las regiones</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section-heading">
+            <h2>Mis Labores</h2>
+            <p>Registro y seguimiento de actividades agrícolas</p>
+        </div>
+
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-top">
+                    <span class="kpi-icon">📋</span>
+                    <span class="kpi-change">+13.1% vs mes anterior</span>
+                </div>
+                <div class="kpi-label">Labores Registradas</div>
+                <div class="kpi-value">1,760</div>
+                <div class="kpi-sub">Eventos totales</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-top">
+                    <span class="kpi-icon">🚜</span>
+                    <span class="kpi-change">634 con registro</span>
+                </div>
+                <div class="kpi-label">Predios con Registro</div>
+                <div class="kpi-value">634</div>
+                <div class="kpi-sub">De 845 totales (75%)</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-top">
+                    <span class="kpi-icon">🌱</span>
+                    <span class="kpi-change">+9.7% incremento</span>
+                </div>
+                <div class="kpi-label">Superficie con Labores</div>
+                <div class="kpi-value">2,890 Ha</div>
+                <div class="kpi-sub">75% del total</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-top">
+                    <span class="kpi-icon">🛡️</span>
+                    <span class="kpi-change">9 técnicas</span>
+                </div>
+                <div class="kpi-label">Prácticas de Conservación</div>
+                <div class="kpi-value">9</div>
+                <div class="kpi-sub">Técnicas implementadas</div>
+            </div>
+        </div>
+
+        <div class="chart-row two-cols">
+            <div class="chart-card">
+                <h4>Distribución de Labores por Tipo</h4>
+                <p>Cantidad de registros por actividad agrícola</p>
+                @if (chartsReady()) {
+                    <div class="chart-canvas tall">
+                        <canvas baseChart [data]="laborTypeData" [options]="laborTypeOptions" [type]="'bar'"></canvas>
+                    </div>
+                }
+            </div>
+            <div class="chart-card small">
+                <h4>Actividad Mensual de Labores</h4>
+                <p>Número de labores registradas por mes (2026)</p>
+                @if (chartsReady()) {
+                    <div class="chart-canvas">
+                        <canvas baseChart [data]="monthlyData" [options]="monthlyOptions" [type]="'bar'"></canvas>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="chart-row one-col">
+            <div class="chart-card wide">
+                <h4>Adopción de Prácticas de Conservación de Suelo</h4>
+                <p>Porcentaje de productores que implementan cada técnica</p>
+                @if (chartsReady()) {
+                    <div class="chart-canvas wide-canvas">
+                        <canvas baseChart [data]="adoptionData" [options]="adoptionOptions" [type]="'bar'"></canvas>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-header">
+                <span class="info-icon">🛡️</span>
+                <div>
+                    <h4>Prácticas de Conservación de Suelo</h4>
+                    <p>
+                        El 68.5% de los productores incorporan materia orgánica, siendo la práctica de conservación más adoptada.
+                        La labranza mínima y los cultivos de cobertura también muestran alta aceptación, contribuyendo a la sostenibilidad del sistema productivo.
+                    </p>
+                </div>
+            </div>
+            <div class="info-grid">
+                <div class="mini-stat"><strong>68.5%</strong><span>Incorporación de materia orgánica</span></div>
+                <div class="mini-stat"><strong>54.2%</strong><span>Labranza mínima / reducida</span></div>
+                <div class="mini-stat"><strong>42.8%</strong><span>Cultivos de cobertura</span></div>
+                <div class="mini-stat"><strong>38.6%</strong><span>Siembra en curvas de nivel</span></div>
+                <div class="mini-stat"><strong>31.4%</strong><span>Barreras vivas</span></div>
+                <div class="mini-stat"><strong>24.7%</strong><span>Terrazas individuales</span></div>
+            </div>
+        </div>
+    </div>
+</ocontainer>

@@ -170,10 +170,16 @@ export class Home implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-
+        this.loadTableData();
     }
 
     ngOnDestroy(): void {
 
+    }
+
+    // Load table data from API
+    loadTableData() {
+        // TODO: Replace with API call
+        // Example: this.apiService.getUsers().subscribe(data => { this.data = data; });
     }
 }

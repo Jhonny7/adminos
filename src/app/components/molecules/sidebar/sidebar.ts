@@ -8,6 +8,17 @@ import {
 } from '@angular/animations';
 import { EventService } from '../../../services/event.service';
 import { events } from '../../../../environments/environment.prod';
+import { Router } from '@angular/router';
+
+interface MenuItem {
+  label: string;
+  icon: string;
+  routerLink?: string;
+  exact?: boolean;
+  open?: boolean;
+  children?: any[];
+}
+
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.html',
@@ -35,35 +46,29 @@ export class SidebarComponent {
   @Input() collapsed = false;
   @Input() isMobile = false;
 
-  menu = [
+  menu: MenuItem[] = [
     {
-      label: 'Dashboard',
-      icon: 'dashboard',
-      open: false
+      label: 'Resumen Ejecutivo',
+      icon: 'space_dashboard',
+      routerLink: '/admin',
+      exact: true
     },
     {
-      label: 'Usuarios',
-      icon: 'group',
-      open: false,
-      children: [
-        { label: 'Lista' },
-        { label: 'Crear' }
-      ]
-    },
-    {
-      label: 'Configuración',
-      icon: 'settings',
-      open: false
+      label: 'Mis Labores',
+      icon: 'assignment',
+      routerLink: '/admin/labors',
+      exact: true
     }
   ];
 
   constructor(
-    private eventService: EventService
+    private eventService: EventService,
+    private router: Router
   ) {
 
   }
 
-  toggle(item: any) {
+  toggle(item: MenuItem) {
     if (item.children) {
       item.open = !item.open;
     }

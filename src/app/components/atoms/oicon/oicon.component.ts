@@ -24,7 +24,6 @@ export class OIconComponent implements OnInit {
     }
 
     ngOnInit(){
-         console.log(this.classMap[this.type]);
-    
+        this.type = this.classMap[this.type] ? this.type : 'outlined';
     }
 }

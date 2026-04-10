@@ -21,8 +21,8 @@
           "builder": "@angular/build:application",
           "options": {
             "outputPath": "dist/adminos",
-            "baseHref": "./",
-            "deployUrl": "./",
+            "baseHref": "/",
+            "deployUrl": "/",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
@@ -45,7 +45,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",

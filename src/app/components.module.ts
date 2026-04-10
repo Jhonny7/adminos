@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { NgModule } from "@angular/core";
+import { NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { TranslateModule } from "@ngx-translate/core";
@@ -31,10 +31,13 @@ import { OTableComponent, OTableExampleComponent } from "./components/organisms/
 import { MaterialModule } from "./material.module";
 import { Home } from "./pages/Home/home.component";
 import { Login } from "./pages/login/login.component";
+import { Dashboard } from "./pages/Dashboard/dashboard.component";
+import { Labors } from "./pages/Labors/labors.component";
 import { OSquareButtonComponent } from "./components/atoms/osquare-button/osquare-button.component";
 import { OIconComponent } from "./components/atoms/oicon/oicon.component";
 import { ModalPanelContainerComponent } from "./components/atoms/modal-panel/modal-panel.component";
 import { PopoverContainerComponent } from "./components/atoms/popover/popover.component";
+import { BaseChartDirective } from 'ng2-charts';
 
 export const exporters: any = [
   LayoutComponent,
@@ -72,6 +75,8 @@ export const exporters: any = [
   //Pages
   Login,
   Home,
+  Dashboard,
+  Labors,
   OInputExampleComponent,
   ModalPanelContainerComponent,
   PopoverContainerComponent
@@ -90,7 +95,9 @@ export const exporters: any = [
     ReactiveFormsModule,
     RouterModule,
     TranslateModule,
-    MaterialModule
-  ]
+    MaterialModule,
+    BaseChartDirective
+  ],
+  schemas: [NO_ERRORS_SCHEMA]
 })
 export class ComponentsModule {}

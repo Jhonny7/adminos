@@ -1,30 +1,40 @@
 <div class="sidebar" [class.collapsed]="collapsed">
-
-  <div class="menu">
-    <div class="adminos" (click)="openMenu($event)">
-      <p>Admin <span>OS</span></p>
+  <div class="sidebar-top">
+    <div class="brand" (click)="openMenu($event)">
+      <div class="brand-icon">
+        <mat-icon>agriculture</mat-icon>
+      </div>
+      <div class="brand-copy" *ngIf="!collapsed">
+        <h3>AgroPanel</h3>
+        <p>Dashboard Agrícola</p>
+      </div>
     </div>
 
-    <div *ngFor="let item of menu">
-      <div class="menu-item" (click)="toggle(item)">
-        <mat-icon>{{ item.icon }}</mat-icon>
-
-        <span *ngIf="!collapsed">
-          {{ item.label }}
-        </span>
-
-        <mat-icon *ngIf="item.children && !collapsed">
-          {{ item.open ? 'expand_less' : 'expand_more' }}
-        </mat-icon>
+    <div class="menu-list">
+      <div *ngFor="let item of menu">
+        <a
+          class="menu-item"
+          [routerLink]="item.routerLink"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.exact !== false }"
+          (click)="toggle(item)"
+        >
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span *ngIf="!collapsed">{{ item.label }}</span>
+        </a>
       </div>
-      <div class="submenu" [@submenuAnimation]="item.open && !collapsed ? 'open' : 'closed'">
-        <div class="submenu-item" *ngFor="let sub of item.children">
-          {{ sub.label }}
-        </div>
-      </div>
-
     </div>
-
   </div>
 
+  <div class="sidebar-footer">
+    <div class="user-badge">
+      <div class="avatar">
+        <mat-icon>person</mat-icon>
+      </div>
+      <div class="user-copy" *ngIf="!collapsed">
+        <strong>Usuario Demo</strong>
+        <span>Productor</span>
+      </div>
+    </div>
+  </div>
 </div>
