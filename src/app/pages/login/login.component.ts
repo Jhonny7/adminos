@@ -1,15 +1,18 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { paths, sessionTag } from '../../../environments/environment';
 import { AlertService } from '../../services/alert.service';
+import { GenericService } from '../../services/generic.service';
 import { LoadingService } from '../../services/loading-service';
-//import firebase from 'firebase'
 import { LocalStorageEncryptService } from '../../services/local-storage-encrypt.service';
 import { ThemeService } from '../../services/theme.service';
-import { GenericService } from '../../services/generic.service';
-import { FcmService } from '../../services/fcm.service';
+
+interface LoginResponse {
+  token: string;
+}
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -18,49 +21,15 @@ import { FcmService } from '../../services/fcm.service';
   standalone: false
 })
 export class Login implements OnInit, OnDestroy {
-  slideOpts = {
-    initialSlide: 1,
-    speed: 400,
-  };
-
-  public load: boolean = false;
-
-  public opciones: any = [];
-  public user: any = null;
-
-  public opcionesUsuario: any = [];
-
-  public cards: any = [];
-
+  public load = false;
+  public type = true;
   public sus?: Subscription;
+  public user: LoginResponse | null = null;
 
-  public dataLogin: any = {
-    username: '',
+  public dataLogin = {
+    access: '',
     password: '',
   };
-
-  public data: any = {
-    email: {
-      error: false,
-      value: '',
-    },
-    username: {
-      error: false,
-      value: '',
-    },
-    pass: {
-      error: false,
-      value: '',
-    },
-    confirm: {
-      error: false,
-      value: '',
-    },
-  };
-
-  public enterMail: string = '';
-
-  public type: boolean = true;
 
   constructor(
     private alertService: AlertService,
@@ -68,43 +37,98 @@ export class Login implements OnInit, OnDestroy {
     public router: Router,
     private localStorageEncryptService: LocalStorageEncryptService,
     public themeService: ThemeService,
-    private translateService: TranslateService,
     private genericService: GenericService,
-    private fcmService: FcmService
   ) {
-    this.user =
-      this.localStorageEncryptService.getFromLocalStorage('userSessionGymAdmon');
+    this.user = this.localStorageEncryptService.getFromLocalStorage(sessionTag);
   }
 
   ngOnInit() {
     if (this.user) {
-      this.router.navigate(['/', 'posco', 'administration']);
+      this.router.navigate(['/', 'admin']);
+      return;
     }
+
     setTimeout(() => {
       this.load = false;
     }, 1800);
   }
 
   login() {
-    this.loadingService.show();
+    const access = this.dataLogin.access?.trim();
+    const password = this.dataLogin.password?.trim();
+
+    if (!access || !password) {
+      this.alertService.warnAlert(
+        'Campos requeridos',
+        'Ingresa tu usuario y contraseña para continuar.'
+      );
+      return;
+    }
+
+    const body = {
+      access,
+      password,
+      device: this.getDeviceInfo(),
+    };
+
+    this.loadingService.show('Iniciando sesión...');
+    this.sus?.unsubscribe();
+    this.sus = this.genericService.sendPostRequest<LoginResponse>(paths.login, body).subscribe(
+      (response: LoginResponse) => {
+        this.loadingService.hide();
+        this.user = response;
+        this.localStorageEncryptService.setToSessionStorage(sessionTag, response);
+        this.router.navigate(['/', 'admin']);
+      }, (error: HttpErrorResponse) => {
+        this.loadingService.hide();
+        const message =
+          error?.error?.message ||
+          error?.error?.error ||
+          error?.message ||
+          'No fue posible iniciar sesión.';
+
+        this.alertService.errorAlert('Error de acceso', message);
+      },
+    );
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.sus?.unsubscribe();
+  }
 
   eye() {
     this.type = !this.type;
   }
 
   forgot() {
-    
-  }
-
-  sendMail(otpNumber, emailTo, username) {
-    
   }
 
   register() {
-    console.log("go to register");
+    console.log('go to register');
     this.router.navigate(['/', 'choose']);
+  }
+
+  private getDeviceInfo(): string {
+    if (typeof navigator === 'undefined') {
+      return 'browser';
+    }
+
+    const userAgent = navigator.userAgent || '';
+    const platform = navigator.platform || 'browser';
+    let browser = 'Browser';
+
+    if (userAgent.includes('Edg')) {
+      browser = 'Edge';
+    } else if (userAgent.includes('OPR') || userAgent.includes('Opera')) {
+      browser = 'Opera';
+    } else if (userAgent.includes('Firefox')) {
+      browser = 'Firefox';
+    } else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) {
+      browser = 'Safari';
+    } else if (userAgent.includes('Chrome')) {
+      browser = 'Chrome';
+    }
+
+    return `${browser} - ${platform}`;
   }
 }

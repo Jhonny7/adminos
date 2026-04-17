@@ -1,9 +1,9 @@
-import { Component, HostListener, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { EventService } from '../../../services/event.service';
 import { events } from '../../../../environments/environment.prod';
-import { AlertService, IButtonSheet } from '../../../services/alert.service';
 import { Login } from '../../../pages/login/login.component';
+import { AlertService, IButtonSheet } from '../../../services/alert.service';
+import { EventService } from '../../../services/event.service';
 
 export interface MenuHeader {
   icon: string,
@@ -152,7 +152,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   constructor(
     private eventService: EventService,
-    private alertService: AlertService
+    private alertService: AlertService,
   ) {
 
   }
@@ -206,7 +206,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   onScroll(event: any) {
     const scrollTop = event.target.scrollTop;
     const scrollDelta = scrollTop - this.lastScrollTop;
-    
+
     // Hide header when scrolling down, show when scrolling up
     if (Math.abs(scrollDelta) > 10) { // Threshold to avoid jitter
       this.isHeaderVisible = scrollDelta < 0;

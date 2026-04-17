@@ -1,9 +1,15 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, timeout } from 'rxjs/operators';
+import { sessionTag } from '../../environments/environment';
 import { LocalStorageEncryptService } from './local-storage-encrypt.service';
 
 export const TIME_OUT = 1000 * 60 * 1; //ultimo número define en minutos
+
+type SecureHttpOptions = {
+    headers?: HttpHeaders | { [header: string]: string | string[] };
+    params?: any;
+};
 /**Clase provider que es básicamente un servicio generico para las peticiones a servicios */
 @Injectable(
     {
@@ -18,9 +24,32 @@ export class GenericService {
         private localStorageEncryptService: LocalStorageEncryptService) {
     }
 
+    private buildSecureOptions(options: SecureHttpOptions = {}, isSecure: boolean = false): SecureHttpOptions {
+        if (!isSecure) {
+            return options;
+        }
+
+        const userSession = this.localStorageEncryptService.getFromSessionStorage(sessionTag)
+            || this.localStorageEncryptService.getFromLocalStorage(sessionTag);
+        const token = userSession?.token;
+
+        if (!token) {
+            return options;
+        }
+
+        const headers = options.headers instanceof HttpHeaders
+            ? options.headers
+            : new HttpHeaders(options.headers || {});
+
+        return {
+            ...options,
+            headers: headers.set('Authorization', `Bearer ${token}`)
+        };
+    }
+
     /**Método que hace peticiones tipo GET */
-    sendGetRequest(webservice_URL: string, clase: any = null) {
-        let observable: any = this.http.get(webservice_URL);
+    sendGetRequest<T = any>(webservice_URL: string, clase: any = null, isSecure: boolean = false) {
+        let observable: any = this.http.get<T>(webservice_URL, this.buildSecureOptions({}, isSecure));
 
         if (clase) {
             return observable.pipe(map((data: any) => {
@@ -30,7 +59,7 @@ export class GenericService {
                 if (!Array.isArray(arr)) {
                     obj = clase.fromJson(arr);
                 } else {
-                    obj = arr.map(item => clase.fromJson(item));
+                    obj = arr.map((item: any) => clase.fromJson(item));
                 }
                 return obj;
             }))
@@ -40,51 +69,51 @@ export class GenericService {
     }
 
     /**Método que hace peticiones tipo GET  con parámetros*/
-    sendGetRequestParams(webservice_URL: string, params: any) {
+    sendGetRequestParams<T = any>(webservice_URL: string, params: SecureHttpOptions = {}, isSecure: boolean = false) {
         //return this.http.get(webservice_URL, params).timeout(TIME_OUT);
-        return this.http.get(webservice_URL, params)
+        return this.http.get<T>(webservice_URL, this.buildSecureOptions(params, isSecure))
     }
 
     /**Método que hace peticiones tipo GET  con parámetros*/
-    sendGetParams(webservice_URL: string, params: any) {
+    sendGetParams<T = any>(webservice_URL: string, params: any, isSecure: boolean = false) {
         //return this.http.get(webservice_URL, params).timeout(TIME_OUT);
-        let options: any = {};
-        options.params = params;
-        return this.http.get(webservice_URL, options);
+        const options: SecureHttpOptions = { params };
+        return this.http.get<T>(webservice_URL, this.buildSecureOptions(options, isSecure));
     }
 
     /**Método que hace peticiones tipo POST  con parámetros específicos*/
-    sendPostRequestParams(webservice_URL: string, params: any, httpOptions: any) {
+    sendPostRequestParams<T = any>(webservice_URL: string, params: any, httpOptions: SecureHttpOptions = {}, isSecure: boolean = false) {
         //return this.http.post(webservice_URL, params, httpOptions).timeout(TIME_OUT);
-        return this.http.post(webservice_URL, params, httpOptions);
+        return this.http.post<T>(webservice_URL, params, this.buildSecureOptions(httpOptions, isSecure));
     }
 
     /**Método que hace peticiones tipo POST */
-    sendPostRequest(webservice_URL: string, request: { }) {
+    sendPostRequest<T = any>(webservice_URL: string, request: {} = {}, isSecure: boolean = false) {
         //return this.http.post(webservice_URL, request).timeout(TIME_OUT);
-        return this.http.post(webservice_URL, request).pipe(timeout(TIME_OUT));
+        return this.http.post<T>(webservice_URL, request, this.buildSecureOptions({}, isSecure)).pipe(timeout(TIME_OUT));
     }
 
     /**Método que hace peticiones tipo PUT */
-    sendPutRequest(webservice_URL: string, request: {} = {}) {
+    sendPutRequest<T = any>(webservice_URL: string, request: {} = {}, isSecure: boolean = false) {
         //return this.http.post(webservice_URL, request).timeout(TIME_OUT);
-        return this.http.put(webservice_URL, request);
+        return this.http.put<T>(webservice_URL, request, this.buildSecureOptions({}, isSecure));
     }
 
     /**Método que hace peticiones tipo DELETE */
-    sendDeleteRequest(webservice_URL: string) {
+    sendDeleteRequest<T = any>(webservice_URL: string, isSecure: boolean = false) {
         //return this.http.delete(webservice_URL).timeout(TIME_OUT);
-        return this.http.delete(webservice_URL);
+        return this.http.delete<T>(webservice_URL, this.buildSecureOptions({}, isSecure));
     }
 
     /**Método que hace peticiones tipo DELETE */
-    sendDelete(webservice_URL: string) {
+    sendDelete<T = any>(webservice_URL: string, isSecure: boolean = false) {
         //return this.http.delete(webservice_URL).timeout(TIME_OUT);
-        return this.http.delete(webservice_URL);
+        return this.http.delete<T>(webservice_URL, this.buildSecureOptions({}, isSecure));
     }
 
     getUser() {
-        return this.localStorageEncryptService.getFromLocalStorage("userSession");
+        return this.localStorageEncryptService.getFromSessionStorage(sessionTag)
+            || this.localStorageEncryptService.getFromLocalStorage(sessionTag);
     }
 
     //For themes

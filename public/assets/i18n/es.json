@@ -1,10 +1,12 @@
 {
-  "common":{
+  "common": {
     "cancel": "Cancelar"
   },
   "login": {
     "login": "Iniciar sesión",
     "forgot": "Olvidé mi contraseña",
-    "nclient": "Nuevo cliente"
+    "nclient": "Nuevo cliente",
+    "input-name": "Usuario",
+    "input-password": "Contraseña"
   }
 }

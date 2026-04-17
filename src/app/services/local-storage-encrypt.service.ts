@@ -66,6 +66,15 @@ export class LocalStorageEncryptService {
     localStorage.setItem(encryptedKey, encryptedData);
   }
 
+  setToSessionStorage(key: string, data: any) {
+    let encryptedData = CryptoJS.AES.encrypt(JSON.stringify(data), this.secretKey).toString();
+    let encryptedKey = CryptoJS.SHA256(key).toString();
+
+    encryptedData = JSON.stringify(data);
+    encryptedKey = key;
+    sessionStorage.setItem(encryptedKey, encryptedData);
+  }
+
   yayirobe(data:any){
     let strin:string = CryptoJS.AES.decrypt(data, this.secretKey).toString(CryptoJS.enc.Utf8);
     console.log(strin);
@@ -78,10 +87,25 @@ export class LocalStorageEncryptService {
    * Recupera valores del localstorage por medio de la llave
    * @param key Llave a obtener
    */
+  getFromSessionStorage(key: string): any {
+    let encryptedKey = CryptoJS.SHA256(key).toString();
+    encryptedKey = key;
+    const item = sessionStorage.getItem(encryptedKey);
+    if (item === undefined || item === null) {
+      return null;
+    }
+
+    if (this.isJson(item)) {
+      return JSON.parse(item);
+    } else {
+      return item;
+    }
+  }
+
   getFromLocalStorage(key: string): any {
     let encryptedKey = CryptoJS.SHA256(key).toString();
     encryptedKey = key;
-    const item = localStorage.getItem(encryptedKey);
+    const item = localStorage.getItem(encryptedKey) ?? sessionStorage.getItem(encryptedKey);
     if (item === undefined || item === null) {
       return null;
     }
@@ -101,6 +125,7 @@ export class LocalStorageEncryptService {
    */
   clear() {
     localStorage.clear();
+    sessionStorage.clear();
   }
 
   /**
@@ -111,6 +136,7 @@ export class LocalStorageEncryptService {
     const encryptedKey = CryptoJS.SHA256(property).toString();
     //localStorage.removeItem(encryptedKey);
     localStorage.removeItem(property);
+    sessionStorage.removeItem(property);
   }
 
   /**

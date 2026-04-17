@@ -1,5 +1,4 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -11,7 +10,9 @@ import { TranslateService } from '@ngx-translate/core';
 export class App {
   protected readonly title = signal('admin');
 
-  constructor(private translate: TranslateService) {
+  constructor(
+    private translate: TranslateService,
+  ) {
     this.translate.setDefaultLang('es');
     this.translate.use('es');
   }

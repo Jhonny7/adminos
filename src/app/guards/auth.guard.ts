@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { CanActivate, CanActivateChild, Router } from "@angular/router";
-import { sessionTag } from "../../environments/environment.prod";
+import { sessionTag } from "../../environments/environment";
+import { LocalStorageEncryptService } from "../services/local-storage-encrypt.service";
 
 @Injectable(
     {
@@ -11,6 +12,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
 
     constructor(
         private router: Router,
+        private localStorageEncryptService: LocalStorageEncryptService,
     ) {
 
     }
@@ -24,7 +26,7 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     }
 
     check() {
-        let userSessionEducacion: any = JSON.parse(localStorage.getItem(sessionTag));
+        let userSessionEducacion: any = this.localStorageEncryptService.getFromSessionStorage(sessionTag) || this.localStorageEncryptService.getFromLocalStorage(sessionTag);
         if (userSessionEducacion) {
             return true;
         } else {

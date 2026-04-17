@@ -14,8 +14,8 @@
     <div class="white-screen"></div>
 
     <section class="form-box">
-      <p class="title">Admin OS</p>
-      
+      <p class="title">Admin BioParcela</p>
+
       <div class="box">
 
         <div class="change-language">
@@ -24,35 +24,36 @@
 
         <p class="login-title">{{'login.login' | translate}}</p>
 
-       <!--  <oinput
-          [inputPlaceholder]="'login.input-name' | translate"
-          [inputLabel]="'login.input-name' | translate"
-          [(olamModel)]="data.username.value"
-        ></oinput>
+        <div class="field-group">
+          <label class="field-label">{{'login.input-name' | translate}}</label>
+          <input
+            class="field-input"
+            type="text"
+            [placeholder]="'login.input-name' | translate"
+            [(ngModel)]="dataLogin.access"
+          />
+        </div>
 
-        <div class="inp-pass">
-          <oinput
-            [inputType]="type ? 'password' : 'text'"
-            [inputPlaceholder]="'login.input-password' | translate"
-            [inputLabel]="'login.input-password' | translate"
-            globalExtraClass="input-pass-login"
-            [(olamModel)]="data.pass.value"
-          ></oinput>
-          <div class="eye" (mousedown)="eye()" (mouseup)="eye()">
-            <span class="material-icons outlined"> visibility </span>
+        <div class="field-group">
+          <label class="field-label">{{'login.input-password' | translate}}</label>
+          <div class="inp-pass">
+            <input
+              class="field-input password-input"
+              [type]="type ? 'password' : 'text'"
+              [placeholder]="'login.input-password' | translate"
+              [(ngModel)]="dataLogin.password"
+            />
+            <button type="button" class="eye" (click)="eye()" aria-label="Mostrar u ocultar contraseña">
+              <span class="material-icons outlined">{{ type ? 'visibility' : 'visibility_off' }}</span>
+            </button>
           </div>
-        </div> -->
+        </div>
 
         <obutton extraClass="posco-login-btn" (click)="login()">{{'login.login' | translate}}</obutton>
 
         <p class="forgot" (click)="forgot()">
           <span class="material-icons outlined">lock_open</span>
           {{'login.forgot' | translate}}
-        </p>
-
-        <p class="forgot" (click)="register()">
-          <span class="material-icons outlined">add</span>
-          {{'login.nclient' | translate}}
         </p>
       </div>
     </section>

@@ -21,7 +21,25 @@
         >
           <mat-icon>{{ item.icon }}</mat-icon>
           <span *ngIf="!collapsed">{{ item.label }}</span>
+          <mat-icon *ngIf="!collapsed && item.children?.length">{{ item.open ? 'expand_less' : 'expand_more' }}</mat-icon>
         </a>
+
+        <div
+          *ngIf="!collapsed && item.children?.length"
+          class="submenu"
+          [@submenuAnimation]="item.open ? 'open' : 'closed'"
+        >
+          <a
+            *ngFor="let child of item.children"
+            class="menu-item submenu-item"
+            [routerLink]="child.routerLink"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: child.exact !== false }"
+          >
+            <mat-icon>{{ child.icon }}</mat-icon>
+            <span>{{ child.label }}</span>
+          </a>
+        </div>
       </div>
     </div>
   </div>
