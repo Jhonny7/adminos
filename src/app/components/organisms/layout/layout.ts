@@ -1,9 +1,11 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { events } from '../../../../environments/environment.prod';
 import { Login } from '../../../pages/login/login.component';
 import { AlertService, IButtonSheet } from '../../../services/alert.service';
 import { EventService } from '../../../services/event.service';
+import { LocalStorageEncryptService } from '../../../services/local-storage-encrypt.service';
 
 export interface MenuHeader {
   icon: string,
@@ -113,39 +115,15 @@ export class LayoutComponent implements OnInit, OnDestroy {
     }, {
       icon: "logout",
       onClick: (e) => {
-
-        console.log("logout");
-
-        const buttons: IButtonSheet[] = [
-          {
-            text: 'Edit',
-            icon: 'edit',
-            handler: () => {
-              console.log('Edit clicked');
-              // Your edit logic
-            }
+        this.alertService.confirmTrashAlert(
+          () => {
+            this.localStorageEncryptService.clear();
+            this.router.navigate(['/login']);
           },
-          {
-            text: 'Share',
-            icon: 'share',
-            handler: () => {
-              console.log('Share clicked');
-            }
-          },
-          {
-            text: 'Delete',
-            icon: 'delete',
-            handler: () => {
-              console.log('Delete clicked');
-            }
-          }
-        ];
-
-        this.alertService
-          .openActionSheet(buttons, 'Choose Action', true)
-          .then((result) => {
-            console.log('Sheet closed, result:', result);
-          });
+          '¿Cerrar sesión?',
+          '¿Estás seguro de que deseas salir? Se cerrará tu sesión actual.',
+          'Cerrar sesión'
+        );
       }
     },
   ]
@@ -153,6 +131,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
   constructor(
     private eventService: EventService,
     private alertService: AlertService,
+    private router: Router,
+    private localStorageEncryptService: LocalStorageEncryptService,
   ) {
 
   }

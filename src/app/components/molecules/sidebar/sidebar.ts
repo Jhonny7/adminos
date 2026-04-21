@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, NgZone, OnInit } from '@angular/core';
 import {
   trigger,
   state,
@@ -90,6 +90,8 @@ export class SidebarComponent implements OnInit {
     private router: Router,
     private loadingService: LoadingService,
     private genericService: GenericService,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone,
   ) {
 
   }
@@ -102,13 +104,19 @@ export class SidebarComponent implements OnInit {
     this.loadingService.show('Cargando menú...');
     this.genericService.sendGetRequest<MenuResponse>(paths.menu, null, true).subscribe({
       next: (response: MenuResponse) => {
-        const items = this.mapMenuItems(response?.menu || []);
-        this.menu = items.length ? items : [...this.fallbackMenu];
-        this.loadingService.hide();
+        this.ngZone.run(() => {
+          const items = this.mapMenuItems(response?.menu || []);
+          this.menu = items.length ? items : [...this.fallbackMenu];
+          this.cdr.detectChanges();
+          this.loadingService.hide();
+        });
       },
       error: () => {
-        this.menu = [...this.fallbackMenu];
-        this.loadingService.hide();
+        this.ngZone.run(() => {
+          this.menu = [...this.fallbackMenu];
+          this.cdr.detectChanges();
+          this.loadingService.hide();
+        });
       }
     });
   }
