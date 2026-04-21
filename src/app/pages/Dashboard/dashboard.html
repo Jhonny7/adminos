@@ -1,10 +1,38 @@
 <ocontainer [extraClass]="'cls-dashboard'">
-    <div class="dashboard">
+    <div class="dashboard-page">
+        <section class="filters-card">
+            <div class="filters-row">
+                <div class="filter-field">
+                    <label><mat-icon>calendar_today</mat-icon> Ciclo Agrícola</label>
+                    <select>
+                        <option>2025-2026</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label><mat-icon>person_outline</mat-icon> Tipo de Productor</label>
+                    <select>
+                        <option>Todos</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label><mat-icon>place</mat-icon> Ubicación</label>
+                    <select>
+                        <option>Todas las regiones</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <div class="page-heading">
+            <h2>Resumen Ejecutivo</h2>
+            <p>Vista general de la actividad agrícola registrada</p>
+        </div>
+
         <div class="kpi-row">
             @for (card of kpiCards; track card.key) {
                 <div class="kpi-card">
                     <div class="kpi-header">
-                        <span class="kpi-icon">{{ card.icon }}</span>
+                        <span class="kpi-icon-shell"><mat-icon>{{ card.icon }}</mat-icon></span>
                         <span class="kpi-change" [class.is-down]="isTrendDown(card.trend)">
                             {{ card.loading ? 'Cargando...' : getTrendLabel(card.trend) }}
                         </span>
@@ -45,6 +73,25 @@
                 } @else {
                     <div class="chart-placeholder"></div>
                 }
+
+                @if (!chartLoading.surfaceDistribution && surfaceDistributionItems.length) {
+                    <div class="chart-detail-list">
+                        @for (item of surfaceDistributionItems; track item.key || item.label; let index = $index) {
+                            <div class="detail-row">
+                                <div class="detail-header with-dot">
+                                    <span class="detail-main">
+                                        <span class="detail-dot" [style.background]="getChartColor('surfaceDistribution', index)"></span>
+                                        <span class="detail-label">{{ item.label }}</span>
+                                    </span>
+                                    <span class="detail-value">{{ formatChartMetric(item) }} ({{ formatPercentage(item.percentage) }})</span>
+                                </div>
+                                <div class="detail-track">
+                                    <span class="detail-fill" [style.width.%]="item.percentage || 0" [style.background]="getChartColor('surfaceDistribution', index)"></span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
             </div>
 
             <div class="chart-container">
@@ -67,6 +114,25 @@
                 } @else {
                     <div class="chart-placeholder"></div>
                 }
+
+                @if (!chartLoading.usersByGender && usersByGenderItems.length) {
+                    <div class="chart-detail-list">
+                        @for (item of usersByGenderItems; track item.key || item.label; let index = $index) {
+                            <div class="detail-row">
+                                <div class="detail-header with-dot">
+                                    <span class="detail-main">
+                                        <span class="detail-dot" [style.background]="getChartColor('usersByGender', index)"></span>
+                                        <span class="detail-label">{{ item.label }}</span>
+                                    </span>
+                                    <span class="detail-value">{{ formatChartMetric(item) }} ({{ formatPercentage(item.percentage) }})</span>
+                                </div>
+                                <div class="detail-track">
+                                    <span class="detail-fill" [style.width.%]="item.percentage || 0" [style.background]="getChartColor('usersByGender', index)"></span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
             </div>
         </div>
 
@@ -85,11 +151,27 @@
                         <canvas baseChart
                             [data]="lineChartData"
                             [options]="lineChartOptions"
-                            [type]="'line'">
+                            [type]="'bar'">
                         </canvas>
                     </div>
                 } @else {
                     <div class="chart-placeholder"></div>
+                }
+
+                @if (!chartLoading.topCropsBySurface && topCropsBySurfaceItems.length) {
+                    <div class="chart-detail-list">
+                        @for (item of topCropsBySurfaceItems; track item.key || item.label) {
+                            <div class="detail-row">
+                                <div class="detail-header">
+                                    <span class="detail-label">{{ item.label }}</span>
+                                    <span class="detail-value">{{ formatChartMetric(item) }} ({{ formatPercentage(item.percentage) }})</span>
+                                </div>
+                                <div class="detail-track">
+                                    <span class="detail-fill" [style.width.%]="item.percentage || 0" [style.background]="getChartColor('topCropsBySurface', 0)"></span>
+                                </div>
+                            </div>
+                        }
+                    </div>
                 }
             </div>
 
@@ -112,6 +194,22 @@
                     </div>
                 } @else {
                     <div class="chart-placeholder"></div>
+                }
+
+                @if (!chartLoading.topCropsByProduction && topCropsByProductionItems.length) {
+                    <div class="chart-detail-list">
+                        @for (item of topCropsByProductionItems; track item.key || item.label) {
+                            <div class="detail-row">
+                                <div class="detail-header">
+                                    <span class="detail-label">{{ item.label }}</span>
+                                    <span class="detail-value">{{ formatChartMetric(item) }} ({{ formatPercentage(item.percentage) }})</span>
+                                </div>
+                                <div class="detail-track">
+                                    <span class="detail-fill" [style.width.%]="item.percentage || 0" [style.background]="getChartColor('topCropsByProduction', 0)"></span>
+                                </div>
+                            </div>
+                        }
+                    </div>
                 }
             </div>
         </div>

@@ -1,25 +1,27 @@
 <ocontainer [extraClass]="'cls-labors'">
     <div class="labors-page">
-        <div class="filters-row">
-            <div class="filter-box">
-                <label>Ciclo Agrícola</label>
-                <select>
-                    <option>2025-2026</option>
-                </select>
+        <section class="filters-card">
+            <div class="filters-row">
+                <div class="filter-box">
+                    <label><mat-icon>calendar_today</mat-icon> Ciclo Agrícola</label>
+                    <select>
+                        <option>2025-2026</option>
+                    </select>
+                </div>
+                <div class="filter-box">
+                    <label><mat-icon>person_outline</mat-icon> Tipo de Productor</label>
+                    <select>
+                        <option>Todos</option>
+                    </select>
+                </div>
+                <div class="filter-box">
+                    <label><mat-icon>place</mat-icon> Ubicación</label>
+                    <select>
+                        <option>Todas las regiones</option>
+                    </select>
+                </div>
             </div>
-            <div class="filter-box">
-                <label>Tipo de Productor</label>
-                <select>
-                    <option>Todos</option>
-                </select>
-            </div>
-            <div class="filter-box">
-                <label>Ubicación</label>
-                <select>
-                    <option>Todas las regiones</option>
-                </select>
-            </div>
-        </div>
+        </section>
 
         <div class="section-heading">
             <h2>Mis Labores</h2>
@@ -30,7 +32,7 @@
             @for (card of kpiCards; track card.key) {
                 <div class="kpi-card">
                     <div class="kpi-top">
-                        <span class="kpi-icon">{{ card.icon }}</span>
+                        <span class="kpi-icon-shell"><mat-icon>{{ card.icon }}</mat-icon></span>
                         <span class="kpi-change" [class.is-down]="isTrendDown(card.trend)" [class.is-muted]="card.loading || !card.trend">
                             {{ card.loading ? 'Cargando...' : getTrendLabel(card.trend) }}
                         </span>
@@ -135,7 +137,7 @@
 
         <div class="info-card">
             <div class="info-header">
-                <span class="info-icon">🛡️</span>
+                <span class="info-icon"><mat-icon>shield</mat-icon></span>
                 <div>
                     <h4>Prácticas de Conservación de Suelo</h4>
                     <p>{{ conservationNarrative }}</p>

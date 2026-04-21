@@ -75,6 +75,11 @@ interface KpiCard {
 export class Dashboard implements OnInit {
     private readonly cdr = inject(ChangeDetectorRef);
 
+    private readonly surfaceDistributionColors = ['#256C63', '#B58A2A', '#A1244E', '#6C8A3A', '#5E7DA3'];
+    private readonly genderColors = ['#256C63', '#B58A2A', '#A1244E'];
+    private readonly surfaceCropColor = '#256C63';
+    private readonly productionCropColor = '#A1244E';
+
     @ViewChildren(BaseChartDirective)
     private readonly chartDirectives?: QueryList<BaseChartDirective>;
 
@@ -83,7 +88,7 @@ export class Dashboard implements OnInit {
     public kpiCards: KpiCard[] = [
         {
             key: 'registeredUsers',
-            icon: '👥',
+            icon: 'groups',
             label: 'Usuarios Registrados',
             value: null,
             subtitle: 'Registrados activos',
@@ -91,7 +96,7 @@ export class Dashboard implements OnInit {
         },
         {
             key: 'totalSurface',
-            icon: '🌾',
+            icon: 'grass',
             label: 'Superficie Total',
             value: null,
             unit: 'ha',
@@ -100,7 +105,7 @@ export class Dashboard implements OnInit {
         },
         {
             key: 'activeCrops',
-            icon: '🌱',
+            icon: 'trending_up',
             label: 'Cultivos Activos',
             value: null,
             subtitle: 'Sistemas productivos',
@@ -108,7 +113,7 @@ export class Dashboard implements OnInit {
         },
         {
             key: 'irrigatedSurface',
-            icon: '📈',
+            icon: 'water_drop',
             label: 'Superficie con Riego',
             value: null,
             unit: '%',
@@ -143,14 +148,19 @@ export class Dashboard implements OnInit {
         }
     };
 
+    public surfaceDistributionItems: DashboardChartItem[] = [];
+    public usersByGenderItems: DashboardChartItem[] = [];
+    public topCropsBySurfaceItems: DashboardChartItem[] = [];
+    public topCropsByProductionItems: DashboardChartItem[] = [];
+
     public barChartData: ChartData<'bar'> = {
         labels: ['Masculino', 'Femenino', 'Prefiero no decir'],
         datasets: [
             {
                 data: [450, 320, 75],
                 label: 'Usuarios',
-                backgroundColor: ['#DAA520', '#5C6BC0', '#26A69A'],
-                borderColor: '#DAA520',
+                backgroundColor: this.genderColors,
+                borderColor: '#d9e0e7',
                 borderWidth: 1,
                 borderRadius: 6,
             }
@@ -169,12 +179,12 @@ export class Dashboard implements OnInit {
         scales: {
             x: {
                 beginAtZero: true,
-                ticks: { color: '#b0bec5' },
-                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                ticks: { color: '#5b6777' },
+                grid: { color: '#e7ecf1' }
             },
             y: {
-                ticks: { color: '#b0bec5' },
-                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                ticks: { color: '#5b6777' },
+                grid: { color: '#e7ecf1' }
             }
         }
     };
@@ -183,8 +193,8 @@ export class Dashboard implements OnInit {
         labels: ['Riego', 'Temporal'],
         datasets: [{
             data: [2180, 1670],
-            backgroundColor: ['#DAA520', '#1e7e74'],
-            borderColor: ['#1b5e56', '#1b5e56'],
+            backgroundColor: ['#256C63', '#B58A2A'],
+            borderColor: ['#ffffff', '#ffffff'],
             borderWidth: 2,
             hoverOffset: 4
         }]
@@ -199,7 +209,7 @@ export class Dashboard implements OnInit {
             legend: {
                 position: 'bottom',
                 labels: {
-                    color: '#b0bec5',
+                    color: '#5b6777',
                     padding: 15,
                     boxWidth: 12
                 }
@@ -207,26 +217,21 @@ export class Dashboard implements OnInit {
         }
     };
 
-    public lineChartData: ChartData<'line'> = {
+    public lineChartData: ChartData<'bar'> = {
         labels: ['Maíz', 'Frijol', 'Sorgo', 'Trigo', 'Avena'],
         datasets: [
             {
                 data: [1250, 850, 620, 480, 350],
                 label: 'Hectáreas',
-                fill: false,
-                borderColor: '#DAA520',
-                backgroundColor: 'rgba(218, 165, 32, 0.15)',
-                borderWidth: 2,
-                tension: 0.35,
-                pointBackgroundColor: '#DAA520',
-                pointBorderColor: '#1b5e56',
-                pointBorderWidth: 2,
-                pointRadius: 5
+                backgroundColor: this.surfaceCropColor,
+                borderRadius: 8,
+                borderSkipped: false,
             }
         ]
     };
 
-    public lineChartOptions: ChartConfiguration<'line'>['options'] = {
+    public lineChartOptions: ChartConfiguration<'bar'>['options'] = {
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
         animation: false,
@@ -237,13 +242,13 @@ export class Dashboard implements OnInit {
         },
         scales: {
             x: {
-                ticks: { color: '#b0bec5' },
-                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                beginAtZero: true,
+                ticks: { color: '#5b6777' },
+                grid: { color: '#e7ecf1' }
             },
             y: {
-                beginAtZero: true,
-                ticks: { color: '#b0bec5' },
-                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                ticks: { color: '#5b6777' },
+                grid: { display: false }
             }
         }
     };
@@ -253,7 +258,7 @@ export class Dashboard implements OnInit {
         datasets: [{
             data: [5200, 1900, 2800, 1750, 1420],
             label: 'Toneladas',
-            backgroundColor: ['#C41E3A', '#C41E3A', '#C41E3A', '#C41E3A', '#C41E3A'],
+            backgroundColor: Array.from({ length: 5 }, () => this.productionCropColor),
             borderRadius: 6,
             borderSkipped: false,
         }]
@@ -272,11 +277,11 @@ export class Dashboard implements OnInit {
         scales: {
             x: {
                 beginAtZero: true,
-                ticks: { color: '#b0bec5' },
-                grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                ticks: { color: '#5b6777' },
+                grid: { color: '#e7ecf1' }
             },
             y: {
-                ticks: { color: '#b0bec5' },
+                ticks: { color: '#5b6777' },
                 grid: { display: false }
             }
         }
@@ -395,14 +400,16 @@ export class Dashboard implements OnInit {
                 this.updateChartMeta('surfaceDistribution', response);
 
                 const items = response.items || [];
-                const colors = ['#DAA520', '#1E7E74', '#5C6BC0', '#26A69A', '#EF5350'];
+                const colors = this.surfaceDistributionColors;
+
+                this.surfaceDistributionItems = items;
 
                 this.pieChartData = {
                     labels: items.map((item) => item.label),
                     datasets: [{
                         data: items.map((item) => item.value || 0),
                         backgroundColor: colors.slice(0, items.length),
-                        borderColor: Array.from({ length: items.length }, () => '#1b5e56'),
+                        borderColor: Array.from({ length: items.length }, () => '#ffffff'),
                         borderWidth: 2,
                         hoverOffset: 4
                     }]
@@ -423,7 +430,9 @@ export class Dashboard implements OnInit {
                 this.updateChartMeta('usersByGender', response);
 
                 const items = response.items || [];
-                const colors = ['#DAA520', '#5C6BC0', '#26A69A'];
+                const colors = this.genderColors;
+
+                this.usersByGenderItems = items;
 
                 this.barChartData = {
                     labels: items.map((item) => item.label),
@@ -432,7 +441,7 @@ export class Dashboard implements OnInit {
                             data: items.map((item) => item.count || 0),
                             label: 'Usuarios',
                             backgroundColor: colors.slice(0, items.length),
-                            borderColor: '#DAA520',
+                            borderColor: '#d9e0e7',
                             borderWidth: 1,
                             borderRadius: 6,
                         }
@@ -455,21 +464,17 @@ export class Dashboard implements OnInit {
 
                 const items = response.items || [];
 
+                this.topCropsBySurfaceItems = items;
+
                 this.lineChartData = {
                     labels: items.map((item) => item.label),
                     datasets: [
                         {
                             data: items.map((item) => item.value || 0),
                             label: 'Hectáreas',
-                            fill: false,
-                            borderColor: '#DAA520',
-                            backgroundColor: 'rgba(218, 165, 32, 0.15)',
-                            borderWidth: 2,
-                            tension: 0.35,
-                            pointBackgroundColor: '#DAA520',
-                            pointBorderColor: '#1b5e56',
-                            pointBorderWidth: 2,
-                            pointRadius: 5
+                            backgroundColor: this.surfaceCropColor,
+                            borderRadius: 8,
+                            borderSkipped: false,
                         }
                     ]
                 };
@@ -490,12 +495,14 @@ export class Dashboard implements OnInit {
 
                 const items = response.items || [];
 
+                this.topCropsByProductionItems = items;
+
                 this.doughnutChartData = {
                     labels: items.map((item) => item.label),
                     datasets: [{
                         data: items.map((item) => item.value || 0),
                         label: 'Toneladas',
-                        backgroundColor: Array.from({ length: items.length }, () => '#C41E3A'),
+                        backgroundColor: Array.from({ length: items.length }, () => this.productionCropColor),
                         borderRadius: 6,
                         borderSkipped: false,
                     }]
@@ -520,6 +527,32 @@ export class Dashboard implements OnInit {
         }).format(value);
 
         return unit ? `${formattedValue} ${unit}` : formattedValue;
+    }
+
+    formatPercentage(value: number | null | undefined): string {
+        return `${new Intl.NumberFormat('es-MX', {
+            maximumFractionDigits: Number.isInteger(value || 0) ? 0 : 1
+        }).format(value || 0)}%`;
+    }
+
+    formatChartMetric(item: DashboardChartItem): string {
+        return this.formatMetricValue(item.value ?? item.count, item.unit);
+    }
+
+    getChartColor(key: ChartKey, index: number): string {
+        if (key === 'surfaceDistribution') {
+            return this.surfaceDistributionColors[index] || this.surfaceCropColor;
+        }
+
+        if (key === 'usersByGender') {
+            return this.genderColors[index] || this.surfaceCropColor;
+        }
+
+        if (key === 'topCropsByProduction') {
+            return this.productionCropColor;
+        }
+
+        return this.surfaceCropColor;
     }
 
     getTrendLabel(trend?: TrendData): string {

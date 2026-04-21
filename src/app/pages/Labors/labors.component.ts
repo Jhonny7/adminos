@@ -116,7 +116,7 @@ export class Labors implements OnInit {
     public kpiCards: KpiCard[] = [
         {
             key: 'laborsRegistered',
-            icon: '📋',
+            icon: 'assignment',
             label: 'Labores Registradas',
             value: null,
             subtitle: 'Eventos totales',
@@ -124,7 +124,7 @@ export class Labors implements OnInit {
         },
         {
             key: 'estatesWithLabors',
-            icon: '🚜',
+            icon: 'agriculture',
             label: 'Predios con Registro',
             value: null,
             subtitle: 'Predios con actividad',
@@ -132,7 +132,7 @@ export class Labors implements OnInit {
         },
         {
             key: 'surfaceWithLabors',
-            icon: '🌱',
+            icon: 'grass',
             label: 'Superficie con Labores',
             value: null,
             unit: 'ha',
@@ -141,7 +141,7 @@ export class Labors implements OnInit {
         },
         {
             key: 'conservationPractices',
-            icon: '🛡️',
+            icon: 'shield',
             label: 'Prácticas de Conservación',
             value: null,
             subtitle: 'Técnicas implementadas',
@@ -194,11 +194,11 @@ export class Labors implements OnInit {
         scales: {
             x: {
                 beginAtZero: true,
-                ticks: { color: '#c6d2cf' },
-                grid: { color: 'rgba(255,255,255,0.08)' }
+                ticks: { color: '#5b6777' },
+                grid: { color: '#e7ecf1' }
             },
             y: {
-                ticks: { color: '#c6d2cf', font: { size: 10 } },
+                ticks: { color: '#5b6777', font: { size: 10 } },
                 grid: { display: false }
             }
         }
@@ -224,13 +224,13 @@ export class Labors implements OnInit {
         },
         scales: {
             x: {
-                ticks: { color: '#c6d2cf', font: { size: 10 } },
-                grid: { color: 'rgba(255,255,255,0.05)' }
+                ticks: { color: '#5b6777', font: { size: 10 } },
+                grid: { color: '#e7ecf1' }
             },
             y: {
                 beginAtZero: true,
-                ticks: { color: '#c6d2cf' },
-                grid: { color: 'rgba(255,255,255,0.08)' }
+                ticks: { color: '#5b6777' },
+                grid: { color: '#e7ecf1' }
             }
         }
     };
@@ -258,11 +258,11 @@ export class Labors implements OnInit {
             x: {
                 beginAtZero: true,
                 max: 100,
-                ticks: { color: '#c6d2cf' },
-                grid: { color: 'rgba(255,255,255,0.08)' }
+                ticks: { color: '#5b6777' },
+                grid: { color: '#e7ecf1' }
             },
             y: {
-                ticks: { color: '#c6d2cf', font: { size: 10 } },
+                ticks: { color: '#5b6777', font: { size: 10 } },
                 grid: { display: false }
             }
         }
@@ -476,7 +476,7 @@ export class Labors implements OnInit {
                     datasets: [{
                         data: items.map((item) => item.adoption_percentage || 0),
                         label: '% de adopción',
-                        backgroundColor: '#9cc7bf',
+                        backgroundColor: '#256C63',
                         borderRadius: 6,
                         borderSkipped: false,
                     }]
