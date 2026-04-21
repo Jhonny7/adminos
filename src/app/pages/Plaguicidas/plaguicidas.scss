@@ -43,26 +43,28 @@
     }
 
     .filters-card {
-        padding: 1.7rem 1.9rem;
+        padding: 1.8rem 2rem;
     }
 
     .filters-rows {
         display: flex;
         flex-direction: column;
-        gap: 1.2rem;
+        gap: 1.5rem;
     }
 
     .filters-row {
         display: flex;
         align-items: flex-end;
-        gap: 1.35rem;
+        flex-wrap: wrap;
+        gap: 1.1rem 1.2rem;
     }
 
     .filter-field {
         display: flex;
         flex-direction: column;
-        gap: 0.52rem;
+        gap: 0.5rem;
         min-width: 0;
+        overflow: hidden;
 
         label {
             display: inline-flex;
@@ -91,6 +93,7 @@
             color: #1d2630;
             background: #ffffff;
             font-size: 0.88rem;
+            box-sizing: border-box;
         }
 
         input::placeholder {
@@ -102,27 +105,26 @@
     .field-municipio,
     .field-cycle,
     .field-category {
-        flex: 1 1 22rem;
+        flex: 1 1 12rem;
     }
 
     .field-cultivo,
     .field-application {
-        flex: 1 1 19rem;
+        flex: 1 1 10rem;
     }
 
     .field-year {
-        flex: 0 0 16rem;
+        flex: 0 0 8rem;
     }
 
     .field-localidad,
     .field-ingredient {
-        flex: 0 0 23rem;
-        max-width: 23rem;
+        flex: 1 1 14rem;
     }
 
     .export-button {
         height: 3.05rem;
-        flex: 0 0 19rem;
+        flex: 0 0 auto;
         border: none;
         border-radius: 1rem;
         background: #a1244e;
@@ -643,10 +645,6 @@
         .kpi-grid,
         .gender-layout {
             grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .filters-row {
-            flex-wrap: wrap;
         }
 
         .field-state,
