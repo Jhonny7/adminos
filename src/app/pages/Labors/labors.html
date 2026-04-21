@@ -27,60 +27,78 @@
         </div>
 
         <div class="kpi-row">
-            <div class="kpi-card">
-                <div class="kpi-top">
-                    <span class="kpi-icon">📋</span>
-                    <span class="kpi-change">+13.1% vs mes anterior</span>
+            @for (card of kpiCards; track card.key) {
+                <div class="kpi-card">
+                    <div class="kpi-top">
+                        <span class="kpi-icon">{{ card.icon }}</span>
+                        <span class="kpi-change" [class.is-down]="isTrendDown(card.trend)" [class.is-muted]="card.loading || !card.trend">
+                            {{ card.loading ? 'Cargando...' : getTrendLabel(card.trend) }}
+                        </span>
+                    </div>
+                    <div class="kpi-label">{{ card.label }}</div>
+                    <div class="kpi-value">{{ card.loading ? '--' : formatMetricValue(card.value, card.unit) }}</div>
+                    <div class="kpi-sub">{{ card.subtitle }}</div>
+                    @if (card.progress?.value !== undefined) {
+                        <div class="kpi-progress">{{ card.progress?.label || 'Progreso' }}: {{ formatPercentage(card.progress?.value) }}</div>
+                    }
                 </div>
-                <div class="kpi-label">Labores Registradas</div>
-                <div class="kpi-value">1,760</div>
-                <div class="kpi-sub">Eventos totales</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-top">
-                    <span class="kpi-icon">🚜</span>
-                    <span class="kpi-change">634 con registro</span>
-                </div>
-                <div class="kpi-label">Predios con Registro</div>
-                <div class="kpi-value">634</div>
-                <div class="kpi-sub">De 845 totales (75%)</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-top">
-                    <span class="kpi-icon">🌱</span>
-                    <span class="kpi-change">+9.7% incremento</span>
-                </div>
-                <div class="kpi-label">Superficie con Labores</div>
-                <div class="kpi-value">2,890 Ha</div>
-                <div class="kpi-sub">75% del total</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-top">
-                    <span class="kpi-icon">🛡️</span>
-                    <span class="kpi-change">9 técnicas</span>
-                </div>
-                <div class="kpi-label">Prácticas de Conservación</div>
-                <div class="kpi-value">9</div>
-                <div class="kpi-sub">Técnicas implementadas</div>
-            </div>
+            }
         </div>
 
         <div class="chart-row two-cols">
             <div class="chart-card">
-                <h4>Distribución de Labores por Tipo</h4>
-                <p>Cantidad de registros por actividad agrícola</p>
-                @if (chartsReady()) {
+                <h4>{{ chartMeta.distributionByType.title }}</h4>
+                <p>{{ chartMeta.distributionByType.subtitle }}</p>
+                @if (chartLoading.distributionByType) {
+                    <div class="chart-placeholder">Cargando gráfica...</div>
+                } @else if (chartsReady()) {
                     <div class="chart-canvas tall">
                         <canvas baseChart [data]="laborTypeData" [options]="laborTypeOptions" [type]="'bar'"></canvas>
                     </div>
                 }
+                @if (!chartLoading.distributionByType && distributionItems.length) {
+                    <div class="chart-detail-list">
+                        @for (item of distributionItems; track item.key || item.label; let index = $index) {
+                            <div class="detail-row">
+                                <div class="detail-header">
+                                    <span class="detail-label">{{ item.label }}</span>
+                                    <span class="detail-value">{{ formatMetricValue(item.value) }} ({{ formatPercentage(item.percentage) }})</span>
+                                </div>
+                                <div class="detail-track">
+                                    <span class="detail-fill" [style.width.%]="item.percentage || 0" [style.background]="getDistributionColor(index)"></span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
             </div>
             <div class="chart-card small">
-                <h4>Actividad Mensual de Labores</h4>
-                <p>Número de labores registradas por mes (2026)</p>
-                @if (chartsReady()) {
+                <h4>{{ chartMeta.monthlyActivity.title }}</h4>
+                <p>{{ chartMeta.monthlyActivity.subtitle }}</p>
+                @if (chartLoading.monthlyActivity) {
+                    <div class="chart-placeholder">Cargando gráfica...</div>
+                } @else if (chartsReady()) {
                     <div class="chart-canvas">
                         <canvas baseChart [data]="monthlyData" [options]="monthlyOptions" [type]="'bar'"></canvas>
+                    </div>
+                }
+                @if (!chartLoading.monthlyActivity && (monthlyActivityColumns[0].length || monthlyActivityColumns[1].length)) {
+                    <div class="chart-detail-grid">
+                        @for (column of monthlyActivityColumns; track $index) {
+                            <div class="detail-column">
+                                @for (item of column; track item.month_number || item.month) {
+                                    <div class="detail-row compact">
+                                        <div class="detail-header">
+                                            <span class="detail-label">{{ item.month }}</span>
+                                            <span class="detail-value">{{ formatMetricValue(item.value) }} ({{ formatPercentage(item.percentage) }})</span>
+                                        </div>
+                                        <div class="detail-track">
+                                            <span class="detail-fill monthly" [style.width.%]="item.percentage || 0"></span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
                     </div>
                 }
             </div>
@@ -88,11 +106,28 @@
 
         <div class="chart-row one-col">
             <div class="chart-card wide">
-                <h4>Adopción de Prácticas de Conservación de Suelo</h4>
-                <p>Porcentaje de productores que implementan cada técnica</p>
-                @if (chartsReady()) {
+                <h4>{{ chartMeta.conservationAdoption.title }}</h4>
+                <p>{{ chartMeta.conservationAdoption.subtitle }}</p>
+                @if (chartLoading.conservationAdoption) {
+                    <div class="chart-placeholder wide-placeholder">Cargando gráfica...</div>
+                } @else if (chartsReady()) {
                     <div class="chart-canvas wide-canvas">
                         <canvas baseChart [data]="adoptionData" [options]="adoptionOptions" [type]="'bar'"></canvas>
+                    </div>
+                }
+                @if (!chartLoading.conservationAdoption && adoptionDetailItems.length) {
+                    <div class="chart-detail-list adoption-detail-list">
+                        @for (item of adoptionDetailItems; track item.label) {
+                            <div class="detail-row">
+                                <div class="detail-header">
+                                    <span class="detail-label">{{ item.label }}</span>
+                                    <span class="detail-value">{{ formatPercentage(item.value) }}</span>
+                                </div>
+                                <div class="detail-track">
+                                    <span class="detail-fill adoption" [style.width.%]="item.value"></span>
+                                </div>
+                            </div>
+                        }
                     </div>
                 }
             </div>
@@ -103,19 +138,16 @@
                 <span class="info-icon">🛡️</span>
                 <div>
                     <h4>Prácticas de Conservación de Suelo</h4>
-                    <p>
-                        El 68.5% de los productores incorporan materia orgánica, siendo la práctica de conservación más adoptada.
-                        La labranza mínima y los cultivos de cobertura también muestran alta aceptación, contribuyendo a la sostenibilidad del sistema productivo.
-                    </p>
+                    <p>{{ conservationNarrative }}</p>
                 </div>
             </div>
             <div class="info-grid">
-                <div class="mini-stat"><strong>68.5%</strong><span>Incorporación de materia orgánica</span></div>
-                <div class="mini-stat"><strong>54.2%</strong><span>Labranza mínima / reducida</span></div>
-                <div class="mini-stat"><strong>42.8%</strong><span>Cultivos de cobertura</span></div>
-                <div class="mini-stat"><strong>38.6%</strong><span>Siembra en curvas de nivel</span></div>
-                <div class="mini-stat"><strong>31.4%</strong><span>Barreras vivas</span></div>
-                <div class="mini-stat"><strong>24.7%</strong><span>Terrazas individuales</span></div>
+                @for (item of adoptionHighlights; track item.key || item.label) {
+                    <div class="mini-stat">
+                        <strong>{{ formatPercentage(item.adoption_percentage) }}</strong>
+                        <span>{{ item.label }}</span>
+                    </div>
+                }
             </div>
         </div>
     </div>

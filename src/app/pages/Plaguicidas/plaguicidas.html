@@ -1,0 +1,308 @@
+<ocontainer [extraClass]="'cls-plaguicidas'">
+    <div class="pesticides-page">
+        <div class="page-heading">
+            <h2>Panel de Control de Plaguicidas</h2>
+            <p>Monitoreo de uso, categorías toxicológicas y distribución por productor</p>
+        </div>
+
+        <section class="filters-card">
+            <div class="filters-rows">
+                <div class="filters-row">
+                <div class="filter-field field-state">
+                    <label><mat-icon>place</mat-icon> Estado</label>
+                    <select>
+                        <option>Todos los estados</option>
+                    </select>
+                </div>
+                <div class="filter-field field-municipio">
+                    <label><mat-icon>location_city</mat-icon> Municipio</label>
+                    <select>
+                        <option>Todos los municipios</option>
+                    </select>
+                </div>
+                <div class="filter-field field-localidad">
+                    <label><mat-icon>search</mat-icon> Localidad</label>
+                    <input type="text" placeholder="Buscar localidad...">
+                </div>
+                <div class="filter-field field-cultivo">
+                    <label><mat-icon>eco</mat-icon> Cultivo</label>
+                    <select>
+                        <option>Todos los cultivos</option>
+                    </select>
+                </div>
+                <div class="filter-field field-year">
+                    <label><mat-icon>calendar_today</mat-icon> Año</label>
+                    <select>
+                        <option>2025</option>
+                    </select>
+                </div>
+                </div>
+
+                <div class="filters-row">
+                <div class="filter-field field-cycle">
+                    <label><mat-icon>agriculture</mat-icon> Ciclo agrícola</label>
+                    <select>
+                        <option>Todos los ciclos</option>
+                    </select>
+                </div>
+                <div class="filter-field field-category">
+                    <label><mat-icon>warning</mat-icon> Categoría toxicológica</label>
+                    <select>
+                        <option>Todas las categorías</option>
+                    </select>
+                </div>
+                <div class="filter-field field-application">
+                    <label><mat-icon>air</mat-icon> Forma de aplicación</label>
+                    <select>
+                        <option>Todas</option>
+                    </select>
+                </div>
+                <div class="filter-field field-ingredient">
+                    <label><mat-icon>science</mat-icon> Ingrediente activo</label>
+                    <input type="text" placeholder="Buscar ingrediente...">
+                </div>
+                <button class="export-button" type="button" (click)="downloadRecordsCsv()">
+                    <mat-icon>download</mat-icon>
+                    Exportar CSV
+                </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="kpi-grid">
+            @for (card of kpiCards; track card.key) {
+                <article class="kpi-card">
+                    <div class="kpi-header-row">
+                        <div class="kpi-icon-shell">
+                            <mat-icon>{{ card.icon }}</mat-icon>
+                        </div>
+                        @if (card.trend && !card.loading) {
+                            <span class="trend-pill" [class.down]="isTrendDown(card.trend)">{{ getTrendLabel(card.trend) }}</span>
+                        }
+                    </div>
+                    <div class="kpi-label">{{ card.label }}</div>
+                    <div class="kpi-value">{{ card.loading ? '--' : formatMetricValue(card.value, card.unit) }}</div>
+                    <div class="kpi-subtitle">{{ card.subtitle }}</div>
+                    <div class="kpi-trend-label">{{ card.trend?.label || '&nbsp;' }}</div>
+                    <div class="kpi-progress-row">
+                        <span>{{ card.progress?.label || 'Progreso' }}</span>
+                        <strong>{{ formatPercentage(card.progress?.value) }}</strong>
+                    </div>
+                    <div class="progress-track">
+                        <span class="progress-fill" [style.width.%]="card.progress?.value || 0"></span>
+                    </div>
+                </article>
+            }
+        </section>
+
+        <section class="panel-card">
+            <div class="panel-header">
+                <h3>{{ sectionMeta.usageByType.title }}</h3>
+                <p>{{ sectionMeta.usageByType.subtitle }}</p>
+            </div>
+
+            @if (loadingBySection.usageByType) {
+                <div class="section-loader">Cargando distribución por tipo...</div>
+            } @else {
+                <div class="chart-frame usage-frame">
+                    <div class="axis-y">
+                        @for (tick of usageAxisTicks; track tick) {
+                            <span>{{ formatMetricValue(tick) }}</span>
+                        }
+                    </div>
+                    <div class="plot-shell">
+                        <div class="plot-grid"></div>
+                        <div class="usage-bars" [style.gridTemplateColumns]="'repeat(' + usageByTypeItems.length + ', minmax(0, 1fr))'">
+                            @for (item of usageByTypeItems; track item.key || item.label) {
+                                <div class="bar-column">
+                                    <div class="bar" [style.height.%]="getUsageBarHeight(item.value)" [style.background]="item.color || '#2D6A4F'">
+                                        <span>{{ formatPercentage(item.percentage) }}</span>
+                                    </div>
+                                    <div class="bar-label">{{ item.label }}</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-list">
+                    @for (item of usageByTypeItems; track item.key || item.label) {
+                        <div class="detail-row with-dot">
+                            <div class="detail-main">
+                                <span class="detail-dot" [style.background]="item.color || '#2D6A4F'"></span>
+                                <span class="detail-label">{{ item.label }}</span>
+                            </div>
+                            <span class="detail-value">{{ formatMetricValue(item.value, item.unit) }} ({{ formatPercentage(item.percentage) }})</span>
+                            <div class="detail-track full-width">
+                                <span class="detail-fill" [style.width.%]="item.percentage || 0" [style.background]="item.color || '#2D6A4F'"></span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </section>
+
+        <section class="panel-card">
+            <div class="panel-header">
+                <h3>{{ sectionMeta.toxicologyDistribution.title }}</h3>
+                <p>{{ sectionMeta.toxicologyDistribution.subtitle }}</p>
+            </div>
+
+            <div class="toggle-row">
+                <button type="button" class="toggle-chip" [class.active]="isToxicologyRecordsView()" (click)="setToxicologyView('records')">
+                    {{ toxicologyByRecordsLabel }}
+                </button>
+                <button type="button" class="toggle-chip" [class.active]="isToxicologyHectaresView()" (click)="setToxicologyView('hectares')">
+                    {{ toxicologyByHectaresLabel }}
+                </button>
+            </div>
+
+            @if (loadingBySection.toxicologyDistribution) {
+                <div class="section-loader">Cargando distribución toxicológica...</div>
+            } @else {
+                <div class="stacked-wrapper">
+                    <div class="stacked-bar">
+                        @for (item of currentToxicologyItems; track item.key || item.label) {
+                            <div class="stack-segment" [style.width.%]="item.percentage || 0" [style.background]="item.color || '#2D6A4F'">
+                                <span>{{ formatPercentage(item.percentage) }}</span>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="axis-bottom">
+                        <span>0%</span>
+                        <span>25%</span>
+                        <span>50%</span>
+                        <span>75%</span>
+                        <span>100%</span>
+                    </div>
+
+                    <div class="legend-row">
+                        @for (item of currentToxicologyItems; track item.key || item.label) {
+                            <div class="legend-item" [style.color]="item.color || '#2D6A4F'">
+                                <span class="detail-dot" [style.background]="item.color || '#2D6A4F'"></span>
+                                {{ item.label }}
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="detail-list">
+                    @for (item of currentToxicologyItems; track item.key || item.label) {
+                        <div class="detail-row with-dot">
+                            <div class="detail-main">
+                                <span class="detail-dot" [style.background]="item.color || '#2D6A4F'"></span>
+                                <span class="detail-label">{{ item.label }}</span>
+                            </div>
+                            <span class="detail-value">{{ formatToxicologyMetric(item) }}</span>
+                            <div class="detail-track full-width">
+                                <span class="detail-fill" [style.width.%]="item.percentage || 0" [style.background]="item.color || '#2D6A4F'"></span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </section>
+
+        <section class="panel-card compact-panel">
+            <div class="panel-header">
+                <h3>{{ sectionMeta.usageByGender.title }}</h3>
+                <p>{{ sectionMeta.usageByGender.subtitle }}</p>
+            </div>
+
+            @if (loadingBySection.usageByGender) {
+                <div class="section-loader">Cargando distribución por género...</div>
+            } @else {
+                <div class="gender-layout">
+                    <div class="chart-frame gender-frame">
+                        <div class="axis-y small">
+                            @for (tick of genderAxisTicks; track tick) {
+                                <span>{{ tick }}</span>
+                            }
+                        </div>
+                        <div class="plot-shell compact">
+                            <div class="plot-grid"></div>
+                            <div class="usage-bars" [style.gridTemplateColumns]="'repeat(' + genderItems.length + ', minmax(0, 1fr))'">
+                                @for (item of genderItems; track item.key || item.label) {
+                                    <div class="bar-column narrow">
+                                        <div class="bar narrow" [style.height.%]="getGenderBarHeight(item.percentage)" [style.background]="item.color || '#2D6A4F'">
+                                            <span>{{ formatPercentage(item.percentage) }}</span>
+                                        </div>
+                                        <div class="bar-label">{{ item.label }}</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="gender-cards">
+                        @for (item of genderItems; track item.key || item.label) {
+                            <article class="gender-card">
+                                <div class="gender-card-main">
+                                    <div class="gender-icon-shell" [style.color]="item.color || '#2D6A4F'">
+                                        <mat-icon>{{ getGenderIcon(item) }}</mat-icon>
+                                    </div>
+                                    <div class="gender-copy">
+                                        <h4>{{ item.label }}</h4>
+                                        <p>{{ formatMetricValue(item.count) }} productores</p>
+                                    </div>
+                                </div>
+                                <strong class="gender-percent" [style.color]="item.color || '#2D6A4F'">{{ formatPercentage(item.percentage) }}</strong>
+                                <div class="detail-track full-width gender-track">
+                                    <span class="detail-fill" [style.width.%]="item.percentage || 0" [style.background]="item.color || '#2D6A4F'"></span>
+                                </div>
+                            </article>
+                        }
+                    </div>
+                </div>
+            }
+        </section>
+
+        <section class="panel-card">
+            <div class="panel-header">
+                <h3>{{ sectionMeta.recordsSummary.title }}</h3>
+                <p>{{ sectionMeta.recordsSummary.subtitle }}</p>
+            </div>
+
+            @if (loadingBySection.recordsSummary) {
+                <div class="section-loader">Cargando tabla resumen...</div>
+            } @else {
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cultivo</th>
+                                <th>Tipo plaguicida</th>
+                                <th>Ingrediente activo</th>
+                                <th>Categoría toxicológica</th>
+                                <th>Superficie (ha)</th>
+                                <th>Productor (sexo)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (item of recordsSummaryItems; track item.crop + item.active_ingredient + item.surface) {
+                                <tr>
+                                    <td>{{ item.crop }}</td>
+                                    <td>{{ item.pesticide_type }}</td>
+                                    <td>{{ item.active_ingredient }}</td>
+                                    <td>
+                                        <span
+                                            class="risk-pill"
+                                            [class.high]="isHighRisk(item)"
+                                            [class.moderate]="isModerateRisk(item)"
+                                            [class.low]="isLowRisk(item)"
+                                            [class.safe]="isNoRisk(item)">
+                                            {{ item.toxicology_category }}
+                                        </span>
+                                    </td>
+                                    <td>{{ formatSurface(item) }}</td>
+                                    <td>{{ item.producer_gender }}</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </section>
+    </div>
+</ocontainer>

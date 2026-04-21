@@ -72,7 +72,13 @@ export class SidebarComponent implements OnInit {
     {
       label: 'Mis Labores',
       icon: 'assignment',
-      routerLink: '/admin/labors',
+      routerLink: '/admin/labores',
+      exact: true
+    },
+    {
+      label: 'Plaguicidas',
+      icon: 'pest_control',
+      routerLink: '/admin/plaguicidas',
       exact: true
     }
   ];
