@@ -1,0 +1,127 @@
+<ocontainer [extraClass]="'cls-predios'">
+    <div class="predios-page">
+
+        <section class="filters-card">
+            <div class="filters-title">
+                <mat-icon>filter_alt</mat-icon>
+                <h3>Filtros de Ubicación y Tiempo</h3>
+            </div>
+            <div class="filters-row">
+                <div class="filter-field">
+                    <label>Estado</label>
+                    <select [(ngModel)]="selectedEstado">
+                        <option *ngFor="let opt of estados" [value]="opt.value">{{ opt.label }}</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label>Municipio</label>
+                    <select [(ngModel)]="selectedMunicipio">
+                        <option *ngFor="let opt of municipios" [value]="opt.value">{{ opt.label }}</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label>Localidad</label>
+                    <select [(ngModel)]="selectedLocalidad">
+                        <option *ngFor="let opt of localidades" [value]="opt.value">{{ opt.label }}</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label>Cultivo</label>
+                    <select [(ngModel)]="selectedCultivo">
+                        <option *ngFor="let opt of cultivos" [value]="opt.value">{{ opt.label }}</option>
+                    </select>
+                </div>
+                <div class="filter-field field-small">
+                    <label>Año</label>
+                    <select [(ngModel)]="selectedAnio">
+                        <option *ngFor="let opt of anios" [value]="opt.value">{{ opt.label }}</option>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label>Ciclo Agrícola</label>
+                    <select [(ngModel)]="selectedCiclo">
+                        <option *ngFor="let opt of ciclos" [value]="opt.value">{{ opt.label }}</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <div class="main-layout">
+            <section class="map-card">
+                <div class="map-header">
+                    <div class="map-title">
+                        <mat-icon>location_on</mat-icon>
+                        <h3>Mapa de Predios Activos</h3>
+                    </div>
+                    <div class="map-zoom-controls">
+                        <button type="button" class="zoom-btn" (click)="zoomIn()">
+                            <mat-icon>zoom_in</mat-icon>
+                        </button>
+                        <button type="button" class="zoom-btn" (click)="zoomOut()">
+                            <mat-icon>zoom_out</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <div class="map-wrapper">
+                    <div class="map-container" id="predios-map"></div>
+                </div>
+                <div class="map-legend">
+                    <span class="legend-item">
+                        <span class="legend-dot density"></span> Densidad de predios
+                    </span>
+                    <span class="legend-item">
+                        <span class="legend-dot individual"></span> Predio individual
+                    </span>
+                </div>
+            </section>
+
+            <aside class="search-panel">
+                <h3 class="panel-title">Búsquedas Personalizadas</h3>
+
+                <div class="accordion-section">
+                    <button type="button" class="accordion-header" (click)="toggleSection('infra')">
+                        <span>Infraestructura</span>
+                        <mat-icon>{{ infraOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+                    </button>
+                    <div class="accordion-body" *ngIf="infraOpen">
+                        <div class="search-field">
+                            <label>Mecanización</label>
+                            <select [(ngModel)]="selectedMecanizacion">
+                                <option *ngFor="let opt of mecanizacion" [value]="opt.value">{{ opt.label }}</option>
+                            </select>
+                            <span class="badge">{{ prediosMecanizacion }} predios</span>
+                        </div>
+                        <div class="search-field">
+                            <label>Tipo de riego</label>
+                            <select [(ngModel)]="selectedTipoRiego">
+                                <option *ngFor="let opt of tiposRiego" [value]="opt.value">{{ opt.label }}</option>
+                            </select>
+                            <span class="badge">{{ prediosRiego }} predios</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-section">
+                    <button type="button" class="accordion-header" (click)="toggleSection('proceso')">
+                        <span>Proceso</span>
+                        <mat-icon>{{ procesoOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+                    </button>
+                    <div class="accordion-body" *ngIf="procesoOpen">
+                        <p class="empty-text">Sin filtros configurados</p>
+                    </div>
+                </div>
+
+                <div class="accordion-section">
+                    <button type="button" class="accordion-header" (click)="toggleSection('recursos')">
+                        <span>Recursos y Riesgos</span>
+                        <mat-icon>{{ recursosOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+                    </button>
+                    <div class="accordion-body" *ngIf="recursosOpen">
+                        <p class="empty-text">Sin filtros configurados</p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+    </div>
+</ocontainer>

@@ -29,8 +29,9 @@
   display: flex;
   align-items: center;
   padding: 0 16px;
-  background: linear-gradient(180deg, #11161d 0%, #0d1218 100%);
-  color: white;
+  background: #ffffff;
+  color: #1d2630;
+  border-bottom: 1px solid #d5dbe3;
   position: fixed;
   top: 0;
   left: 0;
@@ -54,6 +55,23 @@
 
   .left {
     text-align: left;
+
+    .square-icon {
+      border-color: transparent !important;
+
+      ::ng-deep span {
+        color: #11161d !important;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .square-icon {
+    border-color: #d5dbe3 !important;
+
+    ::ng-deep span {
+      color: #516173 !important;
+    }
   }
 }
 
@@ -64,7 +82,6 @@
 ::ng-deep .mat-drawer {
   width: 250px !important;
   transition: width 0.3s ease;
-  border: none !important;
 }
 
 ::ng-deep .mat-drawer.collapsed {

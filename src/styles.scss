@@ -87,3 +87,9 @@ body {
   overflow: hidden !important;
   padding: 0 !important;
 }
+
+/* Leaflet: ensure tiles render correctly */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+}
