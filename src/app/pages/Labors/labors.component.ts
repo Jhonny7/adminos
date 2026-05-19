@@ -319,7 +319,8 @@ export class Labors implements OnInit {
     }
 
     ngOnInit(): void {
-        this.loadDashboardData();
+        this.loadFilterOptions();
+        this.loadChartData();
     }
 
     private refreshCharts(): void {
@@ -337,14 +338,96 @@ export class Labors implements OnInit {
         }
     }
 
-    private loadDashboardData(): void {
-        this.loadSummaryCard('laborsRegistered', paths.laborsRegistered);
-        this.loadSummaryCard('estatesWithLabors', paths.estatesWithLabors);
-        this.loadSummaryCard('surfaceWithLabors', paths.surfaceWithLabors);
-        this.loadSummaryCard('conservationPractices', paths.conservationPractices);
-        this.loadDistributionByType();
-        this.loadMonthlyActivity();
-        this.loadConservationAdoption();
+    // ── Filtros ──────────────────────────────────────────────────────────────
+    private loadFilterOptions(): void {
+        this.loadEstados();
+        this.loadCatalogsLabors();
+        this.generateAnios();
+    }
+
+    private loadEstados(): void {
+        this.filtersLoading = { ...this.filtersLoading, estados: true };
+        this.genericService.sendGetRequest<any>(paths.filterEstados, null, true).subscribe({
+            next: (response) => {
+                this.estados = (response.states || []).map((s: any) => ({ id: s.code, label: s.name }));
+                this.filtersLoading = { ...this.filtersLoading, estados: false };
+                this.cdr.markForCheck();
+            },
+            error: () => {
+                this.filtersLoading = { ...this.filtersLoading, estados: false };
+                this.cdr.markForCheck();
+            }
+        });
+    }
+
+    private generateAnios(): void {
+        const currentYear = 2026;
+        this.anios = Array.from({ length: 11 }, (_, i) => {
+            const year = currentYear - i;
+            return { id: String(year), label: String(year) };
+        });
+    }
+
+    private loadCatalogsLabors(): void {
+        this.filtersLoading = {
+            ...this.filtersLoading,
+            regimenes: true,
+            ciclos: true,
+            tiposProductor: true,
+            cultivos: true
+        };
+        this.genericService.sendGetRequest<any>(paths.catalogsDashboard, null, true).subscribe({
+            next: (response) => {
+                this.regimenes = (response.regimens || []).map((r: any) => ({ id: r.id, label: r.name }));
+                this.ciclos = (response.cycle || []).map((c: any) => ({ id: c.id, label: c.name }));
+                this.tiposProductor = (response.producer_type || []).map((p: any) => ({ id: p.id, label: p.name }));
+                this.cultivos = (response.crops || []).map((cr: any) => ({ id: cr.id, label: cr.name }));
+                this.filtersLoading = {
+                    ...this.filtersLoading,
+                    regimenes: false,
+                    ciclos: false,
+                    tiposProductor: false,
+                    cultivos: false
+                };
+                this.cdr.markForCheck();
+            },
+            error: () => {
+                this.filtersLoading = {
+                    ...this.filtersLoading,
+                    regimenes: false,
+                    ciclos: false,
+                    tiposProductor: false,
+                    cultivos: false
+                };
+                this.cdr.markForCheck();
+            }
+        });
+    }
+
+    private buildFilterParams(filters?: FilterParams): Record<string, string> | null {
+        if (!filters) {
+            return null;
+        }
+        const params: Record<string, string> = {};
+        if (filters.estado) { params['state'] = filters.estado; }
+        if (filters.municipio) { params['municipality'] = filters.municipio; }
+        if (filters.regimen) { params['regimen'] = filters.regimen; }
+        if (filters.anio) { params['year'] = filters.anio; }
+        if (filters.ciclo) { params['cycle'] = filters.ciclo; }
+        if (filters.tipoProductor) { params['producer_type'] = filters.tipoProductor; }
+        if (filters.cultivo) { params['crop'] = filters.cultivo; }
+        return Object.keys(params).length ? params : null;
+    }
+
+    loadChartData(filters?: FilterParams): void {
+        const params = this.buildFilterParams(filters);
+        this.loadSummaryCard('laborsRegistered', paths.laborsRegistered, params);
+        this.loadSummaryCard('estatesWithLabors', paths.estatesWithLabors, params);
+        this.loadSummaryCard('surfaceWithLabors', paths.surfaceWithLabors, params);
+        this.loadSummaryCard('conservationPractices', paths.conservationPractices, params);
+        this.loadDistributionByType(params);
+        this.loadMonthlyActivity(params);
+        this.loadConservationAdoption(params);
     }
 
     onEstadoChange(estadoId: string): void {
@@ -371,7 +454,7 @@ export class Labors implements OnInit {
     }
 
     applyFilters(): void {
-        
+        this.loadChartData(this.filterValues);
     }
 
     clearFilters(): void {
@@ -385,10 +468,11 @@ export class Labors implements OnInit {
             cultivo: ''
         };
         this.municipios = [];
+        this.loadChartData();
     }
 
-    private loadSummaryCard(key: SummaryKey, url: string): void {
-        this.genericService.sendGetRequest<SummaryResponse>(url, null, true).subscribe({
+    private loadSummaryCard(key: SummaryKey, url: string, params?: Record<string, string> | null): void {
+        this.genericService.sendGetParams<SummaryResponse>(url, params ?? {}, true).subscribe({
             next: (response: SummaryResponse) => {
                 this.updateKpiCard(key, response);
             },
@@ -444,8 +528,8 @@ export class Labors implements OnInit {
         this.cdr.markForCheck();
     }
 
-    private loadDistributionByType(): void {
-        this.genericService.sendGetRequest<DistributionResponse>(paths.laborsDistributionByType, null, true).subscribe({
+    private loadDistributionByType(params?: Record<string, string> | null): void {
+        this.genericService.sendGetParams<DistributionResponse>(paths.laborsDistributionByType, params ?? {}, true).subscribe({
             next: (response: DistributionResponse) => {
                 this.chartMeta = {
                     ...this.chartMeta,
@@ -483,8 +567,8 @@ export class Labors implements OnInit {
         });
     }
 
-    private loadMonthlyActivity(): void {
-        this.genericService.sendGetRequest<MonthlyActivityResponse>(paths.laborsMonthlyActivity, null, true).subscribe({
+    private loadMonthlyActivity(params?: Record<string, string> | null): void {
+        this.genericService.sendGetParams<MonthlyActivityResponse>(paths.laborsMonthlyActivity, params ?? {}, true).subscribe({
             next: (response: MonthlyActivityResponse) => {
                 this.chartMeta = {
                     ...this.chartMeta,
@@ -525,8 +609,8 @@ export class Labors implements OnInit {
         ];
     }
 
-    private loadConservationAdoption(): void {
-        this.genericService.sendGetRequest<ConservationAdoptionResponse>(paths.laborsConservationAdoption, null, true).subscribe({
+    private loadConservationAdoption(params?: Record<string, string> | null): void {
+        this.genericService.sendGetParams<ConservationAdoptionResponse>(paths.laborsConservationAdoption, params ?? {}, true).subscribe({
             next: (response: ConservationAdoptionResponse) => {
                 this.chartMeta = {
                     ...this.chartMeta,
