@@ -6,6 +6,7 @@ import { Home } from './pages/Home/home.component';
 import { Dashboard } from './pages/Dashboard/dashboard.component';
 import { Labors } from './pages/Labors/labors.component';
 import { Plaguicidas } from './pages/Plaguicidas/plaguicidas.component';
+import { ReturnsCosts } from './pages/ReturnsCosts/returns-costs.component';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -26,6 +27,7 @@ export const routes: Routes = [
       { path: 'resumen', component: Dashboard },
       { path: 'labores', component: Labors },
       { path: 'plaguicidas', component: Plaguicidas },
+      { path: 'returns-costs', component: ReturnsCosts },
       { path: 'home', component: Home }
     ]
   }

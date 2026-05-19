@@ -1,0 +1,104 @@
+.cls-returns-costs {
+  background-color: transparent !important;
+  .container-box {
+    background-color: transparent !important;
+  }
+}
+
+.cls-returns-costs > div {
+  background-color: transparent !important;
+}
+
+.returns-costs-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+  color: #1d2630;
+
+  .filters-card,
+  .kpi-card,
+  .chart-card {
+    background: #ffffff;
+    border: 1px solid #dbe1e8;
+    border-radius: 1.4rem;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08), 0 12px 24px rgba(15, 23, 42, 0.04);
+  }
+
+  .filters-card {
+    padding: 1.2rem 1.35rem;
+  }
+
+  .filters-row {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .filters-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+
+    .btn-apply {
+      padding: 0.55rem 1.3rem;
+      background: #A1244E;
+      color: #ffffff;
+      border: none;
+      border-radius: 0.6rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s;
+      &:hover {
+        background: #8a1d41;
+      }
+    }
+    .btn-clear {
+      padding: 0.55rem 1.3rem;
+      background: #ffffff;
+      color: #1d2630;
+      border: 1px solid #d7dce2;
+      border-radius: 0.6rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s;
+      &:hover {
+        background: #f5f7fa;
+      }
+    }
+  }
+
+  .filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.52rem;
+    min-width: 0;
+    label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      color: #697586;
+      font-size: 0.8rem;
+      font-weight: 700;
+      line-height: 1.2;
+      .mat-icon {
+        width: 15px;
+        height: 15px;
+        font-size: 15px;
+      }
+    }
+    select {
+      width: 100%;
+      height: 3.05rem;
+      border: 1px solid #d7dce2;
+      border-radius: 1rem;
+      padding: 0 0.92rem;
+      outline: none;
+      color: #1d2630;
+      background: #ffffff;
+      font-size: 0.88rem;
+    }
+  }
+}

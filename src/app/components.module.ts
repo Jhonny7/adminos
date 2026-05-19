@@ -39,6 +39,7 @@ import { OIconComponent } from "./components/atoms/oicon/oicon.component";
 import { ModalPanelContainerComponent } from "./components/atoms/modal-panel/modal-panel.component";
 import { PopoverContainerComponent } from "./components/atoms/popover/popover.component";
 import { BaseChartDirective } from 'ng2-charts';
+import { ReturnsCosts } from "./pages/ReturnsCosts/returns-costs.component";
 
 export const exporters: any = [
   LayoutComponent,
@@ -78,6 +79,7 @@ export const exporters: any = [
   Home,
   Dashboard,
   Labors,
+  ReturnsCosts,
   Plaguicidas,
   OInputExampleComponent,
   ModalPanelContainerComponent,
