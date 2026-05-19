@@ -1,3 +1,4 @@
+ 
 export const path = "https://giz-qa.encodingmx.com/api/v1";
 
 export const sessionTag = "userSessionAdmonOS";
@@ -35,7 +36,16 @@ export const paths = {
   pesticidesRecordsSummary: `${path}/dashboard/pesticides/records-summary`,
   filterEstados: `${path}/sepomex/states`,
   filterMunicipiosBase: `${path}/sepomex/states`,
-  catalogsDashboard: `${path}/catalogs-dashboard`
+  catalogsDashboard: `${path}/catalogs-dashboard`,
+   // Costos y Rendimientos
+  averageYield: `${path}/dashboard/cost/average-yield`,
+  totalCostPerHectare: `${path}/dashboard/cost/total-cost-per-hectare`,
+  grossMarginPerHectare: `${path}/dashboard/cost/gross-margin-per-hectare`,
+  benefitCostRatio: `${path}/dashboard/cost/benefit-cost-ratio`,
+  yieldByHumidity: `${path}/dashboard/cost/yield-by-humidity`,
+  topCropsYield: `${path}/dashboard/cost/top-crops-yield`,
+  costYieldEvolution: `${path}/dashboard/cost/cost-yield-evolution`,
+  analysisTable: `${path}/dashboard/cost/analysis-table`,
 }
 
 export const themeData = {
