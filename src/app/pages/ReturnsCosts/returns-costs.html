@@ -11,7 +11,7 @@
             }
           </select>
         </div>
-        <div class="filter-field">
+        <div class="filter-field"> 
           <label>Municipio</label>
           <select [(ngModel)]="filterValues.municipio" [disabled]="!filterValues.estado || filtersLoading.municipios">
             <option value="">Todos</option>
@@ -75,6 +75,98 @@
     <div class="section-heading">
       <h2>Rendimientos y Costos de Producción</h2>
       <p>Estimación de costos de producción y análisis de rentabilidad</p>
+    </div>
+
+    <div class="kpi-row">
+      <!-- RENDIMIENTO PROMEDIO -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-icon-shell"><mat-icon>eco</mat-icon></span>
+          <span class="kpi-change" [class.is-down]="averageYieldData?.trend?.direction === 'down'" [class.is-muted]="!averageYieldData?.trend">
+            <ng-container *ngIf="averageYieldData; else loading1">
+              {{ averageYieldData.trend ? (averageYieldData.trend.label + ' ' + (averageYieldData.trend.percentage ? '(' + (averageYieldData.trend.percentage | number:'1.1-1') + '%)' : '')) : '' }}
+            </ng-container>
+            <ng-template #loading1>Cargando...</ng-template>
+          </span>
+        </div>
+        <div class="kpi-label">Rendimiento Promedio</div>
+        <div class="kpi-value">
+          <ng-container *ngIf="averageYieldData; else loadingVal1">
+            {{ averageYieldData.value }} {{ averageYieldData.unit }}
+          </ng-container>
+          <ng-template #loadingVal1>--</ng-template>
+        </div>
+        <div class="kpi-sub">{{ averageYieldData?.label }}</div>
+        <div class="kpi-progress" *ngIf="averageYieldData?.progress">
+          {{ averageYieldData.progress.label || 'Progreso' }}: {{ averageYieldData.progress.value | number:'1.0-0' }}%
+        </div>
+      </div>
+
+      <!-- COSTO TOTAL POR HECTÁREA -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-icon-shell"><mat-icon>attach_money</mat-icon></span>
+          <span class="kpi-change is-muted"></span>
+        </div>
+        <div class="kpi-label">Costo Total por Hectárea</div>
+        <div class="kpi-value">
+          <ng-container *ngIf="totalCostPerHectareData; else loadingVal2">
+            {{ totalCostPerHectareData.cost_per_hectare.average | currency:'USD':'symbol':'1.0-0' }}
+          </ng-container>
+          <ng-template #loadingVal2>--</ng-template>
+        </div>
+        <div class="kpi-sub">
+          <ng-container *ngIf="totalCostPerHectareData">
+            Fertilización {{ totalCostPerHectareData.breakdown.items[0]?.percentage | number:'1.0-0' }}% | Mano de obra {{ totalCostPerHectareData.breakdown.items[1]?.percentage | number:'1.0-0' }}%
+          </ng-container>
+        </div>
+        <div class="kpi-progress" *ngIf="totalCostPerHectareData?.progress">
+          {{ totalCostPerHectareData.progress.label || 'Progreso' }}: {{ totalCostPerHectareData.progress.value | number:'1.0-0' }}%
+        </div>
+      </div>
+
+      <!-- MARGEN BRUTO POR HECTÁREA -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-icon-shell"><mat-icon>account_balance_wallet</mat-icon></span>
+          <span class="kpi-change" [class.is-down]="grossMarginPerHectareData?.trend?.direction === 'down'" [class.is-muted]="!grossMarginPerHectareData?.trend">
+            <ng-container *ngIf="grossMarginPerHectareData; else loading3">
+              {{ grossMarginPerHectareData.trend ? (grossMarginPerHectareData.trend.label + ' ' + (grossMarginPerHectareData.trend.percentage ? '(' + (grossMarginPerHectareData.trend.percentage | number:'1.1-1') + '%)' : '')) : '' }}
+            </ng-container>
+            <ng-template #loading3>Cargando...</ng-template>
+          </span>
+        </div>
+        <div class="kpi-label">Margen Bruto por Hectárea</div>
+        <div class="kpi-value">
+          <ng-container *ngIf="grossMarginPerHectareData; else loadingVal3">
+            {{ grossMarginPerHectareData.value | currency:'USD':'symbol':'1.0-0' }}
+          </ng-container>
+          <ng-template #loadingVal3>--</ng-template>
+        </div>
+        <div class="kpi-sub">{{ grossMarginPerHectareData?.subtitle }}</div>
+        <div class="kpi-progress" *ngIf="grossMarginPerHectareData?.progress">
+          {{ grossMarginPerHectareData.progress.label || 'Progreso' }}: {{ grossMarginPerHectareData.progress.value | number:'1.0-0' }}%
+        </div>
+      </div>
+
+      <!-- RELACIÓN B/C -->
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <span class="kpi-icon-shell"><mat-icon>balance</mat-icon></span>
+          <span class="kpi-change is-muted"></span>
+        </div>
+        <div class="kpi-label">Relación B/C</div>
+        <div class="kpi-value">
+          <ng-container *ngIf="benefitCostRatioData; else loadingVal4">
+            {{ benefitCostRatioData.value }}
+          </ng-container>
+          <ng-template #loadingVal4>--</ng-template>
+        </div>
+        <div class="kpi-sub">Rentable (meta &gt;1.2)</div>
+        <div class="kpi-progress" *ngIf="benefitCostRatioData?.progress">
+          {{ benefitCostRatioData.progress.label || 'Progreso' }}: {{ benefitCostRatioData.progress.value | number:'1.0-0' }}%
+        </div>
+      </div>
     </div>
   </div>
 </ocontainer>
