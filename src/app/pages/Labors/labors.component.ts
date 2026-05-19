@@ -14,6 +14,7 @@ import {
 } from '@angular/core';
 import { ChartConfiguration, ChartData } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import { FilterOption, FilterParams, SepomexMunicipalitiesResponse } from '../Dashboard/dashboard.component';
 
 type SummaryKey = 'laborsRegistered' | 'estatesWithLabors' | 'surfaceWithLabors' | 'conservationPractices';
 type ChartKey = 'distributionByType' | 'monthlyActivity' | 'conservationAdoption';
@@ -275,6 +276,37 @@ export class Labors implements OnInit {
     public monthlyActivityColumns: MonthlyActivityItem[][] = [[], []];
     public conservationNarrative = 'Cargando adopción de prácticas de conservación.';
 
+    // ── Filters ────────────────────────────────────────────────────────────────
+    public filterValues: FilterParams = {
+        estado: '',
+        municipio: '',
+        regimen: '',
+        anio: '',
+        ciclo: '',
+        tipoProductor: '',
+        cultivo: ''
+    };
+
+    public estados: FilterOption[] = [];
+    public municipios: FilterOption[] = [];
+    public regimenes: FilterOption[] = [];
+    public anios: FilterOption[] = [];
+    public ciclos: FilterOption[] = [];
+    public tiposProductor: FilterOption[] = [];
+    public cultivos: FilterOption[] = [];
+
+    public filtersLoading = {
+        estados: false,
+        municipios: false,
+        regimenes: false,
+        anios: false,
+        ciclos: false,
+        tiposProductor: false,
+        cultivos: false
+    };
+    // ───────────────────────────────────────────────────────────────────────────
+
+
     constructor(
         private genericService: GenericService
     ) {
@@ -313,6 +345,46 @@ export class Labors implements OnInit {
         this.loadDistributionByType();
         this.loadMonthlyActivity();
         this.loadConservationAdoption();
+    }
+
+    onEstadoChange(estadoId: string): void {
+        this.filterValues = { ...this.filterValues, estado: estadoId, municipio: '' };
+        this.municipios = [];
+
+        if (!estadoId) {
+            return;
+        }
+
+        this.filtersLoading = { ...this.filtersLoading, municipios: true };
+        const url = `${paths.filterMunicipiosBase}/${estadoId}/municipalities`;
+        this.genericService.sendGetRequest<SepomexMunicipalitiesResponse>(url, null, true).subscribe({
+            next: (response) => {
+                this.municipios = (response.municipalities || []).map((m) => ({ id: m.code, label: m.name }));
+                this.filtersLoading = { ...this.filtersLoading, municipios: false };
+                this.cdr.markForCheck();
+            },
+            error: () => {
+                this.filtersLoading = { ...this.filtersLoading, municipios: false };
+                this.cdr.markForCheck();
+            }
+        });
+    }
+
+    applyFilters(): void {
+        
+    }
+
+    clearFilters(): void {
+        this.filterValues = {
+            estado: '',
+            municipio: '',
+            regimen: '',
+            anio: '',
+            ciclo: '',
+            tipoProductor: '',
+            cultivo: ''
+        };
+        this.municipios = [];
     }
 
     private loadSummaryCard(key: SummaryKey, url: string): void {

@@ -24,7 +24,10 @@ export const paths = {
   pesticidesUsageByType: `${path}/dashboard/pesticides/usage-by-type`,
   pesticidesToxicologyDistribution: `${path}/dashboard/pesticides/toxicology-distribution`,
   pesticidesUsageByGender: `${path}/dashboard/pesticides/usage-by-gender`,
-  pesticidesRecordsSummary: `${path}/dashboard/pesticides/records-summary`
+  pesticidesRecordsSummary: `${path}/dashboard/pesticides/records-summary`,
+  filterEstados: `${path}/sepomex/states`,
+  filterMunicipiosBase: `${path}/sepomex/states`,
+  catalogsDashboard: `${path}/catalogs-dashboard`
 }
 
 export const themeData = {

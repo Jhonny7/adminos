@@ -18,6 +18,51 @@ import { BaseChartDirective } from 'ng2-charts';
 type SummaryKey = 'registeredUsers' | 'totalSurface' | 'activeCrops' | 'irrigatedSurface';
 type ChartKey = 'surfaceDistribution' | 'usersByGender' | 'topCropsBySurface' | 'topCropsByProduction';
 
+export interface FilterOption {
+    id: string | number;
+    label: string;
+}
+
+interface SepomexState {
+    code: number;
+    name: string;
+}
+
+interface SepomexMunicipality {
+    code: number;
+    name: string;
+}
+
+interface SepomexStatesResponse {
+    states: SepomexState[];
+}
+
+export interface SepomexMunicipalitiesResponse {
+    municipalities: SepomexMunicipality[];
+}
+
+interface CatalogItem {
+    id: number;
+    name: string;
+}
+
+interface CatalogsDashboardResponse {
+    regimens: CatalogItem[];
+    cycle: CatalogItem[];
+    producer_type: CatalogItem[];
+    crops: CatalogItem[];
+}
+
+export interface FilterParams {
+    estado?: string;
+    municipio?: string;
+    regimen?: string;
+    anio?: string;
+    ciclo?: string;
+    tipoProductor?: string;
+    cultivo?: string;
+}
+
 interface TrendData {
     direction?: string;
     percentage?: number;
@@ -84,6 +129,36 @@ export class Dashboard implements OnInit {
     private readonly chartDirectives?: QueryList<BaseChartDirective>;
 
     protected readonly chartsReady = signal(false);
+
+    // ── Filters ────────────────────────────────────────────────────────────────
+    public filterValues: FilterParams = {
+        estado: '',
+        municipio: '',
+        regimen: '',
+        anio: '',
+        ciclo: '',
+        tipoProductor: '',
+        cultivo: ''
+    };
+
+    public estados: FilterOption[] = [];
+    public municipios: FilterOption[] = [];
+    public regimenes: FilterOption[] = [];
+    public anios: FilterOption[] = [];
+    public ciclos: FilterOption[] = [];
+    public tiposProductor: FilterOption[] = [];
+    public cultivos: FilterOption[] = [];
+
+    public filtersLoading = {
+        estados: false,
+        municipios: false,
+        regimenes: false,
+        anios: false,
+        ciclos: false,
+        tiposProductor: false,
+        cultivos: false
+    };
+    // ───────────────────────────────────────────────────────────────────────────
 
     public kpiCards: KpiCard[] = [
         {
@@ -299,8 +374,139 @@ export class Dashboard implements OnInit {
     }
 
     ngOnInit(): void {
+        this.loadFilterOptions();
         this.loadChartData();
     }
+
+    // ── Filter methods ─────────────────────────────────────────────────────────
+
+    private loadFilterOptions(): void {
+        this.loadEstados();
+        this.loadCatalogsDashboard();
+        this.generateAnios();
+    }
+
+    private loadEstados(): void {
+        this.filtersLoading = { ...this.filtersLoading, estados: true };
+        this.genericService.sendGetRequest<SepomexStatesResponse>(paths.filterEstados, null, true).subscribe({
+            next: (response) => {
+                this.estados = (response.states || []).map((s) => ({ id: s.code, label: s.name }));
+                this.filtersLoading = { ...this.filtersLoading, estados: false };
+                this.cdr.markForCheck();
+            },
+            error: () => {
+                this.filtersLoading = { ...this.filtersLoading, estados: false };
+                this.cdr.markForCheck();
+            }
+        });
+    }
+
+    private generateAnios(): void {
+        const currentYear = 2026;
+        this.anios = Array.from({ length: 11 }, (_, i) => {
+            const year = currentYear - i;
+            return { id: String(year), label: String(year) };
+        });
+    }
+
+    private loadCatalogsDashboard(): void {
+        this.filtersLoading = {
+            ...this.filtersLoading,
+            regimenes: true,
+            ciclos: true,
+            tiposProductor: true,
+            cultivos: true
+        };
+        this.genericService.sendGetRequest<CatalogsDashboardResponse>(paths.catalogsDashboard, null, true).subscribe({
+            next: (response) => {
+                this.regimenes = (response.regimens || []).map((r) => ({ id: r.id, label: r.name }));
+                this.ciclos = (response.cycle || []).map((c) => ({ id: c.id, label: c.name }));
+                this.tiposProductor = (response.producer_type || []).map((p) => ({ id: p.id, label: p.name }));
+                this.cultivos = (response.crops || []).map((cr) => ({ id: cr.id, label: cr.name }));
+                this.filtersLoading = {
+                    ...this.filtersLoading,
+                    regimenes: false,
+                    ciclos: false,
+                    tiposProductor: false,
+                    cultivos: false
+                };
+                this.cdr.markForCheck();
+            },
+            error: () => {
+                this.filtersLoading = {
+                    ...this.filtersLoading,
+                    regimenes: false,
+                    ciclos: false,
+                    tiposProductor: false,
+                    cultivos: false
+                };
+                this.cdr.markForCheck();
+            }
+        });
+    }
+
+    private loadFilterList(
+        key: keyof typeof this.filtersLoading,
+        url: string,
+        onSuccess: (list: FilterOption[]) => void
+    ): void {
+        this.filtersLoading = { ...this.filtersLoading, [key]: true };
+        this.genericService.sendGetRequest<FilterOption[]>(url, null, true).subscribe({
+            next: (list) => {
+                onSuccess(Array.isArray(list) ? list : []);
+                this.filtersLoading = { ...this.filtersLoading, [key]: false };
+                this.cdr.markForCheck();
+            },
+            error: () => {
+                this.filtersLoading = { ...this.filtersLoading, [key]: false };
+                this.cdr.markForCheck();
+            }
+        });
+    }
+
+    onEstadoChange(estadoId: string): void {
+        this.filterValues = { ...this.filterValues, estado: estadoId, municipio: '' };
+        this.municipios = [];
+
+        if (!estadoId) {
+            return;
+        }
+
+        this.filtersLoading = { ...this.filtersLoading, municipios: true };
+        const url = `${paths.filterMunicipiosBase}/${estadoId}/municipalities`;
+        this.genericService.sendGetRequest<SepomexMunicipalitiesResponse>(url, null, true).subscribe({
+            next: (response) => {
+                this.municipios = (response.municipalities || []).map((m) => ({ id: m.code, label: m.name }));
+                this.filtersLoading = { ...this.filtersLoading, municipios: false };
+                this.cdr.markForCheck();
+            },
+            error: () => {
+                this.filtersLoading = { ...this.filtersLoading, municipios: false };
+                this.cdr.markForCheck();
+            }
+        });
+    }
+
+
+    applyFilters(): void {
+        this.loadChartData(this.filterValues);
+    }
+
+    clearFilters(): void {
+        this.filterValues = {
+            estado: '',
+            municipio: '',
+            regimen: '',
+            anio: '',
+            ciclo: '',
+            tipoProductor: '',
+            cultivo: ''
+        };
+        this.municipios = [];
+        this.loadChartData();
+    }
+
+    // ───────────────────────────────────────────────────────────────────────────
 
     private refreshCharts(): void {
         this.chartDirectives?.forEach((chartDirective) => {
@@ -317,19 +523,35 @@ export class Dashboard implements OnInit {
         }
     }
 
-    loadChartData(): void {
-        this.loadSummaryCard('registeredUsers', paths.registeredUsers);
-        this.loadSummaryCard('totalSurface', paths.totalSurface);
-        this.loadSummaryCard('activeCrops', paths.activeCrops);
-        this.loadSummaryCard('irrigatedSurface', paths.irrigatedSurface);
-        this.loadSurfaceDistribution();
-        this.loadUsersByGender();
-        this.loadTopCropsBySurface();
-        this.loadTopCropsByProduction();
+    loadChartData(filters?: FilterParams): void {
+        const params = this.buildFilterParams(filters);
+        this.loadSummaryCard('registeredUsers', paths.registeredUsers, params);
+        this.loadSummaryCard('totalSurface', paths.totalSurface, params);
+        this.loadSummaryCard('activeCrops', paths.activeCrops, params);
+        this.loadSummaryCard('irrigatedSurface', paths.irrigatedSurface, params);
+        this.loadSurfaceDistribution(params);
+        this.loadUsersByGender(params);
+        this.loadTopCropsBySurface(params);
+        this.loadTopCropsByProduction(params);
     }
 
-    private loadSummaryCard(key: SummaryKey, url: string): void {
-        this.genericService.sendGetRequest<SummaryResponse>(url, null, true).subscribe({
+    private buildFilterParams(filters?: FilterParams): Record<string, string> | null {
+        if (!filters) {
+            return null;
+        }
+        const params: Record<string, string> = {};
+        if (filters.estado) { params['state'] = filters.estado; }
+        if (filters.municipio) { params['municipality'] = filters.municipio; }
+        if (filters.regimen) { params['regimen'] = filters.regimen; }
+        if (filters.anio) { params['year'] = filters.anio; }
+        if (filters.ciclo) { params['cycle'] = filters.ciclo; }
+        if (filters.tipoProductor) { params['producer_type'] = filters.tipoProductor; }
+        if (filters.cultivo) { params['crop'] = filters.cultivo; }
+        return Object.keys(params).length ? params : null;
+    }
+
+    private loadSummaryCard(key: SummaryKey, url: string, params?: Record<string, string> | null): void {
+        this.genericService.sendGetParams<SummaryResponse>(url, params ?? {}, true).subscribe({
             next: (response: SummaryResponse) => {
                 this.updateKpiCard(key, response);
             },
@@ -394,8 +616,8 @@ export class Dashboard implements OnInit {
         };
     }
 
-    private loadSurfaceDistribution(): void {
-        this.genericService.sendGetRequest<DashboardChartResponse>(paths.surfaceDistribution, null, true).subscribe({
+    private loadSurfaceDistribution(params?: Record<string, string> | null): void {
+        this.genericService.sendGetParams<DashboardChartResponse>(paths.surfaceDistribution, params ?? {}, true).subscribe({
             next: (response: DashboardChartResponse) => {
                 this.updateChartMeta('surfaceDistribution', response);
 
@@ -424,8 +646,8 @@ export class Dashboard implements OnInit {
         });
     }
 
-    private loadUsersByGender(): void {
-        this.genericService.sendGetRequest<DashboardChartResponse>(paths.usersByGender, null, true).subscribe({
+    private loadUsersByGender(params?: Record<string, string> | null): void {
+        this.genericService.sendGetParams<DashboardChartResponse>(paths.usersByGender, params ?? {}, true).subscribe({
             next: (response: DashboardChartResponse) => {
                 this.updateChartMeta('usersByGender', response);
 
@@ -457,8 +679,8 @@ export class Dashboard implements OnInit {
         });
     }
 
-    private loadTopCropsBySurface(): void {
-        this.genericService.sendGetRequest<DashboardChartResponse>(paths.topCropsBySurface, null, true).subscribe({
+    private loadTopCropsBySurface(params?: Record<string, string> | null): void {
+        this.genericService.sendGetParams<DashboardChartResponse>(paths.topCropsBySurface, params ?? {}, true).subscribe({
             next: (response: DashboardChartResponse) => {
                 this.updateChartMeta('topCropsBySurface', response);
 
@@ -488,8 +710,8 @@ export class Dashboard implements OnInit {
         });
     }
 
-    private loadTopCropsByProduction(): void {
-        this.genericService.sendGetRequest<DashboardChartResponse>(paths.topCropsByProduction, null, true).subscribe({
+    private loadTopCropsByProduction(params?: Record<string, string> | null): void {
+        this.genericService.sendGetParams<DashboardChartResponse>(paths.topCropsByProduction, params ?? {}, true).subscribe({
             next: (response: DashboardChartResponse) => {
                 this.updateChartMeta('topCropsByProduction', response);
 

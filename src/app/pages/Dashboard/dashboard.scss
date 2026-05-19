@@ -47,8 +47,47 @@
 
     .filters-row {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(7, minmax(0, 1fr));
         gap: 1rem;
+    }
+
+    .filters-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 1rem;
+
+        .btn-apply {
+            padding: 0.55rem 1.3rem;
+            background: #A1244E;
+            color: #ffffff;
+            border: none;
+            border-radius: 0.6rem;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.18s;
+
+            &:hover {
+                background: #8a1d41;
+            }
+        }
+
+        .btn-clear {
+            padding: 0.55rem 1.3rem;
+            background: #ffffff;
+            color: #1d2630;
+            border: 1px solid #d7dce2;
+            border-radius: 0.6rem;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.18s;
+
+            &:hover {
+                background: #f5f7fa;
+            }
+        }
     }
 
     .filter-field {

@@ -3,25 +3,77 @@
         <section class="filters-card">
             <div class="filters-row">
                 <div class="filter-field">
-                    <label><mat-icon>calendar_today</mat-icon> Ciclo Agrícola</label>
-                    <select>
-                        <option>2025-2026</option>
+                    <label>Estado</label>
+                    <select [(ngModel)]="filterValues.estado" (ngModelChange)="onEstadoChange($event)"
+                            [disabled]="filtersLoading.estados">
+                        <option value="">Todos</option>
+                        @for (opt of estados; track opt.id) {
+                            <option [value]="opt.id">{{ opt.label }}</option>
+                        }
                     </select>
                 </div>
                 <div class="filter-field">
-                    <label><mat-icon>person_outline</mat-icon> Tipo de Productor</label>
-                    <select>
-                        <option>Todos</option>
+                    <label>Municipio</label>
+                    <select [(ngModel)]="filterValues.municipio"
+                            [disabled]="!filterValues.estado || filtersLoading.municipios">
+                        <option value="">Todos</option>
+                        @for (opt of municipios; track opt.id) {
+                            <option [value]="opt.id">{{ opt.label }}</option>
+                        }
                     </select>
                 </div>
                 <div class="filter-field">
-                    <label><mat-icon>place</mat-icon> Ubicación</label>
-                    <select>
-                        <option>Todas las regiones</option>
+                    <label>Régimen</label>
+                    <select [(ngModel)]="filterValues.regimen" [disabled]="filtersLoading.regimenes">
+                        <option value="">Ambos</option>
+                        @for (opt of regimenes; track opt.id) {
+                            <option [value]="opt.id">{{ opt.label }}</option>
+                        }
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label>Año</label>
+                    <select [(ngModel)]="filterValues.anio" [disabled]="filtersLoading.anios">
+                        <option value="">Todos</option>
+                        @for (opt of anios; track opt.id) {
+                            <option [value]="opt.id">{{ opt.label }}</option>
+                        }
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label>Ciclo</label>
+                    <select [(ngModel)]="filterValues.ciclo" [disabled]="filtersLoading.ciclos">
+                        <option value="">Todos</option>
+                        @for (opt of ciclos; track opt.id) {
+                            <option [value]="opt.id">{{ opt.label }}</option>
+                        }
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label>Tipo de Productor</label>
+                    <select [(ngModel)]="filterValues.tipoProductor" [disabled]="filtersLoading.tiposProductor">
+                        <option value="">Todos</option>
+                        @for (opt of tiposProductor; track opt.id) {
+                            <option [value]="opt.id">{{ opt.label }}</option>
+                        }
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label>Cultivo</label>
+                    <select [(ngModel)]="filterValues.cultivo" [disabled]="filtersLoading.cultivos">
+                        <option value="">Todos</option>
+                        @for (opt of cultivos; track opt.id) {
+                            <option [value]="opt.id">{{ opt.label }}</option>
+                        }
                     </select>
                 </div>
             </div>
+            <div class="filters-actions">
+                <button class="btn-apply" (click)="applyFilters()">Aplicar filtros</button>
+                <button class="btn-clear" (click)="clearFilters()">Limpiar</button>
+            </div>
         </section>
+
 
         <div class="page-heading">
             <h2>Resumen Ejecutivo</h2>
