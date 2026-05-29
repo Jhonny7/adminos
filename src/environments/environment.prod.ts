@@ -42,6 +42,8 @@ export const paths = {
   totalCostPerHectare: `${path}/dashboard/cost/total-cost-per-hectare`,
   grossMarginPerHectare: `${path}/dashboard/cost/gross-margin-per-hectare`,
   benefitCostRatio: `${path}/dashboard/cost/benefit-cost-ratio`,
+  salePrice: `${path}/dashboard/cost/sale-price`,
+  yieldByMunicipality: `${path}/dashboard/cost/yield-by-municipality`,
   yieldByHumidity: `${path}/dashboard/cost/yield-by-humidity`,
   topCropsYield: `${path}/dashboard/cost/top-crops-yield`,
   costYieldEvolution: `${path}/dashboard/cost/cost-yield-evolution`,

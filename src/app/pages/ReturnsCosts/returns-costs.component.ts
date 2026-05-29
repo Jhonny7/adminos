@@ -26,19 +26,25 @@ export interface AverageYieldResponse {
 
 export interface TotalCostPerHectareResponse {
     title: string;
-    label: string;
+    mode: string;
+    selected_value: number;
+    label?: string;
     cost_per_hectare: { min: number; average: number; max: number; unit: string };
+    total_cost: number;
+    total_surface_ha: number;
     breakdown: {
         title: string;
-        items: { key: string; label: string; value: number; percentage: number }[];
+        items: { key?: string; label: string; value: number; percentage: number }[];
     };
-    sale_price: {
-        title: string;
-        min: number;
-        average: number;
-        max: number;
-        unit: string;
+    progress?: {
+        value: number;
+        label: string;
     };
+}
+
+export interface SalePriceResponse {
+    title: string;
+    sale_price: { min: number; average: number; max: number; unit: string };
     estimated_income: {
         value: number;
         unit: string;
@@ -59,10 +65,18 @@ export interface TotalCostPerHectareResponse {
         subtitle: string;
         current: number;
     };
-    progress?: {
-        value: number;
-        label: string;
-    };
+}
+
+export interface YieldByMunicipalityResponse {
+    title: string;
+    unit: string;
+    items: {
+        municipality_code: string;
+        municipality: string;
+        harvest_ton: number;
+        surface_ha: number;
+        yield: number;
+    }[];
 }
 
 export interface GrossMarginPerHectareResponse {
@@ -152,6 +166,8 @@ export class ReturnsCosts implements OnInit {
     // Data de las APIs
     public averageYieldData?: AverageYieldResponse;
     public totalCostPerHectareData?: TotalCostPerHectareResponse;
+    public salePriceData?: SalePriceResponse;
+    public yieldByMunicipalityData?: YieldByMunicipalityResponse;
     public grossMarginPerHectareData?: GrossMarginPerHectareResponse;
     public benefitCostRatioData?: BenefitCostRatioResponse;
     public yieldByHumidityData?: YieldByHumidityResponse;
@@ -327,7 +343,7 @@ export class ReturnsCosts implements OnInit {
     };
 
     public get costBreakdownItems(): TotalCostPerHectareResponse['breakdown']['items'] {
-        return this.totalCostPerHectareData?.breakdown.items ?? [];
+        return this.totalCostPerHectareData?.breakdown?.items ?? [];
     }
 
     public get currentCostPerHectare(): number {
@@ -335,7 +351,7 @@ export class ReturnsCosts implements OnInit {
     }
 
     public get currentSalePrice(): number {
-        return this.totalCostPerHectareData?.sale_price[this.selectedCostView] ?? 0;
+        return this.salePriceData?.sale_price[this.selectedCostView] ?? 0;
     }
 
     public get averageYieldTitle(): string {
@@ -356,6 +372,7 @@ export class ReturnsCosts implements OnInit {
 
     public setSelectedCostView(view: CostViewMode): void {
         this.selectedCostView = view;
+        this.loadTotalCostPerHectare();
     }
 
     public getCostViewLabel(view: CostViewMode): string {
@@ -394,7 +411,8 @@ export class ReturnsCosts implements OnInit {
     }
 
     public loadTotalCostPerHectare(): void {
-        const params = this.buildQueryParams();
+        const params = this.buildQueryParams() || {};
+        params['mode'] = this.selectedCostView;
         this.genericService.sendGetParams<TotalCostPerHectareResponse>(
             paths.totalCostPerHectare,
             params, true
@@ -423,6 +441,29 @@ export class ReturnsCosts implements OnInit {
             params, true
         ).subscribe(data => {
             this.benefitCostRatioData = data;
+            this.cdr.markForCheck();
+        });
+    }
+
+    public loadSalePrice(): void {
+        const params = this.buildQueryParams();
+        this.genericService.sendGetParams<SalePriceResponse>(
+            paths.salePrice,
+            params, true
+        ).subscribe(data => {
+            this.salePriceData = data;
+            this.cdr.markForCheck();
+        });
+    }
+
+    public loadYieldByMunicipality(): void {
+        const params = this.buildQueryParams();
+        this.genericService.sendGetParams<YieldByMunicipalityResponse>(
+            paths.yieldByMunicipality,
+            params, true
+        ).subscribe(data => {
+            this.yieldByMunicipalityData = data;
+            this.updateYieldByMunicipalityChart(data);
             this.cdr.markForCheck();
         });
     }
@@ -480,6 +521,8 @@ export class ReturnsCosts implements OnInit {
         this.loadTotalCostPerHectare();
         this.loadGrossMarginPerHectare();
         this.loadBenefitCostRatio();
+        this.loadSalePrice();
+        this.loadYieldByMunicipality();
         this.loadYieldByHumidity();
         this.loadTopCropsYield();
         this.loadCostYieldEvolution();
@@ -492,7 +535,6 @@ export class ReturnsCosts implements OnInit {
 
     private updateAverageYieldCharts(data: AverageYieldResponse): void {
         const historicalItems = data.historical?.items ?? [];
-        const municipalityItems = data.by_municipality?.items ?? [];
 
         this.yieldHistoryChartData = {
             labels: historicalItems.map((item) => item.cycle),
@@ -510,11 +552,30 @@ export class ReturnsCosts implements OnInit {
             }]
         };
 
+        // Also update municipality chart from average-yield if dedicated endpoint hasn't loaded yet
+        const municipalityItems = data.by_municipality?.items ?? [];
+        if (municipalityItems.length && !this.yieldByMunicipalityData) {
+            this.yieldByMunicipalityChartData = {
+                labels: municipalityItems.map((item) => item.municipality),
+                datasets: [{
+                    data: municipalityItems.map((item) => item.value),
+                    label: data.by_municipality?.title || 'Rendimiento por municipio',
+                    backgroundColor: '#2A6B5F',
+                    borderRadius: 6,
+                    borderSkipped: false
+                }]
+            };
+        }
+    }
+
+    private updateYieldByMunicipalityChart(data: YieldByMunicipalityResponse): void {
+        const items = data.items ?? [];
+
         this.yieldByMunicipalityChartData = {
-            labels: municipalityItems.map((item) => item.municipality),
+            labels: items.map((item) => item.municipality),
             datasets: [{
-                data: municipalityItems.map((item) => item.value),
-                label: data.by_municipality?.title || 'Rendimiento por municipio',
+                data: items.map((item) => item.yield),
+                label: data.title || 'Rendimiento por municipio',
                 backgroundColor: '#2A6B5F',
                 borderRadius: 6,
                 borderSkipped: false
@@ -642,7 +703,7 @@ export class ReturnsCosts implements OnInit {
                 this.regimenes = (response.regimens || []).map((r: any) => ({ id: r.id, label: r.name }));
                 this.ciclos = (response.cycle || []).map((c: any) => ({ id: c.id, label: c.name }));
                 this.tiposProductor = (response.producer_type || []).map((p: any) => ({ id: p.id, label: p.name }));
-                this.cultivos = (response.crops || []).map((cr: any) => ({ id: cr.id, label: cr.name }));
+                this.cultivos = (response.crops || []).map((cr: any) => ({ id: cr.code, label: cr.name }));
                 this.filtersLoading = {
                     ...this.filtersLoading,
                     regimenes: false,

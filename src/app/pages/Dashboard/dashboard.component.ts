@@ -422,7 +422,7 @@ export class Dashboard implements OnInit {
                 this.regimenes = (response.regimens || []).map((r) => ({ id: r.id, label: r.name }));
                 this.ciclos = (response.cycle || []).map((c) => ({ id: c.id, label: c.name }));
                 this.tiposProductor = (response.producer_type || []).map((p) => ({ id: p.id, label: p.name }));
-                this.cultivos = (response.crops || []).map((cr) => ({ id: cr.id, label: cr.name }));
+                this.cultivos = (response.crops || []).map((cr) => ({ id: cr.code, label: cr.name }));
                 this.filtersLoading = {
                     ...this.filtersLoading,
                     regimenes: false,

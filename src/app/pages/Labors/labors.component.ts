@@ -381,7 +381,7 @@ export class Labors implements OnInit {
                 this.regimenes = (response.regimens || []).map((r: any) => ({ id: r.id, label: r.name }));
                 this.ciclos = (response.cycle || []).map((c: any) => ({ id: c.id, label: c.name }));
                 this.tiposProductor = (response.producer_type || []).map((p: any) => ({ id: p.id, label: p.name }));
-                this.cultivos = (response.crops || []).map((cr: any) => ({ id: cr.id, label: cr.name }));
+                this.cultivos = (response.crops || []).map((cr: any) => ({ id: cr.code, label: cr.name }));
                 this.filtersLoading = {
                     ...this.filtersLoading,
                     regimenes: false,

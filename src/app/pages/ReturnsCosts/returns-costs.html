@@ -202,7 +202,7 @@
         <div class="card-head between">
           <div>
             <h4>{{ totalCostPerHectareData.title }}</h4>
-            <p>{{ totalCostPerHectareData.label }}</p>
+            <p>Modo: {{ selectedCostView === 'min' ? 'Mínimo' : selectedCostView === 'max' ? 'Máximo' : 'Promedio' }}</p>
           </div>
 
           <div class="segmented-control">
@@ -259,40 +259,40 @@
       </section>
 
       <div class="side-stack">
-        <section class="chart-card sale-price-card">
-          <h4>{{ totalCostPerHectareData.sale_price.title }}</h4>
+        <section class="chart-card sale-price-card" *ngIf="salePriceData">
+          <h4>{{ salePriceData.title }}</h4>
           <div class="price-list">
             <div class="price-row" [class.is-active]="selectedCostView === 'min'">
               <span>{{ getCostViewLabel('min') }}</span>
-              <strong>{{ totalCostPerHectareData.sale_price.min | currency:'MXN':'symbol':'1.0-0' }}/{{ totalCostPerHectareData.sale_price.unit }}</strong>
+              <strong>{{ salePriceData.sale_price.min | currency:'MXN':'symbol':'1.0-0' }}/{{ salePriceData.sale_price.unit }}</strong>
             </div>
             <div class="price-row" [class.is-active]="selectedCostView === 'average'">
               <span>{{ getCostViewLabel('average') }}</span>
-              <strong>{{ totalCostPerHectareData.sale_price.average | currency:'MXN':'symbol':'1.0-0' }}/{{ totalCostPerHectareData.sale_price.unit }}</strong>
+              <strong>{{ salePriceData.sale_price.average | currency:'MXN':'symbol':'1.0-0' }}/{{ salePriceData.sale_price.unit }}</strong>
             </div>
             <div class="price-row" [class.is-active]="selectedCostView === 'max'">
               <span>{{ getCostViewLabel('max') }}</span>
-              <strong>{{ totalCostPerHectareData.sale_price.max | currency:'MXN':'symbol':'1.0-0' }}/{{ totalCostPerHectareData.sale_price.unit }}</strong>
+              <strong>{{ salePriceData.sale_price.max | currency:'MXN':'symbol':'1.0-0' }}/{{ salePriceData.sale_price.unit }}</strong>
             </div>
           </div>
         </section>
 
-        <section class="metric-card income-card">
-          <span>{{ totalCostPerHectareData.estimated_income.label }}</span>
-          <strong>{{ totalCostPerHectareData.estimated_income.value | currency:'MXN':'symbol':'1.0-0' }}</strong>
-          <small>{{ totalCostPerHectareData.estimated_income.subtitle }}</small>
+        <section class="metric-card income-card" *ngIf="salePriceData">
+          <span>{{ salePriceData.estimated_income.label }}</span>
+          <strong>{{ salePriceData.estimated_income.value | currency:'MXN':'symbol':'1.0-0' }}</strong>
+          <small>{{ salePriceData.estimated_income.subtitle }}</small>
         </section>
 
-        <section class="metric-card profit-card">
-          <span>{{ totalCostPerHectareData.estimated_profit.label }}</span>
-          <strong>{{ totalCostPerHectareData.estimated_profit.value | currency:'MXN':'symbol':'1.0-0' }}</strong>
-          <small>{{ totalCostPerHectareData.estimated_profit.subtitle }}</small>
+        <section class="metric-card profit-card" *ngIf="salePriceData">
+          <span>{{ salePriceData.estimated_profit.label }}</span>
+          <strong>{{ salePriceData.estimated_profit.value | currency:'MXN':'symbol':'1.0-0' }}</strong>
+          <small>{{ salePriceData.estimated_profit.subtitle }}</small>
         </section>
 
-        <section class="chart-card break-even-card">
-          <h4>{{ totalCostPerHectareData.break_even.label }}</h4>
-          <div class="break-even-value">{{ totalCostPerHectareData.break_even.value | number:'1.1-2' }} {{ totalCostPerHectareData.break_even.unit }}</div>
-          <p>{{ totalCostPerHectareData.break_even.subtitle }}</p>
+        <section class="chart-card break-even-card" *ngIf="salePriceData">
+          <h4>{{ salePriceData.break_even.label }}</h4>
+          <div class="break-even-value">{{ salePriceData.break_even.value | number:'1.1-2' }} {{ salePriceData.break_even.unit }}</div>
+          <p>{{ salePriceData.break_even.subtitle }}</p>
         </section>
       </div>
     </div>
