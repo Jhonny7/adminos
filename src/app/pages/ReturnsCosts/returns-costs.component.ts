@@ -129,9 +129,12 @@ export interface AnalysisTableResponse {
 
 // ================== Fin de Tipos ==================
 import { Component, ChangeDetectionStrategy, ViewEncapsulation, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { ChartConfiguration, ChartData } from 'chart.js';
 import { FilterOption, FilterParams, SepomexMunicipalitiesResponse } from '../Dashboard/dashboard.component';
 import { GenericService } from '../../services/generic.service';
 import { paths } from '../../../environments/environment.prod';
+
+type CostViewMode = 'min' | 'average' | 'max';
 
 @Component({
     selector: 'app-returns-costs',
@@ -143,6 +146,9 @@ import { paths } from '../../../environments/environment.prod';
 })
 export class ReturnsCosts implements OnInit {
     private readonly cdr = inject(ChangeDetectorRef);
+    private readonly genericService = inject(GenericService);
+
+    private readonly costBreakdownColors = ['#B58728', '#00473A', '#6E163C', '#6C9A8B', '#D7A43C', '#2A6B5F', '#9D7F1C', '#D5DCE4'];
     // Data de las APIs
     public averageYieldData?: AverageYieldResponse;
     public totalCostPerHectareData?: TotalCostPerHectareResponse;
@@ -152,6 +158,213 @@ export class ReturnsCosts implements OnInit {
     public topCropsYieldData?: TopCropsYieldResponse;
     public costYieldEvolutionData?: CostYieldEvolutionResponse;
     public analysisTableData?: AnalysisTableResponse;
+
+    public selectedCostView: CostViewMode = 'average';
+
+    public yieldHistoryChartData: ChartData<'line'> = {
+        labels: [],
+        datasets: [{ data: [], label: 'Rendimiento', borderColor: '#B58728', backgroundColor: 'rgba(181, 135, 40, 0.18)', pointBackgroundColor: '#B58728', pointBorderColor: '#B58728', pointRadius: 4, pointHoverRadius: 5, tension: 0.35, fill: false }]
+    };
+
+    public yieldHistoryChartOptions: ChartConfiguration<'line'>['options'] = {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            x: {
+                ticks: { color: '#5b6777' },
+                grid: { color: '#e7ecf1' }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: { color: '#5b6777' },
+                grid: { color: '#e7ecf1' }
+            }
+        }
+    };
+
+    public yieldByMunicipalityChartData: ChartData<'bar'> = {
+        labels: [],
+        datasets: [{ data: [], label: 'Rendimiento', backgroundColor: '#2A6B5F', borderRadius: 6, borderSkipped: false }]
+    };
+
+    public yieldByMunicipalityChartOptions: ChartConfiguration<'bar'>['options'] = {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            x: {
+                ticks: { color: '#5b6777' },
+                grid: { color: '#e7ecf1' }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: { color: '#5b6777' },
+                grid: { color: '#e7ecf1' }
+            }
+        }
+    };
+
+    public costBreakdownChartData: ChartData<'doughnut'> = {
+        labels: [],
+        datasets: [{ data: [], backgroundColor: this.costBreakdownColors, borderColor: '#ffffff', borderWidth: 3, hoverOffset: 4 }]
+    };
+
+    public costBreakdownChartOptions: ChartConfiguration<'doughnut'>['options'] = {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        cutout: '62%',
+        plugins: {
+            legend: { display: false }
+        }
+    };
+
+    public yieldByHumidityChartData: ChartData<'bar'> = {
+        labels: [],
+        datasets: []
+    };
+
+    public yieldByHumidityChartOptions: ChartConfiguration<'bar'>['options'] = {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { color: '#5b6777', boxWidth: 12, padding: 14 }
+            }
+        },
+        scales: {
+            x: {
+                ticks: { color: '#5b6777' },
+                grid: { color: '#e7ecf1' }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: { color: '#5b6777' },
+                grid: { color: '#e7ecf1' }
+            }
+        }
+    };
+
+    public topCropsYieldChartData: ChartData<'bar'> = {
+        labels: [],
+        datasets: [{ data: [], label: 'Rendimiento', backgroundColor: '#B58728', borderRadius: 6, borderSkipped: false }]
+    };
+
+    public topCropsYieldChartOptions: ChartConfiguration<'bar'>['options'] = {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                ticks: { color: '#5b6777' },
+                grid: { color: '#e7ecf1' }
+            },
+            y: {
+                ticks: { color: '#5b6777' },
+                grid: { display: false }
+            }
+        }
+    };
+
+    public costYieldEvolutionChartData: ChartData<'line'> = {
+        labels: [],
+        datasets: [
+            { data: [], label: 'Costo/ha (MXN)', borderColor: '#9B2226', backgroundColor: 'rgba(155, 34, 38, 0.1)', pointBackgroundColor: '#9B2226', yAxisID: 'y', tension: 0.35 },
+            { data: [], label: 'Rendimiento (ton/ha)', borderColor: '#B58728', backgroundColor: 'rgba(181, 135, 40, 0.1)', pointBackgroundColor: '#B58728', yAxisID: 'y1', tension: 0.35 }
+        ]
+    };
+
+    public costYieldEvolutionChartOptions: ChartConfiguration<'line'>['options'] = {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        interaction: {
+            mode: 'index',
+            intersect: false
+        },
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { color: '#5b6777', boxWidth: 12, padding: 14 }
+            }
+        },
+        scales: {
+            x: {
+                ticks: { color: '#5b6777' },
+                grid: { color: '#e7ecf1' }
+            },
+            y: {
+                type: 'linear',
+                position: 'left',
+                beginAtZero: true,
+                ticks: { color: '#5b6777' },
+                grid: { color: '#e7ecf1' },
+                title: { display: true, text: 'Costo (MXN/ha)', color: '#5b6777' }
+            },
+            y1: {
+                type: 'linear',
+                position: 'right',
+                beginAtZero: true,
+                ticks: { color: '#5b6777' },
+                grid: { drawOnChartArea: false },
+                title: { display: true, text: 'Rendimiento (ton/ha)', color: '#5b6777' }
+            }
+        }
+    };
+
+    public get costBreakdownItems(): TotalCostPerHectareResponse['breakdown']['items'] {
+        return this.totalCostPerHectareData?.breakdown.items ?? [];
+    }
+
+    public get currentCostPerHectare(): number {
+        return this.totalCostPerHectareData?.cost_per_hectare[this.selectedCostView] ?? 0;
+    }
+
+    public get currentSalePrice(): number {
+        return this.totalCostPerHectareData?.sale_price[this.selectedCostView] ?? 0;
+    }
+
+    public get averageYieldTitle(): string {
+        if (!this.averageYieldData) {
+            return 'Rendimiento Promedio';
+        }
+
+        return `${this.averageYieldData.label} - ${this.averageYieldData.crop}`;
+    }
+
+    public get fertilizationPercentage(): number {
+        return this.totalCostPerHectareData?.breakdown.items.find((item) => item.key === 'fertilization')?.percentage ?? 0;
+    }
+
+    public get laborPercentage(): number {
+        return this.totalCostPerHectareData?.breakdown.items.find((item) => item.key === 'labor')?.percentage ?? 0;
+    }
+
+    public setSelectedCostView(view: CostViewMode): void {
+        this.selectedCostView = view;
+    }
+
+    public getCostViewLabel(view: CostViewMode): string {
+        return view === 'min' ? 'Mínimo' : view === 'max' ? 'Máximo' : 'Promedio';
+    }
+
+    public getBreakdownFill(percentage: number): number {
+        return Math.min(Math.max(percentage, 0), 100);
+    }
 
     // Construir los query params a partir de los filtros
     private buildQueryParams(): Record<string, string> | null {
@@ -175,6 +388,7 @@ export class ReturnsCosts implements OnInit {
             params, true
         ).subscribe(data => {
             this.averageYieldData = data;
+            this.updateAverageYieldCharts(data);
             this.cdr.markForCheck();
         });
     }
@@ -186,6 +400,7 @@ export class ReturnsCosts implements OnInit {
             params, true
         ).subscribe(data => {
             this.totalCostPerHectareData = data;
+            this.updateCostBreakdownChart(data);
             this.cdr.markForCheck();
         });
     }
@@ -217,7 +432,11 @@ export class ReturnsCosts implements OnInit {
         this.genericService.sendGetParams<YieldByHumidityResponse>(
             paths.yieldByHumidity,
             params, true
-        ).subscribe(data => this.yieldByHumidityData = data);
+        ).subscribe(data => {
+            this.yieldByHumidityData = data;
+            this.updateYieldByHumidityChart(data);
+            this.cdr.markForCheck();
+        });
     }
 
     public loadTopCropsYield(): void {
@@ -225,7 +444,11 @@ export class ReturnsCosts implements OnInit {
         this.genericService.sendGetParams<TopCropsYieldResponse>(
             paths.topCropsYield,
             params, true
-        ).subscribe(data => this.topCropsYieldData = data);
+        ).subscribe(data => {
+            this.topCropsYieldData = data;
+            this.updateTopCropsYieldChart(data);
+            this.cdr.markForCheck();
+        });
     }
 
     public loadCostYieldEvolution(): void {
@@ -233,7 +456,11 @@ export class ReturnsCosts implements OnInit {
         this.genericService.sendGetParams<CostYieldEvolutionResponse>(
             paths.costYieldEvolution,
             params, true
-        ).subscribe(data => this.costYieldEvolutionData = data);
+        ).subscribe(data => {
+            this.costYieldEvolutionData = data;
+            this.updateCostYieldEvolutionChart(data);
+            this.cdr.markForCheck();
+        });
     }
 
     public loadAnalysisTable(): void {
@@ -241,7 +468,10 @@ export class ReturnsCosts implements OnInit {
         this.genericService.sendGetParams<AnalysisTableResponse>(
             paths.analysisTable,
             params, true
-        ).subscribe(data => this.analysisTableData = data);
+        ).subscribe(data => {
+            this.analysisTableData = data;
+            this.cdr.markForCheck();
+        });
     }
 
     // Método para cargar todos los datos principales (puedes llamarlo en ngOnInit o al aplicar filtros)
@@ -255,11 +485,121 @@ export class ReturnsCosts implements OnInit {
         this.loadCostYieldEvolution();
         this.loadAnalysisTable();
     }
-    private readonly genericService = inject(GenericService);
-
     ngOnInit(): void {
         this.loadFilterOptions();
         this.loadAllCostDashboardData();
+    }
+
+    private updateAverageYieldCharts(data: AverageYieldResponse): void {
+        const historicalItems = data.historical?.items ?? [];
+        const municipalityItems = data.by_municipality?.items ?? [];
+
+        this.yieldHistoryChartData = {
+            labels: historicalItems.map((item) => item.cycle),
+            datasets: [{
+                data: historicalItems.map((item) => item.value),
+                label: data.historical?.title || 'Rendimiento',
+                borderColor: '#B58728',
+                backgroundColor: 'rgba(181, 135, 40, 0.18)',
+                pointBackgroundColor: '#B58728',
+                pointBorderColor: '#B58728',
+                pointRadius: 4,
+                pointHoverRadius: 5,
+                tension: 0.35,
+                fill: false
+            }]
+        };
+
+        this.yieldByMunicipalityChartData = {
+            labels: municipalityItems.map((item) => item.municipality),
+            datasets: [{
+                data: municipalityItems.map((item) => item.value),
+                label: data.by_municipality?.title || 'Rendimiento por municipio',
+                backgroundColor: '#2A6B5F',
+                borderRadius: 6,
+                borderSkipped: false
+            }]
+        };
+    }
+
+    private updateCostBreakdownChart(data: TotalCostPerHectareResponse): void {
+        const items = data.breakdown?.items ?? [];
+
+        this.costBreakdownChartData = {
+            labels: items.map((item) => item.label),
+            datasets: [{
+                data: items.map((item) => item.value),
+                backgroundColor: items.map((_, index) => this.costBreakdownColors[index % this.costBreakdownColors.length]),
+                borderColor: '#ffffff',
+                borderWidth: 3,
+                hoverOffset: 4
+            }]
+        };
+    }
+
+    private updateYieldByHumidityChart(data: YieldByHumidityResponse): void {
+        const regimens = data.regimens ?? [];
+        const cropLabels = Array.from(new Set(regimens.flatMap((regimen) => regimen.crops.map((crop) => crop.label))));
+
+        this.yieldByHumidityChartData = {
+            labels: regimens.map((regimen) => regimen.label),
+            datasets: cropLabels.map((cropLabel) => {
+                const matchingCrop = regimens.find((regimen) => regimen.crops.some((crop) => crop.label === cropLabel))?.crops.find((crop) => crop.label === cropLabel);
+
+                return {
+                    label: cropLabel,
+                    data: regimens.map((regimen) => regimen.crops.find((crop) => crop.label === cropLabel)?.value ?? 0),
+                    backgroundColor: matchingCrop?.color || '#B58728',
+                    borderRadius: 6,
+                    borderSkipped: false
+                };
+            })
+        };
+    }
+
+    private updateTopCropsYieldChart(data: TopCropsYieldResponse): void {
+        const items = data.items ?? [];
+
+        this.topCropsYieldChartData = {
+            labels: items.map((item) => item.label),
+            datasets: [{
+                data: items.map((item) => item.value),
+                label: data.unit || 'Rendimiento',
+                backgroundColor: '#B58728',
+                borderRadius: 6,
+                borderSkipped: false
+            }]
+        };
+    }
+
+    private updateCostYieldEvolutionChart(data: CostYieldEvolutionResponse): void {
+        const labels = data.items?.map((item) => item.cycle) ?? [];
+        const costSeries = data.series?.find((serie) => serie.key === 'cost');
+        const yieldSeries = data.series?.find((serie) => serie.key === 'yield');
+
+        this.costYieldEvolutionChartData = {
+            labels,
+            datasets: [
+                {
+                    data: data.items?.map((item) => item.cost) ?? [],
+                    label: costSeries?.label || 'Costo/ha (MXN)',
+                    borderColor: costSeries?.color || '#9B2226',
+                    backgroundColor: 'rgba(155, 34, 38, 0.1)',
+                    pointBackgroundColor: costSeries?.color || '#9B2226',
+                    yAxisID: 'y',
+                    tension: 0.35
+                },
+                {
+                    data: data.items?.map((item) => item.yield) ?? [],
+                    label: yieldSeries?.label || 'Rendimiento (ton/ha)',
+                    borderColor: yieldSeries?.color || '#B58728',
+                    backgroundColor: 'rgba(181, 135, 40, 0.1)',
+                    pointBackgroundColor: yieldSeries?.color || '#B58728',
+                    yAxisID: 'y1',
+                    tension: 0.35
+                }
+            ]
+        };
     }
 
     private loadFilterOptions(): void {

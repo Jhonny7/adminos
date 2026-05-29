@@ -111,13 +111,13 @@
         <div class="kpi-label">Costo Total por Hectárea</div>
         <div class="kpi-value">
           <ng-container *ngIf="totalCostPerHectareData; else loadingVal2">
-            {{ totalCostPerHectareData.cost_per_hectare.average | currency:'USD':'symbol':'1.0-0' }}
+            {{ totalCostPerHectareData.cost_per_hectare.average | currency:'MXN':'symbol':'1.0-0' }}
           </ng-container>
           <ng-template #loadingVal2>--</ng-template>
         </div>
         <div class="kpi-sub">
           <ng-container *ngIf="totalCostPerHectareData">
-            Fertilización {{ totalCostPerHectareData.breakdown.items[0]?.percentage | number:'1.0-0' }}% | Mano de obra {{ totalCostPerHectareData.breakdown.items[1]?.percentage | number:'1.0-0' }}%
+            Fertilización {{ fertilizationPercentage | number:'1.0-0' }}% | Mano de obra {{ laborPercentage | number:'1.0-0' }}%
           </ng-container>
         </div>
         <div class="kpi-progress" *ngIf="totalCostPerHectareData?.progress">
@@ -139,7 +139,7 @@
         <div class="kpi-label">Margen Bruto por Hectárea</div>
         <div class="kpi-value">
           <ng-container *ngIf="grossMarginPerHectareData; else loadingVal3">
-            {{ grossMarginPerHectareData.value | currency:'USD':'symbol':'1.0-0' }}
+            {{ grossMarginPerHectareData.value | currency:'MXN':'symbol':'1.0-0' }}
           </ng-container>
           <ng-template #loadingVal3>--</ng-template>
         </div>
@@ -168,5 +168,184 @@
         </div>
       </div>
     </div>
+
+    <section class="chart-card average-summary-card" *ngIf="averageYieldData">
+      <div class="average-summary-header">
+        <div>
+          <h4>{{ averageYieldTitle }}</h4>
+          <div class="average-summary-value">{{ averageYieldData.value | number:'1.0-1' }} <span>{{ averageYieldData.unit }}</span></div>
+          <div class="average-summary-trend" [class.is-down]="averageYieldData.trend?.direction === 'down'" *ngIf="averageYieldData.trend">
+            {{ averageYieldData.trend.direction === 'down' ? '-' : '+' }}{{ averageYieldData.trend.percentage | number:'1.1-1' }}% {{ averageYieldData.trend.label }}
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-grid two-up">
+        <div class="chart-panel">
+          <h5>{{ averageYieldData.historical?.title || 'Rendimiento histórico' }}</h5>
+          <div class="chart-canvas">
+            <canvas baseChart [data]="yieldHistoryChartData" [options]="yieldHistoryChartOptions" [type]="'line'"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-panel">
+          <h5>{{ averageYieldData.by_municipality?.title || 'Rendimiento por municipio' }}</h5>
+          <div class="chart-canvas">
+            <canvas baseChart [data]="yieldByMunicipalityChartData" [options]="yieldByMunicipalityChartOptions" [type]="'bar'"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="chart-row cost-layout" *ngIf="totalCostPerHectareData">
+      <section class="chart-card cost-estimation-card">
+        <div class="card-head between">
+          <div>
+            <h4>{{ totalCostPerHectareData.title }}</h4>
+            <p>{{ totalCostPerHectareData.label }}</p>
+          </div>
+
+          <div class="segmented-control">
+            <button type="button" [class.active]="selectedCostView === 'min'" (click)="setSelectedCostView('min')">Mínimo</button>
+            <button type="button" [class.active]="selectedCostView === 'average'" (click)="setSelectedCostView('average')">Promedio</button>
+            <button type="button" [class.active]="selectedCostView === 'max'" (click)="setSelectedCostView('max')">Máximo</button>
+          </div>
+        </div>
+
+        <div class="cost-stat-grid">
+          <div class="cost-stat-card" [class.is-active]="selectedCostView === 'min'">
+            <span>{{ getCostViewLabel('min') }}</span>
+            <strong>{{ totalCostPerHectareData.cost_per_hectare.min | currency:'MXN':'symbol':'1.0-0' }}</strong>
+            <small>{{ totalCostPerHectareData.cost_per_hectare.unit }}</small>
+          </div>
+          <div class="cost-stat-card" [class.is-active]="selectedCostView === 'average'">
+            <span>{{ getCostViewLabel('average') }}</span>
+            <strong>{{ totalCostPerHectareData.cost_per_hectare.average | currency:'MXN':'symbol':'1.0-0' }}</strong>
+            <small>{{ totalCostPerHectareData.cost_per_hectare.unit }}</small>
+          </div>
+          <div class="cost-stat-card" [class.is-active]="selectedCostView === 'max'">
+            <span>{{ getCostViewLabel('max') }}</span>
+            <strong>{{ totalCostPerHectareData.cost_per_hectare.max | currency:'MXN':'symbol':'1.0-0' }}</strong>
+            <small>{{ totalCostPerHectareData.cost_per_hectare.unit }}</small>
+          </div>
+        </div>
+
+        <div class="cost-breakdown-grid">
+          <div>
+            <h5>{{ totalCostPerHectareData.breakdown.title }}</h5>
+            <div class="cost-breakdown-list">
+              @for (item of costBreakdownItems; track item.key) {
+                <div class="breakdown-item">
+                  <div class="breakdown-main">
+                    <span>{{ item.label }}</span>
+                    <strong>{{ item.value | currency:'MXN':'symbol':'1.0-0' }}</strong>
+                    <small>({{ item.percentage | number:'1.1-1' }}%)</small>
+                  </div>
+                  <div class="detail-track">
+                    <span class="detail-fill" [style.width.%]="getBreakdownFill(item.percentage)"></span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div>
+            <h5>Distribución visual</h5>
+            <div class="chart-canvas doughnut-canvas">
+              <canvas baseChart [data]="costBreakdownChartData" [options]="costBreakdownChartOptions" [type]="'doughnut'"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="side-stack">
+        <section class="chart-card sale-price-card">
+          <h4>{{ totalCostPerHectareData.sale_price.title }}</h4>
+          <div class="price-list">
+            <div class="price-row" [class.is-active]="selectedCostView === 'min'">
+              <span>{{ getCostViewLabel('min') }}</span>
+              <strong>{{ totalCostPerHectareData.sale_price.min | currency:'MXN':'symbol':'1.0-0' }}/{{ totalCostPerHectareData.sale_price.unit }}</strong>
+            </div>
+            <div class="price-row" [class.is-active]="selectedCostView === 'average'">
+              <span>{{ getCostViewLabel('average') }}</span>
+              <strong>{{ totalCostPerHectareData.sale_price.average | currency:'MXN':'symbol':'1.0-0' }}/{{ totalCostPerHectareData.sale_price.unit }}</strong>
+            </div>
+            <div class="price-row" [class.is-active]="selectedCostView === 'max'">
+              <span>{{ getCostViewLabel('max') }}</span>
+              <strong>{{ totalCostPerHectareData.sale_price.max | currency:'MXN':'symbol':'1.0-0' }}/{{ totalCostPerHectareData.sale_price.unit }}</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="metric-card income-card">
+          <span>{{ totalCostPerHectareData.estimated_income.label }}</span>
+          <strong>{{ totalCostPerHectareData.estimated_income.value | currency:'MXN':'symbol':'1.0-0' }}</strong>
+          <small>{{ totalCostPerHectareData.estimated_income.subtitle }}</small>
+        </section>
+
+        <section class="metric-card profit-card">
+          <span>{{ totalCostPerHectareData.estimated_profit.label }}</span>
+          <strong>{{ totalCostPerHectareData.estimated_profit.value | currency:'MXN':'symbol':'1.0-0' }}</strong>
+          <small>{{ totalCostPerHectareData.estimated_profit.subtitle }}</small>
+        </section>
+
+        <section class="chart-card break-even-card">
+          <h4>{{ totalCostPerHectareData.break_even.label }}</h4>
+          <div class="break-even-value">{{ totalCostPerHectareData.break_even.value | number:'1.1-2' }} {{ totalCostPerHectareData.break_even.unit }}</div>
+          <p>{{ totalCostPerHectareData.break_even.subtitle }}</p>
+        </section>
+      </div>
+    </div>
+
+    <div class="chart-row two-cols">
+      <section class="chart-card" *ngIf="yieldByHumidityData">
+        <h4>{{ yieldByHumidityData.title }}</h4>
+        <div class="chart-canvas">
+          <canvas baseChart [data]="yieldByHumidityChartData" [options]="yieldByHumidityChartOptions" [type]="'bar'"></canvas>
+        </div>
+      </section>
+
+      <section class="chart-card" *ngIf="topCropsYieldData">
+        <h4>{{ topCropsYieldData.title }}</h4>
+        <div class="chart-canvas">
+          <canvas baseChart [data]="topCropsYieldChartData" [options]="topCropsYieldChartOptions" [type]="'bar'"></canvas>
+        </div>
+      </section>
+    </div>
+
+    <section class="chart-card" *ngIf="costYieldEvolutionData">
+      <h4>{{ costYieldEvolutionData.title }}</h4>
+      <div class="chart-canvas tall">
+        <canvas baseChart [data]="costYieldEvolutionChartData" [options]="costYieldEvolutionChartOptions" [type]="'line'"></canvas>
+      </div>
+    </section>
+
+    <section class="chart-card" *ngIf="analysisTableData">
+      <h4>{{ analysisTableData.title }}</h4>
+      <div class="analysis-table-wrap">
+        <table class="analysis-table">
+          <thead>
+            <tr>
+              @for (column of analysisTableData.columns; track column) {
+                <th>{{ column }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of analysisTableData.items; track $index) {
+              <tr>
+                <td>{{ item.crop }}</td>
+                <td>{{ item.municipality }}</td>
+                <td>{{ item.surface | number:'1.0-0' }}</td>
+                <td>{{ item.production | number:'1.0-0' }}</td>
+                <td>{{ item.yield | number:'1.1-1' }}</td>
+                <td>{{ item.total_cost | currency:'MXN':'symbol':'1.0-0' }}</td>
+                <td>{{ item.profit | currency:'MXN':'symbol':'1.0-0' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
   </div>
 </ocontainer>
