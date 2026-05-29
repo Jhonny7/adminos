@@ -1,14 +1,15 @@
 .sidebar {
   width: 250px;
-      height: calc(100vh - 20px);
-  background: linear-gradient(180deg, #11161d 0%, #0d1218 100%);
-  color: #f4f7f6;
+  height: calc(100vh - 20px);
+  background: #ffffff;
+  color: #1d2630;
   transition: width 0.3s;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 10px 8px;
+  border-right: 1px solid #d5dbe3;
 }
 
 .sidebar.collapsed {
@@ -26,18 +27,25 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.5rem 0.25rem 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid #eef2f6;
 }
 
 .brand-icon {
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: #d2a22d;
-  color: #10171d;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+
+  .brand-logo {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    object-fit: contain;
+  }
 
   .mat-icon {
     font-size: 18px;
@@ -51,13 +59,13 @@
     margin: 0;
     font-size: 1rem;
     font-weight: 700;
-    color: #f4f0d8;
+    color: #202939;
   }
 
   p {
     margin: 0.1rem 0 0;
     font-size: 0.68rem;
-    color: #8ca19c;
+    color: #8b9199;
   }
 }
 
@@ -74,7 +82,7 @@
   padding: 10px 12px;
   cursor: pointer;
   border-radius: 10px;
-  color: #c6d1ce;
+  color: #516173;
   text-decoration: none;
   transition: all 0.2s ease;
 
@@ -86,8 +94,8 @@
 }
 
 .menu-item:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #ffffff;
+  background: #f5f7fa;
+  color: #202939;
 }
 
 .menu-item.active {
@@ -98,7 +106,7 @@
 
 .sidebar-footer {
   padding-top: 0.75rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid #eef2f6;
 }
 
 .user-badge {
@@ -112,8 +120,8 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(210, 162, 45, 0.18);
-  color: #d2a22d;
+  background: rgba(210, 162, 45, 0.15);
+  color: #b58728;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -131,12 +139,12 @@
 
   strong {
     font-size: 0.74rem;
-    color: #f3f5f4;
+    color: #202939;
   }
 
   span {
     font-size: 0.68rem;
-    color: #879b96;
+    color: #8b9199;
   }
 }
 

@@ -119,9 +119,10 @@
             border-radius: 1rem;
             padding: 0 0.92rem;
             outline: none;
-            color: #1d2630;
+            color: #182237;
             background: #ffffff;
             font-size: 0.88rem;
+            margin: 0.75rem 0;
         }
     }
 
@@ -142,6 +143,12 @@
     .kpi-card {
         padding: 1.5rem 1.45rem 1.35rem;
         min-height: 13.6rem;
+        transition: all 0.3s ease;
+
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
+        }
     }
 
     .kpi-header {
@@ -169,6 +176,11 @@
         }
     }
 
+    .kpi-icon {
+        font-size: 1.5rem;
+        color: #b58728;
+    }
+
     .kpi-change {
         display: inline-flex;
         align-items: center;
@@ -176,7 +188,7 @@
         border-radius: 999px;
         background: #e9f8ee;
         color: #05834d;
-        font-size: 0.72rem;
+        font-size: 0.75rem;
         font-weight: 800;
         text-align: right;
 
@@ -212,21 +224,24 @@
     .chart-container {
         padding: 1.6rem 1.7rem;
         min-height: 27rem;
+        min-height: 380px;
         display: flex;
         flex-direction: column;
     }
 
     .chart-title {
-        margin: 0;
+        margin: 0 0 0.25rem 0;
         color: #202939;
         font-size: 1.12rem;
         font-weight: 800;
+        flex-shrink: 0;
     }
 
     .chart-subtitle {
-        margin: 0.45rem 0 0;
+        margin: 0 0 1rem 0;
         color: #526173;
         font-size: 0.86rem;
+        flex-shrink: 0;
     }
 
     .chart-canvas,
@@ -266,7 +281,7 @@
         justify-content: center;
         align-items: center;
         gap: 0.75rem;
-        color: #6f7b88;
+        color: #697586;
 
         &.compact {
             min-height: 3.5rem;
@@ -348,6 +363,15 @@
         .filters-card {
             padding-left: 1rem;
             padding-right: 1rem;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .chart-subtitle {
+            font-size: 0.75rem;
         }
 
         .detail-header {

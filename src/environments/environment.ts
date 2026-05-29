@@ -32,10 +32,10 @@ export const paths = {
 
 export const themeData = {
   black: {
-    border: "#f2f2f2",
-    color: "#fff",
+    border: "#e8ecf0",
+    color: "#516173",
     alert_class: "black",
-    background: "#383838"
+    background: "#ffffff"
   }
 }
 

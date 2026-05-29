@@ -34,6 +34,7 @@ import { Login } from "./pages/login/login.component";
 import { Dashboard } from "./pages/Dashboard/dashboard.component";
 import { Labors } from "./pages/Labors/labors.component";
 import { Plaguicidas } from "./pages/Plaguicidas/plaguicidas.component";
+import { Predios } from "./pages/Predios/predios.component";
 import { OSquareButtonComponent } from "./components/atoms/osquare-button/osquare-button.component";
 import { OIconComponent } from "./components/atoms/oicon/oicon.component";
 import { ModalPanelContainerComponent } from "./components/atoms/modal-panel/modal-panel.component";
@@ -81,6 +82,7 @@ export const exporters: any = [
   Labors,
   ReturnsCosts,
   Plaguicidas,
+  Predios,
   OInputExampleComponent,
   ModalPanelContainerComponent,
   PopoverContainerComponent
