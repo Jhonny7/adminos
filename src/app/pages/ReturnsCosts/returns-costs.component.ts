@@ -394,6 +394,7 @@ export class ReturnsCosts implements OnInit {
         if (f.ciclo) params['cycle'] = f.ciclo;
         if (f.tipoProductor) params['producer_type'] = f.tipoProductor;
         if (f.cultivo) params['crop'] = f.cultivo;
+        if (f.regimen) { params['water_humidity'] = f.regimen; }
         return Object.keys(params).length ? params : null;
     }
 
@@ -406,7 +407,7 @@ export class ReturnsCosts implements OnInit {
         ).subscribe(data => {
             this.averageYieldData = data;
             this.updateAverageYieldCharts(data);
-            this.cdr.markForCheck();
+            this.cdr.detectChanges();
         });
     }
 
@@ -419,7 +420,7 @@ export class ReturnsCosts implements OnInit {
         ).subscribe(data => {
             this.totalCostPerHectareData = data;
             this.updateCostBreakdownChart(data);
-            this.cdr.markForCheck();
+            this.cdr.detectChanges();
         });
     }
 
@@ -430,7 +431,7 @@ export class ReturnsCosts implements OnInit {
             params, true
         ).subscribe(data => {
             this.grossMarginPerHectareData = data;
-            this.cdr.markForCheck();
+            this.cdr.detectChanges();
         });
     }
 
@@ -441,7 +442,7 @@ export class ReturnsCosts implements OnInit {
             params, true
         ).subscribe(data => {
             this.benefitCostRatioData = data;
-            this.cdr.markForCheck();
+            this.cdr.detectChanges();
         });
     }
 
@@ -452,7 +453,7 @@ export class ReturnsCosts implements OnInit {
             params, true
         ).subscribe(data => {
             this.salePriceData = data;
-            this.cdr.markForCheck();
+            this.cdr.detectChanges();
         });
     }
 
@@ -464,7 +465,7 @@ export class ReturnsCosts implements OnInit {
         ).subscribe(data => {
             this.yieldByMunicipalityData = data;
             this.updateYieldByMunicipalityChart(data);
-            this.cdr.markForCheck();
+            this.cdr.detectChanges();
         });
     }
 
@@ -476,7 +477,7 @@ export class ReturnsCosts implements OnInit {
         ).subscribe(data => {
             this.yieldByHumidityData = data;
             this.updateYieldByHumidityChart(data);
-            this.cdr.markForCheck();
+            this.cdr.detectChanges();
         });
     }
 
@@ -488,7 +489,7 @@ export class ReturnsCosts implements OnInit {
         ).subscribe(data => {
             this.topCropsYieldData = data;
             this.updateTopCropsYieldChart(data);
-            this.cdr.markForCheck();
+            this.cdr.detectChanges();
         });
     }
 
@@ -500,7 +501,7 @@ export class ReturnsCosts implements OnInit {
         ).subscribe(data => {
             this.costYieldEvolutionData = data;
             this.updateCostYieldEvolutionChart(data);
-            this.cdr.markForCheck();
+            this.cdr.detectChanges();
         });
     }
 
@@ -511,7 +512,7 @@ export class ReturnsCosts implements OnInit {
             params, true
         ).subscribe(data => {
             this.analysisTableData = data;
-            this.cdr.markForCheck();
+            this.cdr.detectChanges();
         });
     }
 
@@ -783,11 +784,11 @@ export class ReturnsCosts implements OnInit {
             next: (response) => {
                 this.municipios = (response.municipalities || []).map((m) => ({ id: m.code, label: m.name }));
                 this.filtersLoading = { ...this.filtersLoading, municipios: false };
-                this.cdr.markForCheck();
+                this.cdr.detectChanges();
             },
             error: () => {
                 this.filtersLoading = { ...this.filtersLoading, municipios: false };
-                this.cdr.markForCheck();
+                this.cdr.detectChanges();
             }
         });
     }

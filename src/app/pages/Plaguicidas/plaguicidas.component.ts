@@ -266,7 +266,7 @@ export class Plaguicidas implements OnInit {
             loading: false
         };
 
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
     }
 
     private finishKpiLoading(key: SummaryKey): void {
@@ -281,7 +281,7 @@ export class Plaguicidas implements OnInit {
             loading: false
         };
 
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
     }
 
     private finishSectionLoading(key: SectionKey): void {
@@ -290,7 +290,7 @@ export class Plaguicidas implements OnInit {
             [key]: false
         };
 
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
     }
 
     private updateSectionMeta(key: SectionKey, title?: string, subtitle?: string): void {

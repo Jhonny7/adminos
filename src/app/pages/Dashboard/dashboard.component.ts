@@ -392,11 +392,11 @@ export class Dashboard implements OnInit {
             next: (response) => {
                 this.estados = (response.states || []).map((s) => ({ id: s.code, label: s.name }));
                 this.filtersLoading = { ...this.filtersLoading, estados: false };
-                this.cdr.markForCheck();
+                this.cdr.detectChanges();
             },
             error: () => {
                 this.filtersLoading = { ...this.filtersLoading, estados: false };
-                this.cdr.markForCheck();
+                this.cdr.detectChanges();
             }
         });
     }
@@ -430,7 +430,7 @@ export class Dashboard implements OnInit {
                     tiposProductor: false,
                     cultivos: false
                 };
-                this.cdr.markForCheck();
+                this.cdr.detectChanges();
             },
             error: () => {
                 this.filtersLoading = {
@@ -440,7 +440,7 @@ export class Dashboard implements OnInit {
                     tiposProductor: false,
                     cultivos: false
                 };
-                this.cdr.markForCheck();
+                this.cdr.detectChanges();
             }
         });
     }
@@ -455,11 +455,11 @@ export class Dashboard implements OnInit {
             next: (list) => {
                 onSuccess(Array.isArray(list) ? list : []);
                 this.filtersLoading = { ...this.filtersLoading, [key]: false };
-                this.cdr.markForCheck();
+                this.cdr.detectChanges();
             },
             error: () => {
                 this.filtersLoading = { ...this.filtersLoading, [key]: false };
-                this.cdr.markForCheck();
+                this.cdr.detectChanges();
             }
         });
     }
@@ -478,11 +478,11 @@ export class Dashboard implements OnInit {
             next: (response) => {
                 this.municipios = (response.municipalities || []).map((m) => ({ id: m.code, label: m.name }));
                 this.filtersLoading = { ...this.filtersLoading, municipios: false };
-                this.cdr.markForCheck();
+                this.cdr.detectChanges();
             },
             error: () => {
                 this.filtersLoading = { ...this.filtersLoading, municipios: false };
-                this.cdr.markForCheck();
+                this.cdr.detectChanges();
             }
         });
     }
@@ -516,7 +516,7 @@ export class Dashboard implements OnInit {
     }
 
     private refreshChartsSoon(): void {
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
 
         if (this.chartsReady()) {
             requestAnimationFrame(() => this.refreshCharts());
@@ -547,6 +547,7 @@ export class Dashboard implements OnInit {
         if (filters.ciclo) { params['cycle'] = filters.ciclo; }
         if (filters.tipoProductor) { params['producer_type'] = filters.tipoProductor; }
         if (filters.cultivo) { params['crop'] = filters.cultivo; }
+        if (filters.regimen) { params['water_humidity'] = filters.regimen; }
         return Object.keys(params).length ? params : null;
     }
 
@@ -579,7 +580,7 @@ export class Dashboard implements OnInit {
             loading: false
         };
 
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
     }
 
     private finishKpiLoading(key: SummaryKey): void {
@@ -594,7 +595,7 @@ export class Dashboard implements OnInit {
             loading: false
         };
 
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
     }
 
     private finishChartLoading(key: ChartKey): void {
@@ -603,7 +604,7 @@ export class Dashboard implements OnInit {
             [key]: false
         };
 
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
     }
 
     private updateChartMeta(key: ChartKey, response: DashboardChartResponse): void {
