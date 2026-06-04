@@ -7,6 +7,8 @@ import {
     ViewEncapsulation
 } from '@angular/core';
 import * as L from 'leaflet';
+import { GenericService } from '../../services/generic.service';
+import { paths } from '../../../environments/environment.prod';
 
 interface FilterOption {
     value: string;
@@ -14,12 +16,13 @@ interface FilterOption {
 }
 
 interface PredioMarker {
-    lat: number;
-    lng: number;
-    nombre: string;
-    superficie: number;
-    cultivo: string;
-    productor: string;
+    id: number;
+    name: string;
+    identification: string;
+    surface_ha: number;
+    crops: string[];
+    centroid: { lat: number; lng: number };
+    coordinates: { lat: number; lng: number }[];
 }
 
 @Component({
@@ -36,100 +39,63 @@ export class Predios implements OnInit, AfterViewInit, OnDestroy {
 
     estados: FilterOption[] = [{ value: '', label: 'Todos' }];
     municipios: FilterOption[] = [{ value: '', label: 'Todos' }];
-    localidades: FilterOption[] = [{ value: '', label: 'Todas' }];
     cultivos: FilterOption[] = [{ value: '', label: 'Todos' }];
     anios: FilterOption[] = [
+        { value: '2030', label: '2030' },
+        { value: '2029', label: '2029' },
+        { value: '2028', label: '2028' },
+        { value: '2027', label: '2027' },
+        { value: '2026', label: '2026' },
         { value: '2025', label: '2025' },
         { value: '2024', label: '2024' },
-        { value: '2023', label: '2023' }
+        { value: '2023', label: '2023' },
+        { value: '2022', label: '2022' },
+        { value: '2021', label: '2021' },
+        { value: '2020', label: '2020' }
     ];
     ciclos: FilterOption[] = [
         { value: '', label: 'Todos' },
-        { value: 'pv', label: 'Primavera-Verano' },
-        { value: 'oi', label: 'Otoño-Invierno' }
+        { value: '1', label: 'Primavera-Verano' },
+        { value: '2', label: 'Otoño-Invierno' }
     ];
 
     selectedEstado = '';
     selectedMunicipio = '';
-    selectedLocalidad = '';
     selectedCultivo = '';
     selectedAnio = '2025';
     selectedCiclo = '';
 
     mecanizacion: FilterOption[] = [{ value: '', label: 'Todos' }];
     tiposRiego: FilterOption[] = [{ value: '', label: 'Todos' }];
+    modalidadesProduccion: FilterOption[] = [{ value: '', label: 'Todos' }];
+    regimenHidrico: FilterOption[] = [{ value: '', label: 'Todos' }];
+    tiposSuelo: FilterOption[] = [{ value: '', label: 'Todos' }];
+    nivelesPeligrosidad: FilterOption[] = [{ value: '', label: 'Todos' }];
     selectedMecanizacion = '';
     selectedTipoRiego = '';
-
-    prediosMecanizacion = 156;
-    prediosRiego = 189;
+    selectedModalidadProduccion = '';
+    selectedRegimenHidrico = '';
+    selectedTipoSuelo = '';
+    selectedNivelPeligrosidad = '';
 
     infraOpen = true;
     procesoOpen = false;
     recursosOpen = false;
 
-    private geofencesLayer: L.LayerGroup = L.layerGroup();
-
-    private readonly geofences = [
-        {
-            nombre: 'Zona Agrícola Norte',
-            coords: [
-                [20.66, -103.38],
-                [20.67, -103.34],
-                [20.65, -103.30],
-                [20.63, -103.31],
-                [20.62, -103.35],
-                [20.64, -103.39]
-            ] as L.LatLngExpression[],
-            color: '#2D6A4F',
-            predios: 45,
-            superficie: 320
-        },
-        {
-            nombre: 'Zona Agrícola Centro',
-            coords: [
-                [20.62, -103.37],
-                [20.63, -103.33],
-                [20.61, -103.30],
-                [20.59, -103.32],
-                [20.58, -103.36]
-            ] as L.LatLngExpression[],
-            color: '#b58728',
-            predios: 62,
-            superficie: 480
-        },
-        {
-            nombre: 'Zona Agrícola Sur',
-            coords: [
-                [20.58, -103.44],
-                [20.59, -103.40],
-                [20.57, -103.38],
-                [20.55, -103.39],
-                [20.54, -103.42],
-                [20.56, -103.45]
-            ] as L.LatLngExpression[],
-            color: '#7B2D8E',
-            predios: 31,
-            superficie: 210
-        }
-    ];
-
-    predios: PredioMarker[] = [
-        { lat: 20.63, lng: -103.34, nombre: 'Predio El Roble', superficie: 12.5, cultivo: 'Maíz', productor: 'Juan Pérez' },
-        { lat: 20.61, lng: -103.38, nombre: 'Predio La Esperanza', superficie: 8.3, cultivo: 'Frijol', productor: 'María López' },
-        { lat: 20.65, lng: -103.30, nombre: 'Predio San Miguel', superficie: 15.0, cultivo: 'Sorgo', productor: 'Carlos Ruiz' },
-        { lat: 20.59, lng: -103.42, nombre: 'Predio Los Pinos', superficie: 22.1, cultivo: 'Maíz', productor: 'Ana García' },
-        { lat: 20.67, lng: -103.25, nombre: 'Predio El Mezquite', superficie: 6.7, cultivo: 'Chile', productor: 'Pedro Sánchez' },
-        { lat: 20.55, lng: -103.35, nombre: 'Predio La Noria', superficie: 18.4, cultivo: 'Tomate', productor: 'Rosa Martínez' },
-        { lat: 20.62, lng: -103.28, nombre: 'Predio Santa Cruz', superficie: 10.2, cultivo: 'Maíz', productor: 'Luis Hernández' },
-        { lat: 20.58, lng: -103.40, nombre: 'Predio El Potrero', superficie: 30.0, cultivo: 'Agave', productor: 'Jorge Ramírez' }
-    ];
+    predios: PredioMarker[] = [];
 
     private mapReady = false;
 
-    constructor(private cdr: ChangeDetectorRef) {}
+    constructor(
+        private cdr: ChangeDetectorRef,
+        private genericService: GenericService
+    ) {}
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.loadEstados();
+        this.loadEstatesCatalogs();
+        this.loadEstatesData();
+    }
 
     ngAfterViewInit(): void {
         setTimeout(() => this.initMap(), 500);
@@ -168,68 +134,66 @@ export class Predios implements OnInit, AfterViewInit, OnDestroy {
         L.control.zoom({ position: 'topright' }).addTo(this.map);
 
         this.markersLayer.addTo(this.map);
-        this.geofencesLayer.addTo(this.map);
-        this.loadGeofences();
         this.loadMarkers();
 
         this.map.invalidateSize();
-    }
-
-    private loadGeofences(): void {
-        this.geofencesLayer.clearLayers();
-
-        for (const geo of this.geofences) {
-            const polygon = L.polygon(geo.coords, {
-                color: geo.color,
-                weight: 2,
-                opacity: 0.8,
-                fillColor: geo.color,
-                fillOpacity: 0.15,
-                dashArray: '6, 4'
-            });
-
-            polygon.bindPopup(`
-                <div style="font-family: sans-serif; min-width: 180px;">
-                    <strong style="font-size: 0.9rem; color: ${geo.color};">${geo.nombre}</strong>
-                    <hr style="border: none; border-top: 1px solid #eef2f6; margin: 0.4rem 0;">
-                    <div style="font-size: 0.78rem; color: #516173; line-height: 1.6;">
-                        <div><b>Predios:</b> ${geo.predios}</div>
-                        <div><b>Superficie:</b> ${geo.superficie} ha</div>
-                    </div>
-                </div>
-            `);
-
-            polygon.addTo(this.geofencesLayer);
-        }
     }
 
     private loadMarkers(): void {
         this.markersLayer.clearLayers();
 
         for (const predio of this.predios) {
-            const marker = L.circleMarker([predio.lat, predio.lng], {
-                radius: Math.max(8, Math.min(predio.superficie / 2, 20)),
-                fillColor: '#c8962c',
-                color: '#a1784a',
-                weight: 2,
-                opacity: 0.9,
-                fillOpacity: 0.7
-            });
+            // Note: API returns lat/lng swapped (lat = longitude, lng = latitude)
+            const centerLat = predio.centroid.lng;
+            const centerLng = predio.centroid.lat;
 
-            marker.bindPopup(`
-                <div style="font-family: sans-serif; min-width: 180px;">
-                    <strong style="font-size: 0.9rem; color: #202939;">${predio.nombre}</strong>
-                    <hr style="border: none; border-top: 1px solid #eef2f6; margin: 0.4rem 0;">
-                    <div style="font-size: 0.78rem; color: #516173; line-height: 1.6;">
-                        <div><b>Superficie:</b> ${predio.superficie} ha</div>
-                        <div><b>Cultivo:</b> ${predio.cultivo}</div>
-                        <div><b>Productor:</b> ${predio.productor}</div>
-                    </div>
-                </div>
-            `);
+            // Draw polygon if coordinates exist
+            if (predio.coordinates && predio.coordinates.length > 2) {
+                const polygonCoords: L.LatLngExpression[] = predio.coordinates.map(
+                    (coord) => [coord.lng, coord.lat] as L.LatLngExpression
+                );
 
-            marker.addTo(this.markersLayer);
+                const polygon = L.polygon(polygonCoords, {
+                    color: '#2D6A4F',
+                    weight: 2,
+                    opacity: 0.8,
+                    fillColor: '#2D6A4F',
+                    fillOpacity: 0.2
+                });
+
+                polygon.bindPopup(this.buildPopup(predio));
+                polygon.addTo(this.markersLayer);
+            }
+
+            // Draw circle marker at centroid
+            if (centerLat && centerLng) {
+                const marker = L.circleMarker([centerLat, centerLng], {
+                    radius: 6,
+                    fillColor: '#c8962c',
+                    color: '#a1784a',
+                    weight: 2,
+                    opacity: 0.9,
+                    fillOpacity: 0.9
+                });
+
+                marker.bindPopup(this.buildPopup(predio));
+                marker.addTo(this.markersLayer);
+            }
         }
+    }
+
+    private buildPopup(predio: PredioMarker): string {
+        return `
+            <div style="font-family: sans-serif; min-width: 200px;">
+                <strong style="font-size: 0.9rem; color: #202939;">${predio.name}</strong>
+                <div style="font-size: 0.7rem; color: #8b9199; margin-top: 2px;">${predio.identification}</div>
+                <hr style="border: none; border-top: 1px solid #eef2f6; margin: 0.4rem 0;">
+                <div style="font-size: 0.78rem; color: #516173; line-height: 1.6;">
+                    <div><b>Superficie:</b> ${predio.surface_ha.toFixed(2)} ha</div>
+                    <div><b>Cultivos:</b> ${predio.crops.join(', ') || 'N/A'}</div>
+                </div>
+            </div>
+        `;
     }
 
     zoomIn(): void {
@@ -244,5 +208,141 @@ export class Predios implements OnInit, AfterViewInit, OnDestroy {
         if (section === 'infra') this.infraOpen = !this.infraOpen;
         if (section === 'proceso') this.procesoOpen = !this.procesoOpen;
         if (section === 'recursos') this.recursosOpen = !this.recursosOpen;
+    }
+
+    applyFilters(): void {
+        this.loadEstatesData();
+    }
+
+    canApplyMainFilters(): boolean {
+        return !!(this.selectedEstado && this.selectedCultivo && this.selectedAnio && this.selectedCiclo);
+    }
+
+    applyMainFilters(): void {
+        if (!this.canApplyMainFilters()) return;
+        this.loadEstatesData();
+    }
+
+    applyCustomFilters(): void {
+        this.loadEstatesData();
+    }
+
+    private buildQueryParams(): Record<string, string> {
+        const params: Record<string, string> = {};
+        if (this.selectedEstado) params['state'] = this.selectedEstado;
+        if (this.selectedMunicipio) params['municipality'] = this.selectedMunicipio;
+        if (this.selectedCultivo) params['crop'] = this.selectedCultivo;
+        if (this.selectedAnio) params['year'] = this.selectedAnio;
+        if (this.selectedCiclo) params['cycle'] = this.selectedCiclo;
+        if (this.selectedMecanizacion) params['mechanization'] = this.selectedMecanizacion;
+        if (this.selectedTipoRiego) params['water_irrigation_type'] = this.selectedTipoRiego;
+        if (this.selectedModalidadProduccion) params['production_modality'] = this.selectedModalidadProduccion;
+        if (this.selectedRegimenHidrico) params['water_humidity'] = this.selectedRegimenHidrico;
+        if (this.selectedTipoSuelo) params['soil_type'] = this.selectedTipoSuelo;
+        if (this.selectedNivelPeligrosidad) params['danger_level'] = this.selectedNivelPeligrosidad;
+        return params;
+    }
+
+    private loadEstatesData(): void {
+        const params = this.buildQueryParams();
+        this.genericService.sendGetParams<any>(paths.estatesList, params, true).subscribe({
+            next: (response: any) => {
+                const items = response.items || [];
+                this.predios = items.map((estate: any) => ({
+                    id: estate.id,
+                    name: estate.name || 'Predio',
+                    identification: estate.identification || '',
+                    surface_ha: estate.surface_ha || 0,
+                    crops: estate.crops || [],
+                    centroid: estate.centroid || { lat: 0, lng: 0 },
+                    coordinates: estate.coordinates || []
+                }));
+
+                this.loadMarkers();
+                this.fitMapToPredios();
+                this.cdr.detectChanges();
+            },
+            error: () => {
+                this.predios = [];
+                this.loadMarkers();
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    private fitMapToPredios(): void {
+        if (!this.map || this.predios.length === 0) return;
+
+        // Note: in the API response lat/lng are swapped (lat has longitude values, lng has latitude values)
+        const bounds = L.latLngBounds(
+            this.predios.map(p => [p.centroid.lng, p.centroid.lat] as L.LatLngExpression)
+        );
+        this.map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+    }
+
+    private loadEstados(): void {
+        this.genericService.sendGetRequest<any>(paths.filterEstados, null, true).subscribe({
+            next: (response: any) => {
+                this.estados = [
+                    { value: '', label: 'Todos' },
+                    ...(response.states || []).map((s: any) => ({ value: String(s.code), label: s.name }))
+                ];
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    onEstadoChange(estadoCode: string): void {
+        this.selectedMunicipio = '';
+        this.municipios = [{ value: '', label: 'Todos' }];
+
+        if (!estadoCode) return;
+
+        const url = `${paths.filterMunicipiosBase}/${estadoCode}/municipalities`;
+        this.genericService.sendGetRequest<any>(url, null, true).subscribe({
+            next: (response: any) => {
+                this.municipios = [
+                    { value: '', label: 'Todos' },
+                    ...(response.municipalities || []).map((m: any) => ({ value: String(m.code), label: m.name }))
+                ];
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    private loadEstatesCatalogs(): void {
+        this.genericService.sendGetRequest<any>(paths.estatesCatalogs, null, true).subscribe({
+            next: (response: any) => {
+                this.mecanizacion = [
+                    { value: '', label: 'Todos' },
+                    ...(response.mechanization || []).map((m: any) => ({ value: String(m.id), label: m.name }))
+                ];
+                this.tiposRiego = [
+                    { value: '', label: 'Todos' },
+                    ...(response.water_irrigation_types || []).map((t: any) => ({ value: String(t.id), label: t.name }))
+                ];
+                this.modalidadesProduccion = [
+                    { value: '', label: 'Todos' },
+                    ...(response.production_modalities || []).map((p: any) => ({ value: String(p.id), label: p.name }))
+                ];
+                this.regimenHidrico = [
+                    { value: '', label: 'Todos' },
+                    ...(response.water_humidities || []).map((h: any) => ({ value: String(h.id), label: h.name }))
+                ];
+                this.tiposSuelo = [
+                    { value: '', label: 'Todos' },
+                    ...(response.soil_types || []).map((s: any) => ({ value: String(s.id), label: s.name }))
+                ];
+                this.nivelesPeligrosidad = [
+                    { value: '', label: 'Todos' },
+                    ...(response.danger_levels || []).map((d: any) => ({ value: String(d.id), label: d.name }))
+                ];
+                this.cultivos = [
+                    { value: '', label: 'Todos' },
+                    ...(response.production_systems || []).map((c: any) => ({ value: c.code, label: c.name }))
+                ];
+                this.cdr.detectChanges();
+            }
+        });
     }
 }
