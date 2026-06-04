@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import * as L from 'leaflet';
 import { GenericService } from '../../services/generic.service';
+import { AlertService } from '../../services/alert.service';
 import { paths } from '../../../environments/environment.prod';
 
 interface FilterOption {
@@ -24,6 +25,71 @@ interface PredioMarker {
     centroid: { lat: number; lng: number };
     coordinates: { lat: number; lng: number }[];
 }
+
+type SepomexState = {
+    code: number;
+    name: string;
+};
+
+type SepomexMunicipality = {
+    code: number;
+    name: string;
+};
+
+type SepomexStatesResponse = {
+    states: SepomexState[];
+};
+
+type SepomexMunicipalitiesResponse = {
+    municipalities: SepomexMunicipality[];
+};
+
+type CatalogItem = {
+    id: number;
+    code: string;
+    name: string;
+};
+
+type CatalogsDashboardResponse = {
+    crops: CatalogItem[];
+};
+
+type EstatesCatalogItem = {
+    id: number;
+    code: string;
+    name: string;
+};
+
+type EstatesCatalogsResponse = {
+    water_irrigation_types: EstatesCatalogItem[];
+    water_humidities: EstatesCatalogItem[];
+    production_systems: EstatesCatalogItem[];
+    soil_types: EstatesCatalogItem[];
+    danger_levels: EstatesCatalogItem[];
+};
+
+type ApiLatLng = {
+    lat: number;
+    lng: number;
+};
+
+type EstateItem = {
+    id: number;
+    identification: string;
+    name: string;
+    surface_ha: number;
+    state: number;
+    municipality: number;
+    centroid: ApiLatLng;
+    coordinates: ApiLatLng[];
+    crops: string[];
+};
+
+type EstatesResponse = {
+    title: string;
+    total: number;
+    items: EstateItem[];
+};
 
 @Component({
     selector: 'app-predios',
@@ -88,17 +154,20 @@ export class Predios implements OnInit, AfterViewInit, OnDestroy {
 
     constructor(
         private cdr: ChangeDetectorRef,
-        private genericService: GenericService
+        private genericService: GenericService,
+        private alertService: AlertService
     ) {}
 
     ngOnInit(): void {
         this.loadEstados();
         this.loadEstatesCatalogs();
-        this.loadEstatesData();
     }
 
     ngAfterViewInit(): void {
-        setTimeout(() => this.initMap(), 500);
+        setTimeout(() => {
+            this.initMap();
+            setTimeout(() => this.map?.invalidateSize(), 300);
+        }, 800);
     }
 
     ngOnDestroy(): void {
@@ -137,6 +206,7 @@ export class Predios implements OnInit, AfterViewInit, OnDestroy {
         this.loadMarkers();
 
         this.map.invalidateSize();
+        this.mapReady = true;
     }
 
     private loadMarkers(): void {
@@ -210,12 +280,60 @@ export class Predios implements OnInit, AfterViewInit, OnDestroy {
         if (section === 'recursos') this.recursosOpen = !this.recursosOpen;
     }
 
+    exportGeoJSON(): void {
+        if (!this.predios.length) return;
+
+        const features = this.predios.map((predio) => {
+            // API returns lat/lng swapped: lat = longitude, lng = latitude
+            const coordinates = predio.coordinates.map(
+                (coord) => [coord.lat, coord.lng]
+            );
+
+            // Close the polygon ring if not already closed
+            if (coordinates.length > 0) {
+                const first = coordinates[0];
+                const last = coordinates[coordinates.length - 1];
+                if (first[0] !== last[0] || first[1] !== last[1]) {
+                    coordinates.push([...first]);
+                }
+            }
+
+            return {
+                type: 'Feature' as const,
+                properties: {
+                    id: predio.id,
+                    name: predio.name,
+                    identification: predio.identification,
+                    surface_ha: predio.surface_ha,
+                    crops: predio.crops
+                },
+                geometry: {
+                    type: 'Polygon' as const,
+                    coordinates: [coordinates]
+                }
+            };
+        });
+
+        const geojson = {
+            type: 'FeatureCollection' as const,
+            features
+        };
+
+        const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/geo+json' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'predios.geojson';
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
+
     applyFilters(): void {
         this.loadEstatesData();
     }
 
     canApplyMainFilters(): boolean {
-        return !!(this.selectedEstado && this.selectedCultivo && this.selectedAnio && this.selectedCiclo);
+        return !!(this.selectedEstado && this.selectedAnio && this.selectedCiclo);
     }
 
     applyMainFilters(): void {
@@ -225,6 +343,23 @@ export class Predios implements OnInit, AfterViewInit, OnDestroy {
 
     applyCustomFilters(): void {
         this.loadEstatesData();
+    }
+
+    clearFilters(): void {
+        this.selectedEstado = '';
+        this.selectedMunicipio = '';
+        this.selectedCultivo = '';
+        this.selectedAnio = '';
+        this.selectedCiclo = '';
+        this.selectedMecanizacion = '';
+        this.selectedTipoRiego = '';
+        this.selectedModalidadProduccion = '';
+        this.selectedRegimenHidrico = '';
+        this.selectedTipoSuelo = '';
+        this.selectedNivelPeligrosidad = '';
+        this.municipios = [{ value: '', label: 'Todos' }];
+        this.predios = [];
+        this.loadMarkers();
     }
 
     private buildQueryParams(): Record<string, string> {
@@ -248,6 +383,18 @@ export class Predios implements OnInit, AfterViewInit, OnDestroy {
         this.genericService.sendGetParams<any>(paths.estatesList, params, true).subscribe({
             next: (response: any) => {
                 const items = response.items || [];
+
+                if (items.length === 0) {
+                    this.alertService.warnAlert(
+                        'Sin resultados',
+                        'No se encontraron predios con los filtros seleccionados. Intenta con otra combinación.'
+                    );
+                    this.predios = [];
+                    this.loadMarkers();
+                    this.cdr.detectChanges();
+                    return;
+                }
+
                 this.predios = items.map((estate: any) => ({
                     id: estate.id,
                     name: estate.name || 'Predio',
@@ -258,8 +405,20 @@ export class Predios implements OnInit, AfterViewInit, OnDestroy {
                     coordinates: estate.coordinates || []
                 }));
 
-                this.loadMarkers();
-                this.fitMapToPredios();
+                if (this.mapReady) {
+                    this.loadMarkers();
+                    this.fitMapToPredios();
+                } else {
+                    // Wait for map to be ready then render
+                    const waitForMap = setInterval(() => {
+                        if (this.mapReady) {
+                            clearInterval(waitForMap);
+                            this.loadMarkers();
+                            this.fitMapToPredios();
+                        }
+                    }, 200);
+                    setTimeout(() => clearInterval(waitForMap), 5000);
+                }
                 this.cdr.detectChanges();
             },
             error: () => {

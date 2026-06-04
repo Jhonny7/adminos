@@ -20,6 +20,8 @@ export const paths = {
   topCropsBySurface: `${path}/dashboard/agricola/top-crops-by-surface`,
   topCropsByProduction: `${path}/dashboard/agricola/top-crops-by-production`,
   laborsRegistered: `${path}/dashboard/labors/labors-registered`,
+  estates: `${path}/dashboard/estates`,
+  estatesCatalogs: `${path}/dashboard/estates/catalogs`,
   estatesWithLabors: `${path}/dashboard/labors/estates-with-labors`,
   surfaceWithLabors: `${path}/dashboard/labors/surface-with-labors`,
   conservationPractices: `${path}/dashboard/labors/conservation-practices`,
@@ -38,7 +40,6 @@ export const paths = {
   filterMunicipiosBase: `${path}/sepomex/states`,
   catalogsDashboard: `${path}/catalogs-dashboard`,
   // Costos y Rendimientos
-  estatesCatalogs: `${path}/dashboard/estates/catalogs`,
   estatesList: `${path}/dashboard/estates`,
   averageYield: `${path}/dashboard/cost/average-yield`,
   totalCostPerHectare: `${path}/dashboard/cost/total-cost-per-hectare`,

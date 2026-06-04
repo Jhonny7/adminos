@@ -115,6 +115,43 @@
         justify-content: space-between;
     }
 
+    .map-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .btn-export-geojson {
+        height: 2.2rem;
+        border: 1px solid #dbe1e8;
+        border-radius: 0.6rem;
+        background: #ffffff;
+        color: #256c63;
+        font-size: 0.78rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0 0.8rem;
+        cursor: pointer;
+        white-space: nowrap;
+
+        &:hover {
+            background: #f5f7fa;
+        }
+
+        &:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+        }
+    }
+
     .map-title {
         display: flex;
         align-items: center;
@@ -164,7 +201,6 @@
     }
 
     .map-wrapper {
-        position: relative;
         width: 100%;
         height: 420px;
         border-radius: 1rem;
@@ -173,11 +209,8 @@
     }
 
     .map-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        width: 100%;
+        height: 100%;
     }
 
     .map-legend {

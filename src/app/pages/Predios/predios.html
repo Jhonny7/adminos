@@ -53,13 +53,18 @@
                         <mat-icon>location_on</mat-icon>
                         <h3>Mapa de Predios Activos</h3>
                     </div>
-                    <div class="map-zoom-controls">
-                        <button type="button" class="zoom-btn" (click)="zoomIn()">
-                            <mat-icon>zoom_in</mat-icon>
+                    <div class="map-actions">
+                        <button class="btn-export-geojson" type="button" (click)="exportGeoJSON()" [disabled]="!predios.length">
+                            <mat-icon>download</mat-icon> Exportar GeoJSON
                         </button>
-                        <button type="button" class="zoom-btn" (click)="zoomOut()">
-                            <mat-icon>zoom_out</mat-icon>
-                        </button>
+                        <div class="map-zoom-controls">
+                            <button type="button" class="zoom-btn" (click)="zoomIn()">
+                                <mat-icon>zoom_in</mat-icon>
+                            </button>
+                            <button type="button" class="zoom-btn" (click)="zoomOut()">
+                                <mat-icon>zoom_out</mat-icon>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="map-wrapper">
