@@ -11,6 +11,8 @@ export const paths = {
   login: `${path}/login`,
   menu: `${path}/menu`,
   laborsRegistered: `${path}/dashboard/labors/labors-registered`,
+  estates: `${path}/dashboard/estates`,
+  estatesCatalogs: `${path}/dashboard/estates/catalogs`,
   estatesWithLabors: `${path}/dashboard/labors/estates-with-labors`,
   surfaceWithLabors: `${path}/dashboard/labors/surface-with-labors`,
   conservationPractices: `${path}/dashboard/labors/conservation-practices`,

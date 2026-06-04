@@ -9,20 +9,14 @@
             <div class="filters-row">
                 <div class="filter-field">
                     <label>Estado</label>
-                    <select [(ngModel)]="selectedEstado">
+                    <select [(ngModel)]="selectedEstado" (ngModelChange)="onEstadoChange($event)">
                         <option *ngFor="let opt of estados" [value]="opt.value">{{ opt.label }}</option>
                     </select>
                 </div>
                 <div class="filter-field">
                     <label>Municipio</label>
-                    <select [(ngModel)]="selectedMunicipio">
+                    <select [(ngModel)]="selectedMunicipio" [disabled]="!selectedEstado">
                         <option *ngFor="let opt of municipios" [value]="opt.value">{{ opt.label }}</option>
-                    </select>
-                </div>
-                <div class="filter-field">
-                    <label>Localidad</label>
-                    <select [(ngModel)]="selectedLocalidad">
-                        <option *ngFor="let opt of localidades" [value]="opt.value">{{ opt.label }}</option>
                     </select>
                 </div>
                 <div class="filter-field">
@@ -43,6 +37,10 @@
                         <option *ngFor="let opt of ciclos" [value]="opt.value">{{ opt.label }}</option>
                     </select>
                 </div>
+            </div>
+            <div class="filters-actions">
+                <button class="btn-apply" (click)="applyFilters()">Aplicar filtros</button>
+                <button class="btn-clear" (click)="clearFilters()">Limpiar</button>
             </div>
         </section>
 
@@ -89,14 +87,12 @@
                             <select [(ngModel)]="selectedMecanizacion">
                                 <option *ngFor="let opt of mecanizacion" [value]="opt.value">{{ opt.label }}</option>
                             </select>
-                            <span class="badge">{{ prediosMecanizacion }} predios</span>
                         </div>
                         <div class="search-field">
                             <label>Tipo de riego</label>
                             <select [(ngModel)]="selectedTipoRiego">
                                 <option *ngFor="let opt of tiposRiego" [value]="opt.value">{{ opt.label }}</option>
                             </select>
-                            <span class="badge">{{ prediosRiego }} predios</span>
                         </div>
                     </div>
                 </div>
@@ -107,7 +103,13 @@
                         <mat-icon>{{ procesoOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
                     </button>
                     <div class="accordion-body" *ngIf="procesoOpen">
-                        <p class="empty-text">Sin filtros configurados</p>
+                        <div class="search-field">
+                            <label>Tipo de producción</label>
+                            <select [(ngModel)]="selectedProductionSystem">
+                                <option *ngFor="let opt of productionTypes" [value]="opt.value">{{ opt.label }}
+                                </option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -117,7 +119,27 @@
                         <mat-icon>{{ recursosOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
                     </button>
                     <div class="accordion-body" *ngIf="recursosOpen">
-                        <p class="empty-text">Sin filtros configurados</p>
+                        <div class="search-field">
+                            <label>Régimen hídrico</label>
+                            <select [(ngModel)]="selectedWaterHumidity">
+                                <option *ngFor="let opt of humidity" [value]="opt.value">{{ opt.label }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="search-field">
+                            <label>Tipo de suelo</label>
+                            <select [(ngModel)]="selectedSoilType">
+                                <option *ngFor="let opt of soilTypes" [value]="opt.value">{{ opt.label }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="search-field">
+                            <label>Nivel de peligrosidad</label>
+                            <select [(ngModel)]="selectedDangerLevel">
+                                <option *ngFor="let opt of dangerLevels" [value]="opt.value">{{ opt.label }}
+                                </option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </aside>
