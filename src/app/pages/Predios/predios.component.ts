@@ -253,6 +253,11 @@ export class Predios implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private buildPopup(predio: PredioMarker): string {
+        const cropsEspanol = predio.crops.map(code => {
+            const found = this.cultivos.find(c => c.value === code);
+            return found ? found.label : code;
+        }).join(', ') || 'N/A';
+
         return `
             <div style="font-family: sans-serif; min-width: 200px;">
                 <strong style="font-size: 0.9rem; color: #202939;">${predio.name}</strong>
@@ -260,7 +265,7 @@ export class Predios implements OnInit, AfterViewInit, OnDestroy {
                 <hr style="border: none; border-top: 1px solid #eef2f6; margin: 0.4rem 0;">
                 <div style="font-size: 0.78rem; color: #516173; line-height: 1.6;">
                     <div><b>Superficie:</b> ${predio.surface_ha.toFixed(2)} ha</div>
-                    <div><b>Cultivos:</b> ${predio.crops.join(', ') || 'N/A'}</div>
+                    <div><b>Cultivos:</b> ${cropsEspanol}</div>
                 </div>
             </div>
         `;
@@ -298,6 +303,11 @@ export class Predios implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
 
+            const cropsEspanol = predio.crops.map(code => {
+                const found = this.cultivos.find(c => c.value === code);
+                return found ? found.label : code;
+            });
+
             return {
                 type: 'Feature' as const,
                 properties: {
@@ -305,7 +315,7 @@ export class Predios implements OnInit, AfterViewInit, OnDestroy {
                     name: predio.name,
                     identification: predio.identification,
                     surface_ha: predio.surface_ha,
-                    crops: predio.crops
+                    crops: cropsEspanol
                 },
                 geometry: {
                     type: 'Polygon' as const,
@@ -333,7 +343,7 @@ export class Predios implements OnInit, AfterViewInit, OnDestroy {
     }
 
     canApplyMainFilters(): boolean {
-        return !!(this.selectedEstado && this.selectedAnio && this.selectedCiclo);
+        return !!(this.selectedEstado && this.selectedAnio);
     }
 
     applyMainFilters(): void {
