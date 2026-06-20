@@ -9,6 +9,7 @@ import { Plaguicidas } from './pages/Plaguicidas/plaguicidas.component';
 import { ReturnsCosts } from './pages/ReturnsCosts/returns-costs.component';
 import { Predios } from './pages/Predios/predios.component';
 import { AuthGuard } from './guards/auth.guard';
+import { EliminarCuenta } from './pages/EliminarCuenta/eliminar-cuenta.component';
 
 export const routes: Routes = [
   {
@@ -19,6 +20,10 @@ export const routes: Routes = [
   {
     path: 'login',
     component: Login
+  },
+  {
+    path: 'eliminar-cuenta',
+    component: EliminarCuenta
   },
   {
     path: 'admin',

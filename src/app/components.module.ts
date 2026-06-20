@@ -41,6 +41,7 @@ import { ModalPanelContainerComponent } from "./components/atoms/modal-panel/mod
 import { PopoverContainerComponent } from "./components/atoms/popover/popover.component";
 import { BaseChartDirective } from 'ng2-charts';
 import { ReturnsCosts } from "./pages/ReturnsCosts/returns-costs.component";
+import { EliminarCuenta } from "./pages/EliminarCuenta/eliminar-cuenta.component";
 
 export const exporters: any = [
   LayoutComponent,
@@ -83,6 +84,7 @@ export const exporters: any = [
   ReturnsCosts,
   Plaguicidas,
   Predios,
+  EliminarCuenta,
   OInputExampleComponent,
   ModalPanelContainerComponent,
   PopoverContainerComponent
