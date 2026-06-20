@@ -13,6 +13,7 @@ export const paths = {
   laborsRegistered: `${path}/dashboard/labors/labors-registered`,
   estates: `${path}/dashboard/estates`,
   estatesCatalogs: `${path}/dashboard/estates/catalogs`,
+  estatesList: `${path}/dashboard/estates`,
   estatesWithLabors: `${path}/dashboard/labors/estates-with-labors`,
   surfaceWithLabors: `${path}/dashboard/labors/surface-with-labors`,
   conservationPractices: `${path}/dashboard/labors/conservation-practices`,

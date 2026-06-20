@@ -69,6 +69,10 @@
             flex: 0 0 7rem;
         }
 
+        &.filter-btn-field {
+            flex: 0 0 auto;
+        }
+
         label {
             color: #979ba1;
             font-size: 0.78rem;
@@ -109,6 +113,43 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+    }
+
+    .map-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .btn-export-geojson {
+        height: 2.2rem;
+        border: 1px solid #dbe1e8;
+        border-radius: 0.6rem;
+        background: #ffffff;
+        color: #256c63;
+        font-size: 0.78rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0 0.8rem;
+        cursor: pointer;
+        white-space: nowrap;
+
+        &:hover {
+            background: #f5f7fa;
+        }
+
+        &:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+        }
     }
 
     .map-title {
@@ -160,7 +201,6 @@
     }
 
     .map-wrapper {
-        position: relative;
         width: 100%;
         height: 420px;
         border-radius: 1rem;
@@ -169,11 +209,8 @@
     }
 
     .map-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        width: 100%;
+        height: 100%;
     }
 
     .map-legend {
@@ -297,6 +334,57 @@
         color: #9ba2aa;
         font-size: 0.82rem;
         padding: 0.3rem 0;
+    }
+
+    .btn-search {
+        height: 2.7rem;
+        border: none;
+        border-radius: 0.85rem;
+        background: #a1244e;
+        color: #ffffff;
+        font-size: 0.85rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        padding: 0 1.2rem;
+        cursor: pointer;
+        white-space: nowrap;
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    .btn-search-panel {
+        width: 100%;
+        height: 2.8rem;
+        border: none;
+        border-radius: 1rem;
+        background: #256c63;
+        color: #ffffff;
+        font-size: 0.84rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        margin-top: 0.4rem;
+
+        mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+        }
     }
 
     /* ── Responsive ── */

@@ -39,7 +39,8 @@ export const paths = {
   filterEstados: `${path}/sepomex/states`,
   filterMunicipiosBase: `${path}/sepomex/states`,
   catalogsDashboard: `${path}/catalogs-dashboard`,
-   // Costos y Rendimientos
+  // Costos y Rendimientos
+  estatesList: `${path}/dashboard/estates`,
   averageYield: `${path}/dashboard/cost/average-yield`,
   totalCostPerHectare: `${path}/dashboard/cost/total-cost-per-hectare`,
   grossMarginPerHectare: `${path}/dashboard/cost/gross-margin-per-hectare`,
