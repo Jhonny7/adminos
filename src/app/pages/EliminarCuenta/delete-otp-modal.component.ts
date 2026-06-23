@@ -1,4 +1,4 @@
-import { Component, Inject, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, ViewEncapsulation } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { paths } from '../../../environments/environment';
@@ -15,6 +15,8 @@ import { LocalStorageEncryptService } from '../../services/local-storage-encrypt
   standalone: false
 })
 export class DeleteOtpModalComponent {
+  errorMessage = '';
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { email: string },
     private dialogRef: MatDialogRef<DeleteOtpModalComponent>,
@@ -22,10 +24,12 @@ export class DeleteOtpModalComponent {
     private alertService: AlertService,
     private loadingService: LoadingService,
     private localStorageEncryptService: LocalStorageEncryptService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   onCodeCompleted(code: string) {
+    this.errorMessage = '';
     this.loadingService.show('Verificando código...');
 
     this.genericService.sendPostRequest(paths.deactivateConfirm, {
@@ -48,10 +52,8 @@ export class DeleteOtpModalComponent {
       },
       error: () => {
         this.loadingService.hide();
-        this.alertService.errorAlert(
-          'Código inválido',
-          'El código ingresado no es válido o ha expirado. Intenta de nuevo.'
-        );
+        this.errorMessage = 'El código ingresado no es válido o ha expirado. Intenta de nuevo.';
+        this.cdr.detectChanges();
       }
     });
   }
