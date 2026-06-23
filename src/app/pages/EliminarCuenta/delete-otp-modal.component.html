@@ -1,0 +1,12 @@
+<div class="delete-otp-modal">
+  <h3>Verificar código</h3>
+  <p>Hemos enviado un código de verificación a <strong>{{ data.email }}</strong></p>
+
+  <code-input
+    [isCodeHidden]="false"
+    [codeLength]="6"
+    (codeCompleted)="onCodeCompleted($event)"
+  ></code-input>
+
+  <button class="otp-cancel-btn" (click)="onCancel()">Cancelar</button>
+</div>

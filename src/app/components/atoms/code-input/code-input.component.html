@@ -1,0 +1,15 @@
+<div class="code-input-container" (paste)="onPaste($event)">
+  <input
+    #inputBox
+    *ngFor="let _ of [].constructor(codeLength); let i = index"
+    class="code-input-box"
+    [class.filled]="digits[i]"
+    [type]="isCodeHidden ? 'password' : 'text'"
+    maxlength="1"
+    inputmode="numeric"
+    pattern="[0-9]*"
+    autocomplete="one-time-code"
+    (input)="onInput(i, $event)"
+    (keydown)="onKeydown(i, $event)"
+  />
+</div>

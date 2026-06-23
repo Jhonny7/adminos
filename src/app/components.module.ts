@@ -36,12 +36,14 @@ import { Labors } from "./pages/Labors/labors.component";
 import { Plaguicidas } from "./pages/Plaguicidas/plaguicidas.component";
 import { Predios } from "./pages/Predios/predios.component";
 import { OSquareButtonComponent } from "./components/atoms/osquare-button/osquare-button.component";
+import { CodeInputComponent } from "./components/atoms/code-input/code-input.component";
 import { OIconComponent } from "./components/atoms/oicon/oicon.component";
 import { ModalPanelContainerComponent } from "./components/atoms/modal-panel/modal-panel.component";
 import { PopoverContainerComponent } from "./components/atoms/popover/popover.component";
 import { BaseChartDirective } from 'ng2-charts';
 import { ReturnsCosts } from "./pages/ReturnsCosts/returns-costs.component";
 import { EliminarCuenta } from "./pages/EliminarCuenta/eliminar-cuenta.component";
+import { DeleteOtpModalComponent } from "./pages/EliminarCuenta/delete-otp-modal.component";
 
 export const exporters: any = [
   LayoutComponent,
@@ -70,6 +72,9 @@ export const exporters: any = [
   OInputToggleComponent,
   OInputCheckboxComponent,
   
+  // Code Input (OTP)
+  CodeInputComponent,
+
   // Advanced (placeholders)
   OInputOTPComponent,
   OInputSpecialSelectComponent,
@@ -85,6 +90,7 @@ export const exporters: any = [
   Plaguicidas,
   Predios,
   EliminarCuenta,
+  DeleteOtpModalComponent,
   OInputExampleComponent,
   ModalPanelContainerComponent,
   PopoverContainerComponent

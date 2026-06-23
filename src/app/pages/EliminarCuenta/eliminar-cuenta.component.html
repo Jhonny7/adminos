@@ -47,12 +47,23 @@
     </div>
 
     <div class="delete-account-section help-section">
-      <h2>¿Necesitas ayuda antes de eliminar tu cuenta de BioParcela?</h2>
-      <p>
-        También puedes eliminar tu cuenta de BioParcela enviando un correo a
-        <a href="mailto:contacto@bioparcela.com">contacto@bioparcela.com</a>
-        con tu solicitud de eliminación de cuenta en BioParcela.
-      </p>
+      <div class="help-header" (click)="toggleHelp()">
+        <h2>¿Necesitas ayuda antes de eliminar tu cuenta de BioParcela?</h2>
+        <span class="material-icons outlined">{{ showHelp ? 'expand_less' : 'expand_more' }}</span>
+      </div>
+
+      <div class="help-body" *ngIf="showHelp">
+        <p>
+          También puedes eliminar tu cuenta de BioParcela enviando un correo a
+          <a href="mailto:contacto@bioparcela.com">contacto@bioparcela.com</a>
+          con tu solicitud de eliminación de cuenta en BioParcela.
+        </p>
+
+        <button class="delete-request-btn" (click)="requestDelete()">
+          <span class="material-icons outlined">delete_forever</span>
+          Solicitar eliminación de cuenta
+        </button>
+      </div>
     </div>
   </div>
 </div>

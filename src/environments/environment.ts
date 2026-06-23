@@ -41,7 +41,10 @@ export const paths = {
   yieldByHumidity: `${path}/dashboard/cost/yield-by-humidity`,
   topCropsYield: `${path}/dashboard/cost/top-crops-yield`,
   costYieldEvolution: `${path}/dashboard/cost/cost-yield-evolution`,
-  analysisTable: `${path}/dashboard/cost/analysis-table`
+  analysisTable: `${path}/dashboard/cost/analysis-table`,
+  // BioParcela
+  deactivateOtp: `${path}/user/deactivate/request-otp`,
+  deactivateConfirm: `${path}/user/deactivate/confirm`
 }
 
 export const themeData = {
