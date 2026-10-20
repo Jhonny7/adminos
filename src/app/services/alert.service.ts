@@ -409,24 +409,36 @@ export class AlertService {
             <p>${mensaje}</p>
           </div>
 
-          <div>
-            <input type="text" id="em" placeholder="${placeholder}"/>
+          <div style="padding: 0 1rem;">
+            <input type="text" id="em" placeholder="${placeholder}" style="
+              width: 100%;
+              height: 3rem;
+              border: 1px solid #d7dce2;
+              border-radius: 0.85rem;
+              padding: 0 1rem;
+              outline: none;
+              color: #1d2630;
+              background: #ffffff;
+              font-size: 0.95rem;
+              box-sizing: border-box;
+              transition: border-color 0.2s;
+            "/>
           </div>
           `;
     dataAlert.funcion = () => {};
     dataAlert.preConfirm = () => {
       let valor: any = document.getElementById("em");
       if (valor.value.length <= 0) {
-        valor.style.border = "1px solid #ec0000";
+        valor.style.border = "2px solid #c44536";
         return false;
       } else {
-        valor.style.border = "1px solid #cacaca";
+        valor.style.border = "1px solid #d7dce2";
 
         const re =
           /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         let isEmail = re.test(String(valor.value).toLowerCase());
         if (isEmail) {
-          valor.style.border = "1px solid #cacaca";
+          valor.style.border = "1px solid #256c63";
           return true;
         } else {
           valor.style.border = "1px solid #ec0000";

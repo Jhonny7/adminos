@@ -2,6 +2,11 @@
   <h3>Verificar código</h3>
   <p>Hemos enviado un código de verificación a <strong>{{ data.email }}</strong></p>
 
+  <div class="otp-error" *ngIf="errorMessage">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ errorMessage }}</span>
+  </div>
+
   <code-input
     [isCodeHidden]="false"
     [codeLength]="6"
