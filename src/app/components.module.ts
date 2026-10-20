@@ -44,6 +44,11 @@ import { BaseChartDirective } from 'ng2-charts';
 import { ReturnsCosts } from "./pages/ReturnsCosts/returns-costs.component";
 import { EliminarCuenta } from "./pages/EliminarCuenta/eliminar-cuenta.component";
 import { DeleteOtpModalComponent } from "./pages/EliminarCuenta/delete-otp-modal.component";
+import { Pecuario } from "./pages/Pecuario/pecuario.component";
+import { AdminPlaceholder } from "./pages/AdminPlaceholder/admin-placeholder.component";
+import { Infraestructura } from "./pages/Infraestructura/infraestructura.component";
+import { Rancho } from "./pages/Rancho/rancho.component";
+import { UsoSuelo } from "./pages/UsoSuelo/uso-suelo.component";
 
 export const exporters: any = [
   LayoutComponent,
@@ -91,6 +96,11 @@ export const exporters: any = [
   Predios,
   EliminarCuenta,
   DeleteOtpModalComponent,
+  Pecuario,
+  AdminPlaceholder,
+  Infraestructura,
+  Rancho,
+  UsoSuelo,
   OInputExampleComponent,
   ModalPanelContainerComponent,
   PopoverContainerComponent

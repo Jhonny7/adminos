@@ -1,4 +1,8 @@
 export const path = "https://giz-qa.encodingmx.com/api/v1";
+export const pecuarioPath = "https://giz-qa.encodingmx.com/api/pecuario";
+export const infraestructuraPath = "https://giz-qa.encodingmx.com/api/infraestructura";
+export const ranchoPath = "https://giz-qa.encodingmx.com/api/rancho";
+export const usoSueloPath = "https://giz-qa.encodingmx.com/api/uso-suelo";
 
 export const sessionTag = "userSessionAdmonOS";
 export const emulado = false;
@@ -10,6 +14,44 @@ export const environment = {
 export const paths = {
   login: `${path}/login`,
   menu: `${path}/menu`,
+  pecuarioResumen: `${pecuarioPath}/resumen`,
+  pecuarioCabezasVientres: `${pecuarioPath}/cabezas-vientres`,
+  pecuarioRazas: `${pecuarioPath}/razas`,
+  pecuarioUpp: `${pecuarioPath}/upp`,
+  pecuarioTipoPersona: `${pecuarioPath}/upp/tipo-persona`,
+  pecuarioTrazabilidad: `${pecuarioPath}/trazabilidad`,
+  pecuarioSanidad: `${pecuarioPath}/sanidad`,
+  pecuarioPropiedad: `${pecuarioPath}/propiedad`,
+  pecuarioOrganismos: `${pecuarioPath}/organismos-ganaderos`,
+  pecuarioComparacionPgn: `${pecuarioPath}/comparacion-pgn`,
+  pecuarioExport: `${pecuarioPath}/export`,
+  pecuarioCacheFlush: `${pecuarioPath}/cache/flush`,
+  infraestructuraResumen: `${infraestructuraPath}/resumen`,
+  infraestructuraDesgloseUpp: `${infraestructuraPath}/desglose-upp`,
+  infraestructuraNecesidad: `${infraestructuraPath}/necesidad`,
+  infraestructuraCercado: `${infraestructuraPath}/cercado`,
+  infraestructuraCercadoUpp: `${infraestructuraPath}/cercado/upp`,
+  infraestructuraCatalogos: `${infraestructuraPath}/catalogos`,
+  infraestructuraExport: `${infraestructuraPath}/export`,
+  infraestructuraCacheFlush: `${infraestructuraPath}/cache/flush`,
+  ranchoSuperficie: `${ranchoPath}/superficie`,
+  ranchoTamanoProductor: `${ranchoPath}/tamano-productor`,
+  ranchoApoyos: `${ranchoPath}/apoyos`,
+  ranchoTipoProduccion: `${ranchoPath}/tipo-produccion`,
+  ranchoCargaAnimal: `${ranchoPath}/carga-animal`,
+  ranchoRegistroPropiedad: `${ranchoPath}/registro-propiedad`,
+  ranchoCatalogos: `${ranchoPath}/catalogos`,
+  ranchoExport: `${ranchoPath}/export`,
+  ranchoCacheFlush: `${ranchoPath}/cache/flush`,
+  usoSueloCobertura: `${usoSueloPath}/cobertura`,
+  usoSueloCoberturaEvolucion: `${usoSueloPath}/cobertura/evolucion`,
+  usoSueloClima: `${usoSueloPath}/clima`,
+  usoSueloAgua: `${usoSueloPath}/agua`,
+  usoSueloPastoreo: `${usoSueloPath}/pastoreo`,
+  usoSueloCatalogos: `${usoSueloPath}/catalogos`,
+  usoSueloExport: `${usoSueloPath}/export`,
+  usoSueloClimaSincronizar: `${usoSueloPath}/clima/sincronizar`,
+  usoSueloCacheFlush: `${usoSueloPath}/cache/flush`,
   laborsRegistered: `${path}/dashboard/labors/labors-registered`,
   estates: `${path}/dashboard/estates`,
   estatesCatalogs: `${path}/dashboard/estates/catalogs`,

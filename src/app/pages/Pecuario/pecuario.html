@@ -1,0 +1,194 @@
+<ocontainer [extraClass]="'cls-pecuario'">
+  <div class="pecuario-page">
+    <header class="page-heading">
+      <div>
+        <h1><mat-icon>pets</mat-icon> Resumen Pecuario</h1>
+        <p>Vista general de la actividad ganadera bovina registrada</p>
+      </div>
+      <div class="heading-actions">
+        <button class="btn btn-export" type="button" (click)="exportCsv()">
+          <mat-icon>download</mat-icon> Exportar CSV
+        </button>
+        <button class="btn btn-refresh" type="button" (click)="refreshData()" [disabled]="refreshing || loading">
+          <mat-icon>sync</mat-icon> {{ refreshing ? 'Actualizando...' : 'Actualizar Datos' }}
+        </button>
+      </div>
+    </header>
+
+    @if (errorMessage) {
+      <div class="error-banner"><mat-icon>error_outline</mat-icon>{{ errorMessage }}</div>
+    }
+
+    <section class="global-filters">
+      <div><strong>Ámbito geográfico</strong><span>Filtra los indicadores pecuarios por región</span></div>
+      <select [value]="geoLevel" (change)="geoLevel = $any($event.target).value; onGeoLevelChange()">
+        <option value="nacional">Nacional</option>
+        <option value="estado">Estado</option>
+        <option value="municipio">Municipio</option>
+      </select>
+      @if (geoLevel !== 'nacional') {
+        <select [value]="selectedEstado" (change)="selectedEstado = $any($event.target).value; onEstadoChange()" [disabled]="statesLoading">
+          <option value="">Selecciona estado</option>
+          @for (estado of estados; track estado.id) {
+            <option [value]="estado.id">{{ estado.label }}</option>
+          }
+        </select>
+      }
+      @if (geoLevel === 'municipio') {
+        <select [value]="selectedMunicipio" (change)="selectedMunicipio = $any($event.target).value; onMunicipioChange()" [disabled]="municipalitiesLoading || !selectedEstado">
+          <option value="">Selecciona municipio</option>
+          @for (municipio of municipios; track municipio.id) {
+            <option [value]="municipio.id">{{ municipio.label }}</option>
+          }
+        </select>
+      }
+    </section>
+
+    <section class="kpi-grid">
+      <article class="kpi-card">
+        <div class="kpi-icon"><mat-icon>groups</mat-icon></div>
+        <span>Total Productores</span>
+        <strong>{{ formatNumber(kpis.total_productores) }}</strong>
+        <small>Productores pecuarios registrados</small>
+        <div class="progress-label"><span>Progreso</span><b>80%</b></div>
+        <div class="progress-track"><i style="width: 80%"></i></div>
+      </article>
+      <article class="kpi-card">
+        <div class="kpi-icon"><mat-icon>business</mat-icon></div>
+        <span>Total de UPP</span>
+        <strong>{{ formatNumber(kpis.total_upp) }}</strong>
+        <small>Unidades de Producción Pecuaria</small>
+        <div class="progress-label"><span>Progreso</span><b>74%</b></div>
+        <div class="progress-track"><i style="width: 74%"></i></div>
+      </article>
+      <article class="kpi-card">
+        <div class="kpi-icon"><mat-icon>pets</mat-icon></div>
+        <span>Razas Registradas</span>
+        <strong>{{ formatNumber(kpis.razas_registradas) }}</strong>
+        <small>Razas bovinas en sistema</small>
+        <div class="progress-label"><span>Progreso</span><b>75%</b></div>
+        <div class="progress-track"><i style="width: 75%"></i></div>
+      </article>
+      <article class="kpi-card">
+        <div class="kpi-icon"><mat-icon>monitor_heart</mat-icon></div>
+        <span>Índice Trazabilidad</span>
+        <strong>{{ kpis.indice_trazabilidad }}%</strong>
+        <small>Promedio sanitario general</small>
+        <div class="progress-label"><span>Progreso</span><b>{{ kpis.indice_trazabilidad }}%</b></div>
+        <div class="progress-track"><i [style.width.%]="kpis.indice_trazabilidad"></i></div>
+      </article>
+    </section>
+
+    <section class="three-column-grid">
+      <article class="panel chart-panel">
+        <div class="panel-heading"><div><h2>Perfil por Sexo</h2><p>Distribución de productores</p></div></div>
+        <div class="chart-box"><canvas baseChart [data]="sexoChartData" [options]="doughnutOptions" [type]="'doughnut'"></canvas></div>
+        <div class="detail-list">
+          @for (item of sexo; track item.etiqueta; let index = $index) {
+            <div class="detail-row"><span>{{ item.etiqueta }}</span><b>{{ percentageLabel(item.total, kpis.total_productores) }}</b><div class="line-track"><i [style.width.%]="percentage(item.total, kpis.total_productores)" [class.gold]="index === 1"></i></div></div>
+          }
+        </div>
+      </article>
+
+      <article class="panel chart-panel">
+        <div class="panel-heading"><div><h2>Perfil por Edad</h2><p>Rangos etarios de productores</p></div></div>
+        <div class="chart-box"><canvas baseChart [data]="edadChartData" [options]="barOptions" [type]="'bar'"></canvas></div>
+        <div class="detail-list">
+          @for (item of edad; track item.rango) {
+            <div class="detail-row"><span>{{ item.rango }}<span class="years-suffix">{{ item.rango === '<25' || item.rango === '>60' ? ' años' : '' }}</span></span><b>{{ percentageLabel(item.total, kpis.total_productores) }}</b><div class="line-track"><i [style.width.%]="percentage(item.total, kpis.total_productores)"></i></div></div>
+          }
+        </div>
+      </article>
+
+      <article class="panel chart-panel">
+        <div class="panel-heading"><div><h2>Grupo Indígena</h2><p>Pertenencia a pueblos originarios</p></div></div>
+        <div class="chart-box"><canvas baseChart [data]="indigenaChartData" [options]="doughnutOptions" [type]="'doughnut'"></canvas></div>
+        <p class="note"><em>Principales: {{ indigena.principales.join(', ') || 'Sin información' }}</em></p>
+        <div class="detail-list">
+          <div class="detail-row"><span>Sí</span><b>{{ percentageLabel(indigena.si, kpis.total_productores) }}</b><div class="line-track"><i [style.width.%]="percentage(indigena.si, kpis.total_productores)"></i></div></div>
+          <div class="detail-row"><span>No</span><b>{{ percentageLabel(indigena.no, kpis.total_productores) }}</b><div class="line-track gray"><i [style.width.%]="percentage(indigena.no, kpis.total_productores)"></i></div></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="two-column-grid">
+      <article class="panel large-panel">
+        <div class="panel-heading with-controls"><div><h2>Cabezas y Vientres</h2><p>Distribución por finalidad zootécnica</p></div><div class="controls"><select [value]="geoLevel" (change)="geoLevel = $any($event.target).value; onGeoLevelChange()"><option value="nacional">Nacional</option><option value="estado">Estado</option><option value="municipio">Municipio</option></select><div class="segmented"><button type="button" [class.active]="selectedLivestockMetric === 'cabezas'" (click)="changeLivestockMetric('cabezas')">Cabezas</button><button type="button" [class.active]="selectedLivestockMetric === 'vientres'" (click)="changeLivestockMetric('vientres')">Vientres</button></div></div></div>
+        @if (geoLevel !== 'nacional') {
+          <div class="geo-filters">
+            <select [value]="selectedEstado" (change)="selectedEstado = $any($event.target).value; onEstadoChange()" [disabled]="statesLoading">
+              <option value="">Selecciona estado</option>
+              @for (estado of estados; track estado.id) {
+                <option [value]="estado.id">{{ estado.label }}</option>
+              }
+            </select>
+            @if (geoLevel === 'municipio') {
+              <select [value]="selectedMunicipio" (change)="selectedMunicipio = $any($event.target).value; onMunicipioChange()" [disabled]="municipalitiesLoading || !selectedEstado">
+                <option value="">Selecciona municipio</option>
+                @for (municipio of municipios; track municipio.id) {
+                  <option [value]="municipio.id">{{ municipio.label }}</option>
+                }
+              </select>
+            }
+          </div>
+        }
+        <div class="metric-cards"><div><span>Total Cabezas</span><strong>{{ formatNumber(cabezasVientres.total_cabezas) }}</strong></div><div><span>Total Vientres</span><strong class="gold-text">{{ formatNumber(cabezasVientres.total_vientres) }}</strong></div></div>
+        <div class="chart-box wide"><canvas baseChart [data]="cabezasChartData" [options]="barOptions" [type]="'bar'"></canvas></div>
+        <div class="detail-list">@for (item of cabezasVientres.por_finalidad || []; track item.clave) {<div class="detail-row"><span>{{ item.etiqueta }}</span><b>{{ formatNumber(selectedLivestockMetric === 'cabezas' ? item.cabezas : item.vientres) }} ({{ percentageLabel(selectedLivestockMetric === 'cabezas' ? item.cabezas : item.vientres, selectedLivestockMetric === 'cabezas' ? cabezasVientres.total_cabezas || 0 : cabezasVientres.total_vientres || 0) }})</b><div class="line-track"><i [style.width.%]="percentage(selectedLivestockMetric === 'cabezas' ? item.cabezas : item.vientres, selectedLivestockMetric === 'cabezas' ? cabezasVientres.total_cabezas || 0 : cabezasVientres.total_vientres || 0)"></i></div></div>}</div>
+      </article>
+
+      <article class="panel large-panel">
+        <div class="panel-heading with-controls"><div><h2>Razas Registradas</h2><p>Razas bovinas registradas en el sistema</p></div><div class="controls"><select [value]="geoLevel" (change)="geoLevel = $any($event.target).value; onGeoLevelChange()"><option value="nacional">Nacional</option><option value="estado">Estado</option><option value="municipio">Municipio</option></select><div class="segmented"><button type="button" [class.active]="selectedLivestockMetric === 'cabezas'" (click)="changeLivestockMetric('cabezas'); updateRazasChart()">Cabezas</button><button type="button" [class.active]="selectedLivestockMetric === 'vientres'" (click)="changeLivestockMetric('vientres'); updateRazasChart()">Vientres</button></div></div></div>
+        <div class="chart-box tall"><canvas baseChart [data]="razasChartData" [options]="horizontalBarOptions" [type]="'bar'"></canvas></div>
+        <div class="detail-list compact-list">@for (item of razas; track item.raza) {<div class="detail-row"><span>{{ item.raza }}</span><b>{{ formatNumber(metricValue(item)) }} {{ selectedLivestockMetric }}</b><div class="line-track"><i [style.width.%]="metricValue(item) / maxRaza() * 100"></i></div></div>}</div>
+      </article>
+    </section>
+
+    <section class="two-column-grid">
+      <article class="panel large-panel">
+        <div class="panel-heading with-controls"><div><h2>Total de Unidades de Producción Pecuaria (UPP)</h2><p>UPP registradas en el sistema</p></div><div class="controls"><select [value]="geoLevel" (change)="geoLevel = $any($event.target).value; onGeoLevelChange()"><option value="nacional">Nacional</option><option value="estado">Estado</option><option value="municipio">Municipio</option></select></div></div>
+        <div class="upp-total"><mat-icon>business</mat-icon><strong>{{ formatNumber(upp.total || kpis.total_upp) }}</strong><span>UPP totales</span><b>{{ geoLevel | titlecase }}</b></div>
+        <div class="detail-list shaded-list">@for (item of upp.desglose || []; track item.clave) {<div class="detail-row"><span>{{ item.etiqueta }}</span><b>{{ formatNumber(item.total) }}</b><div class="line-track"><i [style.width.%]="item.total / maxUPP() * 100"></i></div></div>}</div>
+      </article>
+
+      <article class="panel large-panel">
+        <div class="panel-heading"><div><h2>Tipo de Persona de las UPP</h2><p>Clasificación jurídica de las UPP registradas</p></div></div>
+        <div class="chart-box"><canvas baseChart [data]="tipoPersonaChartData" [options]="doughnutOptions" [type]="'doughnut'"></canvas></div>
+        <div class="detail-list shaded-list">@for (item of tipoPersona; track item.clave; let index = $index) {<div class="detail-row"><span>{{ item.etiqueta }}</span><b>{{ percentageLabel(item.total, upp.total || kpis.total_upp) }}</b><div class="line-track"><i [style.width.%]="percentage(item.total, upp.total || kpis.total_upp)" [class.gold]="index === 1"></i></div></div>}</div>
+      </article>
+    </section>
+
+    <section class="panel full-panel">
+      <div class="panel-heading"><div><h2><mat-icon class="section-icon red">local_shipping</mat-icon> Trazabilidad</h2><p>Seguimiento de movilizaciones ganaderas</p></div></div>
+      <div class="trace-layout"><div class="trace-score"><span>Guías REEMO emitidas</span><strong>{{ trazabilidad.guias_emitidas_pct || 0 }}%</strong><div class="big-progress"><i [style.width.%]="trazabilidad.guias_emitidas_pct || 0"></i></div><b [class]="statusClass(trazabilidad.estado)">{{ statusLabel(trazabilidad.estado) }}</b></div><div class="trace-details"><h3>Detalle de Guías REEMO por tipo</h3>@for (item of trazabilidad.detalle || []; track item.tipo) {<div class="detail-row"><span>{{ item.etiqueta }}</span><b>{{ formatNumber(item.total) }} ({{ percentageLabel(item.total, (trazabilidad.detalle || []).reduce((sum, current) => sum + current.total, 0)) }})</b><div class="line-track red-track"><i [style.width.%]="item.total / maxTrazabilidad() * 100"></i></div></div>}</div></div>
+    </section>
+
+    <section class="panel full-panel">
+      <div class="panel-heading"><div><h2><mat-icon class="section-icon green">shield</mat-icon> Sanidad</h2></div></div>
+      <div class="sanidad-grid">@for (item of sanidad.indicadores || []; track item.clave) {<div class="sanidad-card"><span>{{ item.etiqueta }}</span><strong>{{ item.valor }}%</strong><div class="big-progress green-progress"><i [style.width.%]="item.valor"></i><b>{{ item.valor }}%</b></div><b [class]="statusClass(item.estado)">{{ statusLabel(item.estado) }}</b></div>}</div>
+      <div class="sanidad-summary"><div><b>Índice General de Sanidad</b><strong>{{ sanidad.indice_general?.valor || 0 }}%</strong></div><div class="health-scale"><i [style.left.%]="sanidad.indice_general?.valor || 0"></i></div><div class="scale-labels"><span>Crítico</span><span>Aceptable</span><span>Óptimo</span></div></div>
+    </section>
+
+    <section class="panel full-panel">
+      <div class="panel-heading"><div><h2>Productores, Producción y Tipo de Propiedad</h2><p>Comparativa entre régimen privado y comunal</p></div></div>
+      <div class="property-cards">@for (metric of propertyMetrics; track metric.key) {<div><span>{{ metric.label }}</span><strong>{{ formatNumber(metric.values.privada + metric.values.comunal) }}</strong><small>Privada <b>{{ formatNumber(metric.values.privada) }}</b></small><div class="line-track"><i [style.width.%]="percentage(metric.values.privada, metric.values.privada + metric.values.comunal)"></i></div><small class="communal">Comunal <b>{{ formatNumber(metric.values.comunal) }}</b></small><div class="line-track"><i class="gold" [style.width.%]="percentage(metric.values.comunal, metric.values.privada + metric.values.comunal)"></i></div></div>}</div>
+      <div class="chart-box property-chart"><canvas baseChart [data]="propiedadChartData" [options]="barOptions" [type]="'bar'"></canvas></div>
+    </section>
+
+    <section class="two-column-grid">
+      <article class="panel large-panel">
+        <div class="panel-heading"><div><h2>Organismos Ganaderos y PGN</h2><p>Membresía en organismos ganaderos e interconexión con PGN</p></div></div>
+        <div class="chart-box organism-chart"><canvas baseChart [data]="organismosChartData" [options]="doughnutOptions" [type]="'doughnut'"></canvas></div>
+        <div class="detail-list shaded-list"><div class="detail-row"><span>Con organismo ganadero</span><b>{{ percentageLabel(organismos.con_organismo || 0, organismos.con_organismo! + organismos.sin_organismo!) }}</b></div><div class="detail-row"><span>Sin organismo ganadero</span><b>{{ percentageLabel(organismos.sin_organismo || 0, organismos.con_organismo! + organismos.sin_organismo!) }}</b></div></div>
+        <div class="pgn-callout"><h3><mat-icon>link</mat-icon> Interconexión PGN</h3><div><span>Productores con perfil PGN</span><b>{{ formatNumber(organismos.pgn?.productores_con_perfil) }}</b></div><div class="line-track"><i [style.width.%]="percentage(organismos.pgn?.productores_con_perfil || 0, organismos.pgn?.total_productores || 0)"></i></div><small>{{ percentageLabel(organismos.pgn?.productores_con_perfil || 0, organismos.pgn?.total_productores || 0) }} de los productores Bioparcela activos en PGN</small><a [href]="organismos.pgn?.pgn_url" target="_blank" rel="noopener">Consultar en PGN →</a></div>
+      </article>
+
+      <article class="panel large-panel">
+        <div class="panel-heading"><div><h2>Comparación Bioparcela vs PGN</h2><p>Usuarios registrados en ambas plataformas por mes</p></div></div>
+        <div class="comparison-cards"><div><span>Bioparcela</span><strong>{{ formatNumber(comparacion.bioparcela) }}</strong><small>usuarios registrados</small></div><div><span>PGN</span><strong class="gold-text">{{ formatNumber(comparacion.pgn) }}</strong><small>usuarios activos</small></div><div><span>Coincidencia</span><strong>{{ comparacion.cobertura_pct || 0 }}%</strong><small>usuarios en ambas</small></div></div>
+        <div class="chart-box comparison-chart"><canvas baseChart [data]="comparacionChartData" [options]="barOptions" [type]="'bar'"></canvas></div>
+        <div class="coverage"><div><span>Cobertura PGN sobre Bioparcela ({{ comparacion.corte || 'sin corte' }})</span><b>{{ comparacion.cobertura_pct || 0 }}%</b></div><div class="big-progress"><i [style.width.%]="comparacion.cobertura_pct || 0"></i></div><small>{{ formatNumber(comparacion.sin_registro_pgn) }} productores en Bioparcela aún no registrados en PGN</small></div>
+      </article>
+    </section>
+  </div>
+</ocontainer>

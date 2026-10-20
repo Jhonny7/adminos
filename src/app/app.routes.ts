@@ -10,6 +10,11 @@ import { ReturnsCosts } from './pages/ReturnsCosts/returns-costs.component';
 import { Predios } from './pages/Predios/predios.component';
 import { AuthGuard } from './guards/auth.guard';
 import { EliminarCuenta } from './pages/EliminarCuenta/eliminar-cuenta.component';
+import { Pecuario } from './pages/Pecuario/pecuario.component';
+import { AdminPlaceholder } from './pages/AdminPlaceholder/admin-placeholder.component';
+import { Infraestructura } from './pages/Infraestructura/infraestructura.component';
+import { Rancho } from './pages/Rancho/rancho.component';
+import { UsoSuelo } from './pages/UsoSuelo/uso-suelo.component';
 
 export const routes: Routes = [
   {
@@ -35,7 +40,25 @@ export const routes: Routes = [
       { path: 'plaguicidas', component: Plaguicidas },
       { path: 'returns-costs', component: ReturnsCosts },
       { path: 'predios', component: Predios },
-      { path: 'home', component: Home }
+      { path: 'home', component: Home },
+      { path: 'resumen-pecuario', component: Pecuario },
+      {
+        path: 'resumen-rancho',
+        component: Rancho
+      },
+      {
+        path: 'uso-suelo-vegetacion',
+        component: UsoSuelo
+      },
+      {
+        path: 'infraestructura-rancho',
+        component: Infraestructura
+      },
+      {
+        path: 'sanidad-vacunacion',
+        component: AdminPlaceholder,
+        data: { title: 'Sanidad y Vacunación' }
+      }
     ]
   }
 ];

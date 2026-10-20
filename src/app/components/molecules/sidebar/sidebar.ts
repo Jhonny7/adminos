@@ -62,6 +62,39 @@ export class SidebarComponent implements OnInit {
   @Input() collapsed = false;
   @Input() isMobile = false;
 
+  private readonly extraMenuItems: MenuItem[] = [
+    {
+      label: 'Resumen Pecuario',
+      icon: 'pets',
+      routerLink: '/admin/resumen-pecuario',
+      exact: true
+    },
+    {
+      label: 'Resumen del Rancho',
+      icon: 'home',
+      routerLink: '/admin/resumen-rancho',
+      exact: true
+    },
+    {
+      label: 'Uso de Suelo y Vegetación',
+      icon: 'park',
+      routerLink: '/admin/uso-suelo-vegetacion',
+      exact: true
+    },
+    {
+      label: 'Infraestructura del Rancho',
+      icon: 'business',
+      routerLink: '/admin/infraestructura-rancho',
+      exact: true
+    },
+    {
+      label: 'Sanidad y Vacunación',
+      icon: 'vaccines',
+      routerLink: '/admin/sanidad-vacunacion',
+      exact: true
+    }
+  ];
+
   private readonly fallbackMenu: MenuItem[] = [
     {
       label: 'Resumen Ejecutivo',
@@ -80,7 +113,8 @@ export class SidebarComponent implements OnInit {
       icon: 'pest_control',
       routerLink: '/admin/plaguicidas',
       exact: true
-    }
+    },
+    ...this.extraMenuItems
   ];
 
   menu: MenuItem[] = [...this.fallbackMenu];
@@ -105,7 +139,7 @@ export class SidebarComponent implements OnInit {
     this.genericService.sendGetRequest<MenuResponse>(paths.menu, null, true).subscribe({
       next: (response: MenuResponse) => {
         this.ngZone.run(() => {
-          const items = this.mapMenuItems(response?.menu || []);
+          const items = this.mergeExtraMenuItems(this.mapMenuItems(response?.menu || []));
           this.menu = items.length ? items : [...this.fallbackMenu];
           this.cdr.detectChanges();
           this.loadingService.hide();
@@ -119,6 +153,13 @@ export class SidebarComponent implements OnInit {
         });
       }
     });
+  }
+
+  private mergeExtraMenuItems(items: MenuItem[]): MenuItem[] {
+    const routes = new Set(items.map((item) => item.routerLink).filter(Boolean));
+    const missingItems = this.extraMenuItems.filter((item) => !routes.has(item.routerLink));
+
+    return [...items, ...missingItems];
   }
 
   private mapMenuItems(items: MenuApiItem[] = []): MenuItem[] {

@@ -1,0 +1,58 @@
+<ocontainer [extraClass]="'cls-uso-suelo'">
+  <div class="uso-page">
+    <header class="page-heading">
+      <div>
+        <h1>🌿 <span>Uso de Suelo y Vegetación</span></h1>
+        <p>Monitoreo ambiental y manejo del suelo — Visión nacional por temporada</p>
+      </div>
+    </header>
+
+    <section class="filters-card">
+      <div class="filters-row">
+        <div class="search-box"><mat-icon>search</mat-icon><input [(ngModel)]="searchQuery" (keyup.enter)="onFilterChange()" placeholder="Buscar por rancho, UPP o región" /></div>
+        <select [(ngModel)]="selectedEstado" (ngModelChange)="onEstadoChange()"><option value="">Todos los estados</option>@for (estado of estados; track estado.clave) {<option [value]="estado.clave">{{ estado.etiqueta }}</option>}</select>
+        <select [(ngModel)]="selectedMunicipio" (ngModelChange)="onFilterChange()" [disabled]="!selectedEstado"><option value="">Todos los municipios</option>@for (municipio of municipios; track municipio.clave) {<option [value]="municipio.clave">{{ municipio.etiqueta }}</option>}</select>
+        <select [(ngModel)]="selectedSeason" (ngModelChange)="onFilterChange()">@for (season of seasons; track season.clave) {<option [value]="season.clave">{{ season.etiqueta }} {{ selectedYear }}</option>}</select>
+        <select [(ngModel)]="selectedYear" (ngModelChange)="onFilterChange()">@for (year of years; track year) {<option [ngValue]="year">{{ year }}</option>}</select>
+      </div>
+      <div class="filters-actions"><button class="btn btn-export" type="button" (click)="exportCsv()"><mat-icon>download</mat-icon> Exportar CSV</button></div>
+    </section>
+
+    @if (errorMessage) {<div class="error-banner"><mat-icon>error_outline</mat-icon>{{ errorMessage }}</div>}
+
+    <section class="coverage-kpis">
+      @for (tipo of coverage.tipos || []; track tipo.clave; let index = $index) {
+        <article class="coverage-card" [class]="'coverage-' + tipo.clave">
+          <span class="coverage-icon">{{ coverageIcon(tipo.clave) }}</span>
+          <h2>{{ tipo.etiqueta }}</h2>
+          <strong>{{ tipo.pct }}%</strong>
+          <div class="progress"><i [style.width.%]="tipo.pct"></i></div>
+          <b>{{ tipo.pct }}% del total ({{ formatNumber(tipo.ha) }} ha)</b>
+        </article>
+      }
+    </section>
+
+    <section class="panel climate-panel">
+      <div class="climate-header">
+        <div class="source-badge">⌁ API CONAGUA</div>
+        <div class="climate-title"><h2>Condiciones Climáticas e Hidrológicas</h2><p>Comisión Nacional del Agua — datos de precipitación, sequía y recursos hídricos</p></div>
+        <div class="connection"><span [class.offline]="!climate.conectado"></span>{{ climate.conectado ? 'Conectado' : 'Sin conexión' }} <small>Actualizado: {{ formatDate(climate.actualizado_en) }}</small><button type="button" (click)="refreshClimate()" [disabled]="refreshing"><mat-icon>sync</mat-icon>{{ refreshing ? 'Sincronizando...' : 'Sincronizar' }}</button></div>
+      </div>
+      <div class="climate-controls"><label>FILTROS:</label><select [(ngModel)]="climateYear" (ngModelChange)="onClimateChange()">@for (year of years; track year) {<option [ngValue]="year">{{ year }}</option>}</select><div class="segmented"><button type="button" [class.active]="climatePeriod === 'mensual'" (click)="climatePeriod = 'mensual'; onClimateChange()">Mensual</button><button type="button" [class.active]="climatePeriod === 'trimestral'" (click)="climatePeriod = 'trimestral'; onClimateChange()">Trimestral</button></div></div>
+      <div class="climate-tabs">@for (variable of climateVariables; track variable.clave) {<button type="button" [class.active]="climateVariable === variable.clave" (click)="climateVariable = variable.clave; onClimateChange()"><span>{{ variable.clave === 'precipitacion' ? '☔' : variable.clave === 'sequia' ? '⚠️' : variable.clave === 'temperatura' ? '♨' : variable.clave === 'escurrimiento' ? '♧' : '≋' }}</span>{{ variable.etiqueta }}</button>}</div>
+      <div class="climate-kpis">@for (kpi of climate.kpis || []; track kpi.clave) {<article [class.alert-kpi]="kpi.estado === 'deficit'"><span>{{ kpi.etiqueta }}</span><strong>{{ formatValue(kpi) }}</strong>@if (kpi.vs_normal_pct !== undefined) {<b>{{ kpi.vs_normal_pct > 0 ? '+' : '' }}{{ kpi.vs_normal_pct }}% vs normal</b>} @else if (kpi.diferencia_vs_normal !== undefined) {<b>+{{ kpi.diferencia_vs_normal }} vs normal</b>} @else {<b>Normal</b>}</article>}</div>
+      <div class="section-title"><h2>☔ {{ climate.variable?.etiqueta || 'Precipitación' }} — {{ climate.region || 'Nacional' }}, {{ climate.anio || climateYear }}</h2></div>
+      <div class="chart-box climate-chart"><canvas baseChart [data]="climateChartData" [options]="climateChartOptions" [type]="'bar'"></canvas></div>
+      <div class="info-callout"><mat-icon>insights</mat-icon> Los datos se obtienen mediante la API de CONAGUA (Servicio Meteorológico Nacional y BANDAS). Las consultas se actualizan automáticamente.</div>
+    </section>
+
+    <section class="two-column">
+      <article class="panel water-panel"><h2>💧 Disponibilidad de agua</h2><h3>Ranchos con toma de agua</h3><strong class="water-total">{{ water.con_toma_agua_pct || 0 }}%</strong><div class="progress"><i [style.width.%]="water.con_toma_agua_pct || 0"></i></div><b class="right-label">{{ water.con_toma_agua_pct || 0 }}% del total de ranchos</b><hr /><h3>Fuentes de agua principales</h3>@for (source of water.fuentes || []; track source.clave; let index = $index) {<div class="bar-row"><div><span>{{ source.etiqueta }}</span><b>{{ source.pct }}%</b></div><div class="big-progress"><i [style.width.%]="source.pct" [style.background]="sourceColor(index)"></i><strong>{{ source.pct }}%</strong></div></div>}</article>
+      <article class="panel grazing-panel"><h2>🐄 Tipos de pastoreo por época del año</h2><div class="chart-box grazing-chart"><canvas baseChart [data]="grazingChartData" [options]="grazingChartOptions" [type]="'bar'"></canvas></div><hr /><h3>Desglose por época del año</h3>@for (season of grazing.epocas || []; track season.clave) {<div class="season-detail"><h4>{{ season.etiqueta }}</h4>@for (type of season.tipos; track type.clave) {<div class="small-bar-row"><span>{{ type.clave === 'intensivo' ? '🟢' : type.clave === 'continuo' ? '🟡' : '🔴' }} {{ type.etiqueta.replace('Pastoreo ', '') }}</span><div class="big-progress"><i [style.width.%]="type.pct" [style.background]="type.clave === 'intensivo' ? '#22685d' : type.clave === 'continuo' ? '#ad8127' : '#a1244e'"></i><strong>{{ type.pct }}%</strong></div></div>}</div>}</article>
+    </section>
+
+    <section class="panel historical-panel"><h2>↗ Evolución histórica de cobertura vegetal</h2><div class="chart-box evolution-chart"><canvas baseChart [data]="evolutionChartData" [options]="evolutionChartOptions" [type]="'bar'"></canvas></div><div class="evolution-list">@for (period of evolution.periodos || []; track period.etiqueta) {<div><strong>{{ period.etiqueta }}:</strong><span>Nativa {{ period.tipos?.['nativa']?.pct || 0 }}%</span><span>Exótica {{ period.tipos?.['exotica']?.pct || 0 }}%</span><span>Invasora {{ period.tipos?.['invasora']?.pct || 0 }}%</span><span>Inducida {{ period.tipos?.['inducida']?.pct || 0 }}%</span></div>}</div></section>
+
+    <section class="alert-panel"><h2>⚠️ Alerta de tendencia</h2><p>La vegetación invasora <strong>aumentó {{ evolutionChange() }}% en el último año</strong>. Se recomienda priorizar acciones de control y monitoreo ambiental en los ranchos de la región. Las condiciones climáticas actuales pueden incrementar el riesgo de proliferación.</p></section>
+  </div>
+</ocontainer>
