@@ -49,6 +49,7 @@ import { AdminPlaceholder } from "./pages/AdminPlaceholder/admin-placeholder.com
 import { Infraestructura } from "./pages/Infraestructura/infraestructura.component";
 import { Rancho } from "./pages/Rancho/rancho.component";
 import { UsoSuelo } from "./pages/UsoSuelo/uso-suelo.component";
+import { SanidadVacunacion } from "./pages/SanidadVacunacion/sanidad-vacunacion.component";
 
 export const exporters: any = [
   LayoutComponent,
@@ -101,6 +102,7 @@ export const exporters: any = [
   Infraestructura,
   Rancho,
   UsoSuelo,
+  SanidadVacunacion,
   OInputExampleComponent,
   ModalPanelContainerComponent,
   PopoverContainerComponent

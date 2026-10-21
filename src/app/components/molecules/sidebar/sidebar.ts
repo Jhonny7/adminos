@@ -114,7 +114,7 @@ export class SidebarComponent implements OnInit {
       routerLink: '/admin/plaguicidas',
       exact: true
     },
-    ...this.extraMenuItems
+    //...this.extraMenuItems
   ];
 
   menu: MenuItem[] = [...this.fallbackMenu];
@@ -159,7 +159,7 @@ export class SidebarComponent implements OnInit {
     const routes = new Set(items.map((item) => item.routerLink).filter(Boolean));
     const missingItems = this.extraMenuItems.filter((item) => !routes.has(item.routerLink));
 
-    return [...items, ...missingItems];
+    return [...items];
   }
 
   private mapMenuItems(items: MenuApiItem[] = []): MenuItem[] {

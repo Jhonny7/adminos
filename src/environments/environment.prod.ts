@@ -4,6 +4,7 @@ export const pecuarioPath = "https://giz-qa.encodingmx.com/api/pecuario";
 export const infraestructuraPath = "https://giz-qa.encodingmx.com/api/infraestructura";
 export const ranchoPath = "https://giz-qa.encodingmx.com/api/rancho";
 export const usoSueloPath = "https://giz-qa.encodingmx.com/api/uso-suelo";
+export const sanidadPath = "https://giz-qa.encodingmx.com/api/sanidad";
 
 export const sessionTag = "userSessionAdmonOS";
 export const emulado = false;
@@ -53,6 +54,15 @@ export const paths = {
   usoSueloExport: `${usoSueloPath}/export`,
   usoSueloClimaSincronizar: `${usoSueloPath}/clima/sincronizar`,
   usoSueloCacheFlush: `${usoSueloPath}/cache/flush`,
+  sanidadResumen: `${sanidadPath}/resumen`,
+  sanidadCartillaVacunacion: `${sanidadPath}/cartilla-vacunacion`,
+  sanidadUppCertificadas: `${sanidadPath}/upp-certificadas`,
+  sanidadEnfermedades: `${sanidadPath}/enfermedades`,
+  sanidadProtocolos: `${sanidadPath}/protocolos`,
+  sanidadCoberturaEnfermedades: `${sanidadPath}/cobertura-enfermedades`,
+  sanidadRecomendaciones: `${sanidadPath}/recomendaciones`,
+  sanidadCatalogos: `${sanidadPath}/catalogos`,
+  sanidadExport: `${sanidadPath}/export`,
   registeredUsers: `${path}/dashboard/agricola/registered-users`,
   totalSurface: `${path}/dashboard/agricola/total-surface`,
   activeCrops: `${path}/dashboard/agricola/active-crops`,

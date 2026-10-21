@@ -1,0 +1,149 @@
+.cls-sanidad-vacunacion {
+  background: #f7f8fa !important;
+
+  .container-box { background: #f7f8fa !important; }
+}
+
+.sanidad-page {
+  --green: #21685d;
+  --green-light: #dceae7;
+  --gold: #b28625;
+  --gold-light: #f5eedf;
+  --red: #ab234d;
+  --red-light: #f5dfe7;
+  --ink: #1d293d;
+  --muted: #536176;
+  --line: #e1e5ea;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  .page-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.2rem 0;
+    h1 { margin: 0; color: var(--green); font-size: clamp(1.55rem, 2.2vw, 2rem); font-weight: 850; }
+    p { margin: 0.55rem 0 0; color: var(--muted); font-size: 1rem; }
+    .heading-emoji { font-size: 1.65rem; }
+  }
+
+  .heading-actions { display: flex; align-items: center; gap: 0.7rem; }
+
+  .filters-card, .panel, .kpi-card {
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: 1.15rem;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(15, 23, 42, 0.07), 0 12px 24px rgba(15, 23, 42, 0.025);
+  }
+
+  .filters-card { padding: 1rem; }
+  .filters-row { display: grid; grid-template-columns: 1.25fr repeat(3, minmax(0, 1.25fr)); gap: 0.9rem; }
+  .search-box, .filters-row select { height: 3.15rem; min-width: 0; border: 1px solid #d8dee6; border-radius: 1rem; background: #fff; color: #1e293b; font-size: 0.95rem; }
+  .search-box { display: flex; align-items: center; gap: 0.6rem; padding: 0 1rem; color: #9ba6b5; }
+  .search-box input { width: 100%; min-width: 0; border: 0; outline: 0; color: var(--ink); font: inherit; }
+  .filters-row select { padding: 0 1rem; outline: 0; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; min-height: 2.85rem; margin-top: 1rem; padding: 0.6rem 1.25rem; border: 0; border-radius: 0.9rem; font-size: 0.95rem; font-weight: 800; cursor: pointer; }
+  .btn-export { background: var(--red); color: #fff; box-shadow: 0 3px 5px rgba(171, 35, 77, 0.2); }
+  .btn-pdf { background: #7d2340; color: #fff; }
+  .heading-actions .btn { margin-top: 0; }
+  .btn:disabled { cursor: not-allowed; opacity: 0.65; }
+  .error-banner, .alert-banner { border-radius: 0.9rem; font-weight: 700; }
+  .error-banner { display: flex; align-items: center; gap: 0.45rem; padding: 0.8rem 1rem; border: 1px solid #edb4bd; background: #fff3f5; color: var(--red); }
+  .loading-state { display: flex; align-items: center; justify-content: center; gap: 0.7rem; min-height: 5rem; color: var(--muted); }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+  .kpi-card { min-height: 13rem; padding: 1.35rem 1.45rem 1.25rem; }
+  .kpi-icon { font-size: 2rem; line-height: 1; }
+  .kpi-card h2 { margin: 1rem 0 0.7rem; color: var(--muted); font-size: 1rem; font-weight: 750; }
+  .kpi-card > strong { display: block; color: var(--gold); font-size: 2.7rem; line-height: 1; }
+  .kpi-card:nth-child(3) > strong { color: var(--green); }
+  .kpi-alert > strong { color: var(--red); }
+  .kpi-card > b { display: block; margin-top: 0.55rem; text-align: right; color: var(--gold); font-size: 0.82rem; }
+  .progress { height: 0.55rem; overflow: hidden; border-radius: 999px; background: #e6e8ec; }
+  .kpi-card .progress { margin-top: 1rem; }
+  .progress i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--gold), #d9af34); }
+
+  .two-column-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; align-items: stretch; }
+  .panel { padding: 1.35rem 1.45rem; overflow: hidden; }
+  .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+  .panel-heading h2 { margin: 0; color: var(--ink); font-size: 1.3rem; font-weight: 850; }
+  .table-scroll { width: 100%; overflow-x: auto; }
+  .vaccination-row, .certification-row, .disease-row { display: grid; align-items: center; min-width: 760px; border-bottom: 1px solid #edf0f3; gap: 0.8rem; }
+  .vaccination-row { grid-template-columns: 1.65fr 0.85fr 0.95fr 0.7fr; min-height: 3.8rem; }
+  .certification-row { grid-template-columns: 0.95fr 1fr 1.25fr 0.85fr 0.85fr; min-height: 3.8rem; }
+  .table-header { min-height: 3rem; padding: 0 0.55rem; background: #f6f8fa; color: #4b586b; font-size: 0.78rem; font-weight: 800; }
+  .vaccination-row:not(.table-header), .certification-row:not(.table-header), .disease-row:not(.table-header) { padding: 0 0.55rem; }
+  .vaccination-row:not(.table-header) > :first-child, .certification-row strong, .disease-row strong { color: #263247; }
+  .certification-row strong, .disease-row > strong { color: var(--green); }
+  .status-pill { display: inline-flex; width: fit-content; align-items: center; padding: 0.4rem 0.75rem; border-radius: 999px; font-size: 0.78rem; font-weight: 800; white-space: nowrap; }
+  .status-green { background: var(--green-light); color: var(--green); }
+  .status-gold { background: var(--gold-light); color: var(--gold); }
+  .status-red { background: var(--red-light); color: var(--red); }
+  .empty-row { padding: 1.5rem 0.55rem; color: #758196; text-align: center; }
+  .register-button { width: 100%; min-height: 3rem; margin-top: 1rem; border: 0; border-radius: 1rem; background: var(--green); color: #fff; font-size: 0.95rem; font-weight: 800; cursor: not-allowed; }
+  .register-button span { color: var(--red); font-size: 1.3rem; }
+
+  .disease-panel { padding-bottom: 1.45rem; }
+  .disease-row { grid-template-columns: 0.9fr 0.9fr 2.2fr 0.8fr 1.15fr 0.8fr 0.9fr 1fr; min-height: 3.9rem; }
+  .disease-name { color: var(--red) !important; }
+  .tag { width: fit-content; padding: 0.35rem 0.6rem; border-radius: 0.4rem; background: #f1f2f4; color: #293244; font-size: 0.78rem; white-space: nowrap; }
+  .tag-neutral { background: #e8efed; }
+  .alert-banner { margin-top: 1.25rem; padding: 1rem 1.25rem; border-left: 4px solid var(--red); background: #fcf1f4; color: #4b586b; }
+  .alert-banner strong { color: var(--red); }
+
+  .protocols-panel { padding-bottom: 1.5rem; }
+  .protocol-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .protocol-card { min-width: 0; padding: 1.2rem; border-radius: 1rem; background: #f8f9fa; }
+  .protocol-card h3 { margin: 0 0 1rem; color: #222c3d; font-size: 1.05rem; }
+  .protocol-card p { margin: 0.75rem 0; color: #354154; }
+  .protocol-card p strong { color: var(--green); }
+  .protocol-line { margin-top: 1rem; }
+  .protocol-line > span { display: flex; justify-content: space-between; gap: 0.5rem; color: #354154; font-size: 0.85rem; }
+  .protocol-line strong { color: var(--green); white-space: nowrap; }
+  .protocol-line .progress { margin-top: 0.45rem; }
+  .observations-card .observation { padding: 1rem; border-radius: 1rem; background: #fff7e6; color: var(--gold); }
+  .observations-card p { margin-bottom: 0; color: var(--gold); line-height: 1.45; }
+
+  .coverage-panel { padding-bottom: 1.45rem; }
+  .coverage-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  .coverage-row, .national-average { display: grid; grid-template-columns: 14rem minmax(0, 1fr); align-items: center; gap: 0.7rem; }
+  .coverage-row > span, .national-average > strong { font-weight: 750; }
+  .coverage-track { position: relative; height: 2.15rem; overflow: hidden; border-radius: 999px; background: #e4e7eb; }
+  .coverage-track i { display: block; height: 100%; border-radius: inherit; }
+  .coverage-track b { position: absolute; top: 50%; right: 1.1rem; transform: translateY(-50%); color: #fff; font-size: 0.85rem; }
+  .coverage-alto { background: var(--green); }
+  .coverage-medio, .coverage-average { background: linear-gradient(90deg, #ae8427, #d4ad35); }
+  .coverage-bajo { background: var(--red); }
+  .national-average { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e7eaee; }
+
+  .recommendations-panel { background: #f8f9fa; }
+  .recommendation-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .recommendation-card { min-width: 0; padding: 1.2rem; border-radius: 1rem; background: #fff; }
+  .recommendation-card h3 { margin: 0 0 0.7rem; font-size: 1.05rem; }
+  .recommendation-card p { margin: 0; color: #4d5a6e; line-height: 1.55; }
+  .recommendation-alta h3 { color: var(--green); }
+  .recommendation-oportunidad h3 { color: var(--gold); }
+  .recommendation-alerta h3 { color: var(--red); }
+
+  @media (max-width: 1100px) {
+    .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .filters-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .protocol-grid, .recommendation-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 760px) {
+    .two-column-grid { grid-template-columns: 1fr; }
+    .kpi-grid, .filters-row { grid-template-columns: 1fr; }
+    .coverage-row, .national-average { grid-template-columns: 1fr; gap: 0.35rem; }
+    .coverage-track { height: 1.8rem; }
+    .panel, .filters-card, .kpi-card { border-radius: 0.85rem; }
+    .page-heading h1 { line-height: 1.2; }
+  }
+}

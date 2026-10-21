@@ -1,0 +1,92 @@
+<ocontainer [extraClass]="'cls-sanidad-vacunacion'">
+  <div class="sanidad-page" #pdfContent>
+    <header class="page-heading">
+      <div>
+        <h1><span class="heading-emoji">💉</span> Sanidad, Vacunación y Certificaciones</h1>
+        <p>Estado de salud del hato y trazabilidad sanitaria - Visión nacional</p>
+      </div>
+      <div class="heading-actions"><button class="btn btn-pdf" type="button" (click)="exportPdf()" [disabled]="exportingPdf || loading"><mat-icon>picture_as_pdf</mat-icon>{{ exportingPdf ? 'Generando PDF...' : 'Exportar PDF' }}</button></div>
+    </header>
+
+    <section class="filters-card">
+      <div class="filters-row">
+        <label class="search-box"><mat-icon>search</mat-icon><input [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Buscar por UPP, rancho o folio..." aria-label="Buscar" /></label>
+        <select [(ngModel)]="selectedEstado" (ngModelChange)="onFilterChange()" aria-label="Estado"><option value="">Todos los estados</option>@for (estado of estados; track estado.clave) {<option [value]="estado.clave">{{ estado.etiqueta }}</option>}</select>
+        <select [(ngModel)]="selectedCertificacion" (ngModelChange)="onFilterChange()" aria-label="Certificación"><option value="">Todas las certificaciones</option>@for (certificacion of certificaciones; track certificacion.clave) {<option [value]="certificacion.clave">{{ certificacion.etiqueta }}</option>}</select>
+        <select [(ngModel)]="selectedRaza" (ngModelChange)="onFilterChange()" aria-label="Raza"><option value="">Todas las razas</option>@for (raza of razas; track raza.clave) {<option [value]="raza.clave">{{ raza.etiqueta }}</option>}</select>
+      </div>
+      <button class="btn btn-export" type="button" (click)="exportCsv()"><mat-icon>download</mat-icon> Exportar CSV</button>
+    </section>
+
+    @if (errorMessage) {<div class="error-banner"><mat-icon>error_outline</mat-icon>{{ errorMessage }}</div>}
+    @if (loading) {<div class="loading-state"><mat-spinner diameter="34"></mat-spinner><span>Cargando información sanitaria...</span></div>}
+
+    <section class="kpi-grid">
+      @for (kpi of kpis; track kpi.clave) {
+        <article class="kpi-card" [class.kpi-alert]="kpi.clave === 'enfermedades_bajo_control'">
+          <div class="kpi-icon">{{ kpiIcon(kpi.clave) }}</div>
+          <h2>{{ kpi.etiqueta }}</h2>
+          <strong>{{ kpi.valor }}{{ kpi.total === null ? kpi.unidad : '/' + kpi.total }}</strong>
+          <div class="progress"><i [style.width.%]="kpi.progreso"></i></div>
+          <b>{{ kpi.detalle }}</b>
+        </article>
+      }
+    </section>
+
+    <section class="two-column-grid">
+      <article class="panel vaccination-panel">
+        <div class="panel-heading"><h2>📋 Cartilla de Vacunación</h2></div>
+        <div class="table-scroll">
+          <div class="vaccination-row table-header"><span>Enfermedad</span><span>Última aplicación</span><span>Clasificación NOM_MX</span><span>Folio receta</span></div>
+          @for (item of vaccination.items || []; track item.enfermedad) {
+            <div class="vaccination-row"><span>{{ item.enfermedad }}</span><span><b class="status-pill" [ngClass]="statusClass(item.estado)">{{ formatDate(item.ultima_aplicacion) }}</b></span><span>{{ item.clasificacion_nom }}</span><span>{{ item.folio_receta || '—' }}</span></div>
+          } @empty {<div class="empty-row">No hay registros de vacunación para los filtros seleccionados.</div>}
+        </div>
+        <button class="register-button" type="button" disabled><span>＋</span> Registrar vacunación (desde app)</button>
+      </article>
+
+      <article class="panel certifications-panel">
+        <div class="panel-heading"><h2>🏅 UPPs Certificadas</h2></div>
+        <div class="table-scroll">
+          <div class="certification-row table-header"><span>UPP</span><span>Rancho</span><span>Certificación</span><span>Fecha</span><span>Estado</span></div>
+          @for (item of certifications.items || []; track item.upp) {
+            <div class="certification-row"><strong>{{ item.upp }}</strong><span>{{ item.rancho }}</span><span>{{ item.certificacion.etiqueta }}</span><span>{{ formatDate(item.fecha) }}</span><span><b class="status-pill" [ngClass]="statusClass(item.estatus.clave)">{{ item.estatus.etiqueta }}</b></span></div>
+          } @empty {<div class="empty-row">No hay UPPs certificadas para los filtros seleccionados.</div>}
+        </div>
+      </article>
+    </section>
+
+    <section class="panel disease-panel">
+      <div class="panel-heading"><h2>🦠 Registro de enfermedades por UPP, Lote y Animal (Arete SINIIGA)</h2></div>
+      <div class="table-scroll">
+        <div class="disease-row table-header"><span>UPP</span><span>Rancho</span><span>Enfermedad</span><span>Lote</span><span>Arete SINIIGA</span><span>Animal</span><span>Fecha detección</span><span>Estado</span></div>
+        @for (item of diseases.items || []; track item.arete_siniiga) {
+          <div class="disease-row"><strong>{{ item.upp }}</strong><span>{{ item.rancho }}</span><strong class="disease-name">{{ item.enfermedad }}</strong><b class="tag">{{ item.lote }}</b><b class="tag tag-neutral">{{ item.arete_siniiga }}</b><span>{{ item.animal }}</span><span>{{ formatDate(item.fecha_deteccion) }}</span><span><b class="status-pill" [ngClass]="statusClass(item.estatus.clave)">{{ item.estatus.etiqueta }}</b></span></div>
+        } @empty {<div class="empty-row">No hay enfermedades registradas para los filtros seleccionados.</div>}
+      </div>
+      @if (diseases.alerta) {<div class="alert-banner"><strong>Alerta:</strong> {{ diseases.alerta.mensaje }}</div>}
+    </section>
+
+    <section class="panel protocols-panel">
+      <div class="panel-heading"><h2>🛡️ Protocolos de Sanidad</h2></div>
+      <div class="protocol-grid">
+        <article class="protocol-card"><h3>🚪 Control de acceso y limpieza</h3><p>Acceso restringido: <strong>{{ protocolValue(protocols.control_acceso_limpieza?.acceso_restringido) }}</strong></p><p>Registro de visitantes: <strong>{{ protocolValue(protocols.control_acceso_limpieza?.registro_visitantes) }}</strong></p><div class="protocol-line"><span>Limpieza diaria de instalaciones: <strong>{{ protocols.control_acceso_limpieza?.limpieza_diaria_instalaciones_pct || 0 }}%</strong></span><div class="progress"><i [style.width.%]="protocols.control_acceso_limpieza?.limpieza_diaria_instalaciones_pct || 0"></i></div></div></article>
+        <article class="protocol-card"><h3>🧼 Protocolo de sanitización</h3><div class="protocol-line"><span>🧤 Limpieza de calzado: <strong>Implementado {{ protocols.sanitizacion?.limpieza_calzado_pct || 0 }}%</strong></span><div class="progress"><i [style.width.%]="protocols.sanitizacion?.limpieza_calzado_pct || 0"></i></div></div><div class="protocol-line"><span>🚚 Desinfección vehículos: <strong>Implementado {{ protocols.sanitizacion?.desinfeccion_vehiculos_pct || 0 }}%</strong></span><div class="progress"><i [style.width.%]="protocols.sanitizacion?.desinfeccion_vehiculos_pct || 0"></i></div></div><p>🧴 Producto utilizado: <strong>{{ products() }}</strong></p></article>
+        <article class="protocol-card observations-card"><h3>📝 Observaciones generales</h3><div class="observation"><strong>Última auditoría: {{ formatDate(protocols.observaciones?.ultima_auditoria) }}</strong><p>{{ protocols.observaciones?.alerta || 'Sin observaciones.' }}</p></div></article>
+      </div>
+    </section>
+
+    <section class="panel coverage-panel">
+      <div class="panel-heading"><h2>📊 Cobertura de vacunación por enfermedad</h2></div>
+      <div class="coverage-list">
+        @for (item of coverage.items || []; track item.enfermedad) {<div class="coverage-row"><span>{{ item.enfermedad }}:</span><div class="coverage-track"><i [class]="coverageClass(item.nivel)" [style.width.%]="item.porcentaje"></i><b>{{ item.porcentaje }}%</b></div></div>}
+      </div>
+      <div class="national-average"><strong>Promedio nacional:</strong><div class="coverage-track"><i class="coverage-average" [style.width.%]="coverage.promedio_nacional || 0"></i><b>{{ coverage.promedio_nacional || 0 }}% cobertura</b></div></div>
+    </section>
+
+    <section class="panel recommendations-panel">
+      <div class="panel-heading"><h2>📌 Recomendaciones para políticas públicas</h2></div>
+      <div class="recommendation-grid">@for (item of recommendations.items || []; track item.clave) {<article class="recommendation-card" [ngClass]="'recommendation-' + item.tipo"><h3>{{ recommendationIcon(item.tipo) }} {{ item.titulo }}</h3><p>{{ item.texto }}</p></article>}</div>
+    </section>
+  </div>
+</ocontainer>

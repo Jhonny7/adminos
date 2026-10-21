@@ -2,9 +2,11 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
+    ElementRef,
     OnInit,
     QueryList,
     ViewChildren,
+    ViewChild,
     ViewEncapsulation,
     afterNextRender,
     inject,
@@ -16,6 +18,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { catchError, forkJoin, finalize, of } from 'rxjs';
 import { paths } from '../../../environments/environment.prod';
 import { GenericService } from '../../services/generic.service';
+import { PdfExportService } from '../../services/pdf-export.service';
 
 type GeoLevel = 'nacional' | 'estado' | 'municipio';
 type LivestockMetric = 'cabezas' | 'vientres';
@@ -162,10 +165,15 @@ interface PropertyMetric {
 export class Pecuario implements OnInit {
     private readonly cdr = inject(ChangeDetectorRef);
     private readonly genericService = inject(GenericService);
+    private readonly pdfExportService = inject(PdfExportService);
     private readonly route = inject(ActivatedRoute);
 
     @ViewChildren(BaseChartDirective)
     private readonly chartDirectives?: QueryList<BaseChartDirective>;
+
+    @ViewChild('pdfContent') private readonly pdfContent?: ElementRef<HTMLElement>;
+
+    public exportingPdf = false;
 
     protected readonly chartsReady = signal(false);
 
@@ -577,6 +585,15 @@ export class Pecuario implements OnInit {
                 this.errorMessage = 'No fue posible exportar el CSV.';
                 this.cdr.markForCheck();
             }
+        });
+    }
+
+    public exportPdf(): void {
+        if (!this.pdfContent || this.exportingPdf) return;
+        this.exportingPdf = true;
+        this.pdfExportService.exportElement(this.pdfContent.nativeElement, 'resumen-pecuario').finally(() => {
+            this.exportingPdf = false;
+            this.cdr.markForCheck();
         });
     }
 

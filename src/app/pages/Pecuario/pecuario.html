@@ -1,5 +1,5 @@
 <ocontainer [extraClass]="'cls-pecuario'">
-  <div class="pecuario-page">
+  <div class="pecuario-page" #pdfContent>
     <header class="page-heading">
       <div>
         <h1><mat-icon>pets</mat-icon> Resumen Pecuario</h1>
@@ -8,6 +8,9 @@
       <div class="heading-actions">
         <button class="btn btn-export" type="button" (click)="exportCsv()">
           <mat-icon>download</mat-icon> Exportar CSV
+        </button>
+        <button class="btn btn-pdf" type="button" (click)="exportPdf()" [disabled]="exportingPdf || loading">
+          <mat-icon>picture_as_pdf</mat-icon> {{ exportingPdf ? 'Generando PDF...' : 'Exportar PDF' }}
         </button>
         <button class="btn btn-refresh" type="button" (click)="refreshData()" [disabled]="refreshing || loading">
           <mat-icon>sync</mat-icon> {{ refreshing ? 'Actualizando...' : 'Actualizar Datos' }}

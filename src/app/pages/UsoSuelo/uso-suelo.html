@@ -1,10 +1,11 @@
 <ocontainer [extraClass]="'cls-uso-suelo'">
-  <div class="uso-page">
+  <div class="uso-page" #pdfContent>
     <header class="page-heading">
       <div>
         <h1>🌿 <span>Uso de Suelo y Vegetación</span></h1>
         <p>Monitoreo ambiental y manejo del suelo — Visión nacional por temporada</p>
       </div>
+      <div class="heading-actions"><button class="btn btn-pdf" type="button" (click)="exportPdf()" [disabled]="exportingPdf || loading"><mat-icon>picture_as_pdf</mat-icon>{{ exportingPdf ? 'Generando PDF...' : 'Exportar PDF' }}</button></div>
     </header>
 
     <section class="filters-card">

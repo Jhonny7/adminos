@@ -15,6 +15,7 @@ import { AdminPlaceholder } from './pages/AdminPlaceholder/admin-placeholder.com
 import { Infraestructura } from './pages/Infraestructura/infraestructura.component';
 import { Rancho } from './pages/Rancho/rancho.component';
 import { UsoSuelo } from './pages/UsoSuelo/uso-suelo.component';
+import { SanidadVacunacion } from './pages/SanidadVacunacion/sanidad-vacunacion.component';
 
 export const routes: Routes = [
   {
@@ -56,8 +57,7 @@ export const routes: Routes = [
       },
       {
         path: 'sanidad-vacunacion',
-        component: AdminPlaceholder,
-        data: { title: 'Sanidad y Vacunación' }
+        component: SanidadVacunacion
       }
     ]
   }
