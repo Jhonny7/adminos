@@ -148,7 +148,7 @@
   .subsection-title, .detail-title { margin: 0 1.5rem 1rem; color: #465266; font-size: 1rem; }
   .fence-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; padding: 0 1.5rem 1.5rem; }
   .fence-card { min-width: 0; overflow: hidden; border: 1px solid #dfe4ea; border-radius: 1rem; background: #fff; }
-  .fence-card > header { display: flex; gap: 0.55rem; padding: 1rem; background: color-mix(in srgb, var(--fence-color) 10%, white); }
+  .fence-card > header { display: flex; gap: 0.55rem; padding: 1rem; background: #f7f9f8; }
   .fence-card > header > span { font-size: 1.25rem; }
   .fence-card > header strong, .fence-card > header small { display: block; }
   .fence-card > header small { margin-top: 0.2rem; color: #7a8493; }

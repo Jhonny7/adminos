@@ -437,6 +437,15 @@ export class Infraestructura implements OnInit {
         return { cerco_vivo: '#22685d', alambre_puas: '#ad8127', piedra: '#999a9d', cerco_electrico: '#a1244e' }[tipo] || '#22685d';
     }
 
+    public fenceBackground(tipo: string): string {
+        return {
+            cerco_vivo: 'rgba(34, 104, 93, 0.1)',
+            alambre_puas: 'rgba(173, 129, 39, 0.1)',
+            piedra: 'rgba(153, 154, 157, 0.1)',
+            cerco_electrico: 'rgba(161, 36, 78, 0.1)'
+        }[tipo] || 'rgba(34, 104, 93, 0.1)';
+    }
+
     public conditionClass(value: number): string {
         if (value >= 50) { return 'good'; }
         if (value >= 25) { return 'regular'; }
